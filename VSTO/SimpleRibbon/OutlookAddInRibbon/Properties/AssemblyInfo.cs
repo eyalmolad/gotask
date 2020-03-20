@@ -6,11 +6,11 @@ using System.Security;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GoTaskExcelAddInRibbon")]
+[assembly: AssemblyTitle("OutlookAddInRibbon")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GoTaskExcelAddInRibbon")]
+[assembly: AssemblyProduct("OutlookAddInRibbon")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -21,7 +21,7 @@ using System.Security;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0a87f49c-251b-475f-a102-5ba3d58bb87b")]
+[assembly: Guid("aee81c58-9c34-41c2-8ada-53d2b1cb73eb")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -1,4 +1,4 @@
-﻿namespace GoTaskExcelAddInRibbon
+﻿namespace PowerPointAddinRibbon
 {
     public partial class ThisAddIn
     {
@@ -9,9 +9,8 @@
         private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
         {
         }
-
         protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject() => new RibbonController();
-        
+
         #region VSTO generated code
 
         /// <summary>

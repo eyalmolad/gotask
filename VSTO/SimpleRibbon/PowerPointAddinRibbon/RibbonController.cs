@@ -1,9 +1,9 @@
-﻿using System.Drawing;
+﻿using PowerPointAddinRibbon.Properties;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using GoTaskExcelAddInRibbon.Properties;
 
-namespace GoTaskExcelAddInRibbon
+namespace PowerPointAddinRibbon
 {
     [ComVisible(true)]
     public class RibbonController : Microsoft.Office.Core.IRibbonExtensibility
@@ -11,7 +11,7 @@ namespace GoTaskExcelAddInRibbon
         private Microsoft.Office.Core.IRibbonUI _ribbonUi;
 
         public string GetCustomUI(string ribbonID) =>
-                @"<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui'>
+            @"<customUI xmlns='http://schemas.microsoft.com/office/2009/07/customui'>
                         <ribbon>
                            <tabs>
                                 <tab id='sample_tab' label='GoTask'>
