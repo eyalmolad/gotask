@@ -8,11 +8,9 @@ namespace JSONModels
 	class Product : public JSONBase
 	{
 	public:
-		Product();
-		Product(const Product&) = default;
-		virtual ~Product();
+		Product();		
+		virtual ~Product();			
 
-		virtual bool Deserialize(const std::string& s);
 		virtual bool Deserialize(const rapidjson::Value& obj);
 		virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const;
 
@@ -27,8 +25,7 @@ namespace JSONModels
 		void Sales(float sales) { _sales = sales; }
 
 		int Id() const { return _id; }
-		void Id(int id) { _id = id; }
-
+		void Id(int id) { _id = id; }		
 	private:
 		std::string _name;
 		std::string _category;

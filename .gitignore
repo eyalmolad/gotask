@@ -2,3 +2,7 @@
 bin
 .vs
 obj
+Debug
+*.user
+/C++/RapidJSONSample/DataSampleArrayNew.json
+/C++/RapidJSONSample/DataSampleNew.json

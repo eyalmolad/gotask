@@ -9,16 +9,7 @@ namespace JSONModels
 	Product::~Product()
 	{}
 	
-	bool Product::Deserialize(const std::string& s)
-	{		
-		rapidjson::Document doc;
-		if (!InitDocument(s, doc))
-			return false;
-		
-		Deserialize(doc);
-
-		return true;
-	}
+	
 	
 	bool Product::Deserialize(const rapidjson::Value & obj)
 	{
@@ -50,6 +41,4 @@ namespace JSONModels
 
 		return true;
 	}	
-
-	
 }

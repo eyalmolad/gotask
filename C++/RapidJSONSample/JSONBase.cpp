@@ -14,6 +14,17 @@ std::string JSONBase::Serialize() const
 	return "";
 }
 
+bool JSONBase::Deserialize(const std::string& s)
+{
+	rapidjson::Document doc;
+	if (!InitDocument(s, doc))
+		return false;
+
+	Deserialize(doc);
+
+	return true;
+}
+
 bool JSONBase::DeserializeFromFile(const std::string& filePath)
 {
 	std::ifstream f(filePath);
