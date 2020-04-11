@@ -5,7 +5,7 @@ class JSONBase
 {
 public:	
 	bool DeserializeFromFile(const std::string& filePath);
-	bool SerializeToFile(const std::string& filePath);	
+	bool SerializeToFile(const std::string& filePath); 	
 
 	virtual std::string Serialize() const;
 	virtual bool Deserialize(const std::string& s);
