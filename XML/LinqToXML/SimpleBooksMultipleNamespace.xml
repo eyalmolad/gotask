@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+  <Items xmlns="https://gotask.net" xmlns:bk="https://books.net">
+    <Books>
+      <bk:Book>
+        <bk:ISBN>978-1788478120</bk:ISBN>
+        <bk:Name>C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition</bk:Name>
+        <bk:Price>35.99</bk:Price>
+      </bk:Book>
+      <Book>
+        <ISBN>978-1789133646</ISBN>
+        <Name>Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems</Name>
+        <Price>34.99</Price>
+      </Book>
+    </Books>
+  </Items>
+</Root>
