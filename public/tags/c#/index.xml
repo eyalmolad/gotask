@@ -557,10 +557,11 @@ list.Add(777);&lt;/pre&gt;
       <guid>https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/</guid>
       <description>
         
-          &lt;p&gt;I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.&lt;/p&gt;
+          &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;I&#39;ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.&lt;/p&gt;
 &lt;p&gt;In this post, I will provide some samples in C# of how to deserialize such XML files with minimal amount of code.&lt;/p&gt;
 &lt;p&gt;My goal for this article is to provide working examples with minimal amount of code and class attributes.&lt;/p&gt;
-&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Visual Studio 2019&lt;/li&gt;
@@ -569,101 +570,101 @@ list.Add(777);&lt;/pre&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
 &lt;p&gt;Why do we need namespaces?&lt;/p&gt;
-&lt;p&gt;There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it’s own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.&lt;/p&gt;
-&lt;p&gt;For example, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlSerializer&lt;/code&gt; class that I will use in this sample is actually &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;System.Xml.Serialization.XmlSerializer&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;I could easily define a class named XmlSerializer in my namespace without any conflicts.&lt;/p&gt;
+&lt;p&gt;There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it&#39;s own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.&lt;/p&gt;
+&lt;p&gt;For example, &lt;code&gt;XmlSerializer&lt;/code&gt; class that I will use in this sample is actually &lt;code&gt;System.Xml.Serialization.XmlSerializer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I could easily define a class named &lt;code&gt;XmlSerializer&lt;/code&gt; in my namespace without any conflicts.&lt;/p&gt;
 &lt;p&gt;When you work alone on a project, class naming conflict might be a rare thing, but when using external library without namespaces, the conflict could be a common thing.&lt;/p&gt;
 &lt;p&gt;A similar thing happens in XML files. Once you define a namespace, you can create elements with a same name, but different namespace.&lt;/p&gt;
-&lt;p&gt;A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in &lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in &lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34;&gt;XML namespaces&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;XML standard attribute xmlns enables us to define a multiple namespaces for element.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;xmlns=”https://somename.org” creates a default namespace.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;xmlns=&amp;quot;https://somename.org&amp;quot;&lt;/code&gt; creates a default namespace.&lt;/li&gt;
 &lt;li&gt;In cased we would like to add more namespaces, we need to use a prefix.
 &lt;ul&gt;
-&lt;li&gt;xmlns:gt=”https://somename2.org” creates a namespace with prefix gt&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;xmlns:gt=&amp;quot;https://somename2.org&amp;quot;&lt;/code&gt; creates a namespace with prefix &lt;code&gt;gt&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;In Visual Studio, create a new .NET Core Console App.&lt;/li&gt;
-&lt;li&gt;Add a SimpleBooks.xml as shown below. I used a default namespace xmlns=”https://gotask.net” attribute for Books element.&lt;/li&gt;
+&lt;li&gt;Add a &lt;code&gt;SimpleBooks.xml&lt;/code&gt; as shown below. I used a default namespace &lt;code&gt;xmlns=&amp;quot;https://gotask.net&amp;quot; &lt;/code&gt; attribute for Books element.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
-&amp;lt;Books xmlns=&#34;https://gotask.net&#34;&amp;gt;
-  &amp;lt;Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/Book&amp;gt;
-  &amp;lt;Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/Book&amp;gt;
-&amp;lt;/Books&amp;gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Add 2 classes Book and Books.&lt;/li&gt;
-&lt;li&gt;The only class attribute I will use is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlRoot&lt;/code&gt; and set the name of the root element and the namespace.&lt;/li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-XML&#34; data-lang=&#34;XML&#34;&gt;&lt;span class=&#34;ln&#34;&gt; 1&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;utf-8&amp;#34; ?&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 2&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;Books&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;https://gotask.net&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 3&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 4&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1788478120&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 5&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 6&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;35.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 7&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 8&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 9&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1789133646&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;10&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;11&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;34.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;12&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Books&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Add 2 classes &lt;code&gt;Book&lt;/code&gt; and &lt;code&gt;Books&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The only class attribute I will use is &lt;code&gt;XmlRoot&lt;/code&gt; and set the name of the root element and the namespace.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public class Book
-{
-  public string ISBN { get; set; }
-
-  public string Name { get; set; }
-
-  public decimal Price { get; set; }
-}
-
-[XmlRoot(&#34;Books&#34;, Namespace = &#34;https://gotask.net&#34;)]
-public class Books : List&amp;lt;Book&amp;gt;
-{
-}&lt;/pre&gt;
-&lt;h2 id=&#34;deserializing&#34;&gt;Deserializing&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C#&#34; data-lang=&#34;C#&#34;&gt;&lt;span class=&#34;ln&#34;&gt; 1&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Book&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 3&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ISBN&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 4&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 5&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Name&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 6&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 7&lt;/span&gt;    &lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;decimal&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Price&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;set&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 9&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;
+&lt;/span&gt;&lt;span class=&#34;ln&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;[XmlRoot(&amp;#34;Books&amp;#34;, Namespace = &amp;#34;https://gotask.net&amp;#34;)]&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;11&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Books&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Book&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;12&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;deserializing&#34;&gt;Deserializing&lt;/h2&gt;
 &lt;h3 id=&#34;simple-case&#34;&gt;Simple Case&lt;/h3&gt;
 &lt;p&gt;Once we have the classes and the XML data set properly, the deserialize function is really simple.&lt;/p&gt;
 &lt;p&gt;In the list we have 2 books now.&lt;/p&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var serializer = new XmlSerializer(typeof(Books));
-
-using (var reader = new FileStream(&#34;SimpleBooks.xml&#34;, FileMode.Open))
-{
-    var books = (Books)serializer.Deserialize(reader);
-    Console.WriteLine($&#34;Number of books is {books.Count}&#34;);
-}&lt;/pre&gt;
-&lt;h3 id=&#34;multiple-namespaces&#34;&gt;Multiple namespaces&lt;/h3&gt;
-&lt;p&gt;I added another namespace to the declaration of the Books element. This namespace has gt prefix and value “https://github.org”.  Running the code above on this XML will produce the same results (2 books) since there is no Book element in gt namespace.&lt;/p&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
-&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
-  &amp;lt;Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/Book&amp;gt;
-  &amp;lt;Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/Book&amp;gt;
-&amp;lt;/Books&amp;gt;&lt;/pre&gt;
-&lt;p&gt;Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:&lt;/p&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
-&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
-  &amp;lt;Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/Book&amp;gt;
-  &amp;lt;gt:Book&amp;gt;
-    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
-    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
-    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
-  &amp;lt;/gt:Book&amp;gt;
-&amp;lt;/Books&amp;gt;&lt;/pre&gt;
-&lt;p&gt;Now the code above will deserialize only the first book (ISBN 978-1788478120), since it’s the only book that exists in the default namespace.&lt;/p&gt;
-&lt;h4 id=&#34;useful-links&#34;&gt;Useful links&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-C#&#34; data-lang=&#34;C#&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;serializer&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;XmlSerializer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;typeof&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Books&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;using&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;reader&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FileStream&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;SimpleBooks.xml&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;FileMode&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Open&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;5&lt;/span&gt;  &lt;span class=&#34;kt&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;books&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Books&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;serializer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Deserialize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;reader&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;6&lt;/span&gt;  &lt;span class=&#34;n&#34;&gt;Console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WriteLine&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;$&amp;#34;Number of books is {books.Count}&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;multiple-namespaces&#34;&gt;Multiple namespaces&lt;/h3&gt;
+&lt;p&gt;I added another namespace to the declaration of the Books element. This namespace has &lt;code&gt;gt&lt;/code&gt; prefix and value &lt;code&gt;&amp;quot;https://github.org&amp;quot;&lt;/code&gt;.  Running the code above on this XML will produce the same results (2 books) since there is no &lt;code&gt;Book&lt;/code&gt; element in &lt;code&gt;gt&lt;/code&gt; namespace.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-XML&#34; data-lang=&#34;XML&#34;&gt;&lt;span class=&#34;ln&#34;&gt; 1&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;utf-8&amp;#34; ?&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 2&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;Books&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;https://gotask.net&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns:gt=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;https://github.org&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 3&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 4&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1788478120&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 5&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 6&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;35.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 7&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 8&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 9&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1789133646&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;10&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;11&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;34.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;12&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Books&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-XML&#34; data-lang=&#34;XML&#34;&gt;&lt;span class=&#34;ln&#34;&gt; 1&lt;/span&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;?xml version=&amp;#34;1.0&amp;#34; encoding=&amp;#34;utf-8&amp;#34; ?&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 2&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;Books&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;https://gotask.net&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;xmlns:gt=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;https://github.org&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 3&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 4&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1788478120&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 5&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 6&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;35.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 7&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 8&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;gt:Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt; 9&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;ISBN&amp;gt;&lt;/span&gt;978-1789133646&lt;span class=&#34;nt&#34;&gt;&amp;lt;/ISBN&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;10&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Name&amp;gt;&lt;/span&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Name&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;11&lt;/span&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;Price&amp;gt;&lt;/span&gt;34.99&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Price&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;12&lt;/span&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/gt:Book&amp;gt;&lt;/span&gt;
+&lt;span class=&#34;ln&#34;&gt;13&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;/Books&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now the code above will deserialize only the first book (ISBN 978-1788478120), since it&#39;s the only book that exists in the default namespace.&lt;/p&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML Linq namespaces&lt;/a&gt; overview&lt;/li&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml&#34;&gt;XML Linq namespaces&lt;/a&gt; overview&lt;/li&gt;
 &lt;/ul&gt;
 
         
@@ -815,153 +816,6 @@ Console.Write($&amp;quot;{dir} - result={result}&amp;quot;);&lt;/pre&gt;&lt;/p&g
 
   * Source code of this project on [GitHub][1]
 &lt;/code&gt;&lt;/pre&gt;
-
-        
-      </description>
-    </item>
-    
-    <item>
-      <title>C# VSTO Addin Sample for Excel, Word, Power Point, Outlook</title>
-      <link>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</link>
-      <pubDate>Fri, 20 Mar 2020 19:27:52 +0000</pubDate>
-      
-      <guid>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</guid>
-      <description>
-        
-          &lt;p&gt;Microsoft Office provides a variety of component types you could develop to extend its existing functionality or to add more useful features. These components include VBA macros, VSTO components, XLL Addons, and more.&lt;/p&gt;
-&lt;p&gt;In this sample, I will focus on creating a C# VSTO project that displays a simple ribbon.&lt;/p&gt;
-&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
-&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
-&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
-&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18362)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;minimal-requirements&#34;&gt;Minimal requirements&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;Visual Studio 2015&lt;/li&gt;
-&lt;li&gt;Office 2013&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34; target=&#34;_new&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Note that the following Ribbon sample can be used for extending these Office applications: Excel, Word, Outlook, and PowerPoint.&lt;/p&gt;
-&lt;p&gt;In this post, I will use Excel as a hosting application.&lt;/p&gt;
-&lt;h2 id=&#34;setting-up-the-environment&#34;&gt;Setting up the environment&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Open Visual Studio 2019 and create a new Excel VSTO Addin C# project. &lt;figure id=&#34;attachment_22&#34; aria-describedby=&#34;caption-attachment-22&#34; style=&#34;width: 289px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-22&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; alt=&#34;Visual Studio Setup for Office/SharePoint&#34; width=&#34;299&#34; height=&#34;316&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png 708w, https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup-284x300.png 284w&#34; sizes=&#34;(max-width: 299px) 100vw, 299px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-22&#34; class=&#34;wp-caption-text&#34;&gt;Visual Studio Setup for Office/SharePoint&lt;/figcaption&gt;&lt;/figure&gt;&lt;br&gt;
-In case you cannot find such a project on a Visual Studio templates list, complete the following steps:
-&lt;ul&gt;
-&lt;li&gt;Open the Visual Studio 2019 setup from the Windows Control Panel.&lt;/li&gt;
-&lt;li&gt;Make sure “Office/SharePoint development option” is selected as shown in the picture.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;In the generated project, open the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddin.cs&lt;/code&gt; file:
-&lt;ul&gt;
-&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; event handler will be called by the Excel application only once in the hosting application lifetime, during the application startup. This is the recommended place for initialization.&lt;/li&gt;
-&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; event handler will be called by the application before it exits. Do your cleanups here.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;Note: Outlook no longer raises this event. If you have code that must run when Outlook shuts down, see &lt;a href=&#34;https://go.microsoft.com/fwlink/?LinkId=506785&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;this link&lt;/a&gt;.&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public partial class ThisAddIn
-{
-  private void ThisAddIn_Startup(object sender, System.EventArgs e)
-  {
-  }
-
-  private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
-  {
-  }
-
-  #region VSTO generated code
-
-  /// &amp;lt;summary&amp;gt;
-  /// Required method for Designer support - do not modify
-  /// the contents of this method with the code editor.
-  /// &amp;lt;/summary&amp;gt;
-  private void InternalStartup()
-  {
-    this.Startup += new System.EventHandler(ThisAddIn_Startup);
-    this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
-  }
-  
-  #endregion
-}&lt;/pre&gt;
-&lt;h2 id=&#34;testing-the-environment&#34;&gt;Testing the environment&lt;/h2&gt;
-&lt;ol&gt;
-&lt;li&gt;Set a breakpoint in both &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; functions.&lt;/li&gt;
-&lt;li&gt;Hit F5 to run the project’s debugger. An Excel splash screen should appear and shortly after &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; breakpoint will hit.&lt;/li&gt;
-&lt;li&gt;Close the Excel application, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; should hit.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;adding-the-ribbon&#34;&gt;Adding the Ribbon&lt;/h2&gt;
-&lt;p&gt;When developing a VSTO, I prefer creating the ribbon by manualy creating the XML rather than using the Ribbon Designer, which covers only a subset of the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OfficeFluentUI&lt;/code&gt; model.&lt;br&gt;
-You can find more explanations of the difference between using the Ribbon Designer and manually building the XML in these links: &lt;a href=&#34;https://stackoverflow.com/questions/22483329/office-ribbon-xml-vs-office-standard-ribbon-designer&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml vs ribbon designer&lt;/a&gt; and &lt;a href=&#34;https://social.msdn.microsoft.com/Forums/vstudio/en-US/e3a68e06-9e27-4d6c-bd1e-e566ab8b7506/ribbon-xml-vs-ribbon-designer?forum=vsto&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml to ribbon designer comparison&lt;/a&gt;.&lt;/p&gt;
-&lt;h3 id=&#34;ribbon-controller&#34;&gt;Ribbon Controller&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Add a new class RibbonConroller implementing &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;Microsoft.Office.Core.IRibbonExtensibility&lt;/code&gt; interface.&lt;/li&gt;
-&lt;li&gt;Make sure to set the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;[ComVisible(true)]&lt;/code&gt; class attribute.&lt;/li&gt;
-&lt;li&gt;The only function you should implement is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;GetCustomUI&lt;/code&gt; that returns the XML representation of the ribbon you wish to create.&lt;/li&gt;
-&lt;li&gt;For this sample, we will create a simple button that display a message box.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;[ComVisible(true)]
-public class RibbonController : Microsoft.Office.Core.IRibbonExtensibility
-{
-  private Microsoft.Office.Core.IRibbonUI _ribbonUi;
-
-  public string GetCustomUI(string ribbonID) =&amp;gt;
-  @&#34;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
-    &amp;lt;ribbon&amp;gt;
-       &amp;lt;tabs&amp;gt;
-        &amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
-          &amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;
-            &amp;lt;button id=&#39;do_1&#39; label=&#39;Do 1&#39; size=&#39;large&#39; getImage=&#39;OnDo1GetImage&#39; onAction=&#39;OnDo1Click&#39;/&amp;gt;
-          &amp;lt;/group&amp;gt;
-        &amp;lt;/tab&amp;gt;
-      &amp;lt;/tabs&amp;gt;
-    &amp;lt;/ribbon&amp;gt;
-    &amp;lt;/customUI&amp;gt;&#34;;
-
-  public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
-  {
-    _ribbonUi = ribbonUI;
-  }
-
-  public void OnDo1Click(Microsoft.Office.Core.IRibbonControl control)
-  {
-    MessageBox.Show(Resources.Do1Action);
-  }
-
-  public Bitmap OnDo1GetImage(Microsoft.Office.Core.IRibbonControl control) =&amp;gt; Resources.Do1_128px;
-}&lt;/pre&gt;
-&lt;p&gt;The sample XML above adds the ribbon to the Excel application, which includes:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;A new ribbon tab labeled ‘GoTask’ containing a new group labeled ‘Operations’.&lt;/li&gt;
-&lt;li&gt;The group containing a button labeled ‘Do 1’ with click handler implemented in OnDo1Click function.&lt;/li&gt;
-&lt;li&gt;The button displaying an image located in the Resource section.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Notes for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;onAction&lt;/code&gt; callback function:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;It must be public and have the following signature: &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void SomeName(Microsoft.Office.Core.IRibbonControl control)&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;You could use any valid name, however it must match the name provided in onAction attribute in XML.&lt;/li&gt;
-&lt;li&gt;For the proper initialization of the Ribbon, add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OnLoad&lt;/code&gt; function, which will be called by the hosting application once the ribbon is ready to show.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;creating-an-instance-of-the-controller-class&#34;&gt;Creating an Instance of the Controller class&lt;/h3&gt;
-&lt;p&gt;Once we have the RibbonController class, we need to create the instance of it.&lt;br&gt;
-This is done by overriding the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;CreateRibbonExtensibilityObject()&lt;/code&gt; function in the ThisAddIn class.&lt;/p&gt;
-&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject() =&amp;gt; new RibbonController();&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;running-the-project&#34;&gt;Running the project&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Hit F5 to run the project again.&lt;/li&gt;
-&lt;li&gt;The Excel Application should show the ribbon with a new button.&lt;figure id=&#34;attachment_34&#34; aria-describedby=&#34;caption-attachment-34&#34; style=&#34;width: 800px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-34 size-large&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png&#34; alt=&#34;VSTO Excel Sample ribbon with button&#34; width=&#34;810&#34; height=&#34;146&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png 1024w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-300x54.png 300w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-768x139.png 768w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png 1328w&#34; sizes=&#34;(max-width: 810px) 100vw, 810px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-34&#34; class=&#34;wp-caption-text&#34;&gt;VSTO Excel Sample ribbon with button&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
-&lt;h4 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h4&gt;
-&lt;ol&gt;
-&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Full documentation of &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&#34;&gt;Ribbon XML&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-designer?view=vs-2019&#34;&gt;Ribbon Designer&lt;/a&gt; documentation&lt;/li&gt;
-&lt;li&gt;Office applications that &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/features-available-by-office-application-and-project-type?view=vs-2019&#34;&gt;supports VSTO Addins&lt;/a&gt;.&lt;/li&gt;
-&lt;/ol&gt;
 
         
       </description>

@@ -24,89 +24,80 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://git-scm.com/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Git&lt;/a&gt; installed on your local machine (including the command line interface)&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt; account&lt;/li&gt;
-&lt;li&gt;If you wish to setup a ‘private’ repository with the custom domain, you will need to purchase one of the GitHub subscriptions. I use the ‘Team’ subscription which costs 4$ per month (as of Dec/2020). You may check the &lt;a href=&#34;https://github.com/pricing&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pricing &lt;span style=&#34;text-decoration: underline;&#34;&gt;for more information.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;If you wish to setup a ‘private’ repository with the custom domain, you will need to purchase one of the GitHub subscriptions. I use the ‘Team’ subscription which costs 4$ per month (as of Dec/2020). You may check the &lt;a href=&#34;https://github.com/pricing&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pricing for more information.&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;A Text editor, I use &lt;a href=&#34;https://notepad-plus-plus.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Notepad ++&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;A basic command line knowledge&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;setting-up-the-repository&#34;&gt;Setting up the repository&lt;/h2&gt;
 &lt;h3 id=&#34;installing-hugo-on-the-local-computer&#34;&gt;Installing Hugo on the local computer&lt;/h3&gt;
 &lt;p&gt;As described in the &lt;a href=&#34;https://github.com/gohugoio/hugo&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo Git repository&lt;/a&gt;, there are two ways to install the Hugo site generator on the local machine:&lt;/p&gt;
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;Install binary files using one of the common Package Managers&lt;/li&gt;
 &lt;li&gt;Build from the sources&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;p&gt;For this post we will proceed with the binary files’ installation. Since I am using Windows 10 operating system, I used the &lt;a href=&#34;https://chocolatey.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Chocolatey Package Manager&lt;/a&gt;. I installed Chocolatey as an Administrator as described in the &lt;a href=&#34;https://chocolatey.org/install&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;install page&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;For Mac/Linux users, I recommend working with &lt;a href=&#34;https://brew.sh&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Homebrew&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;After having the package manager installed, we can use a command line to install the Hugo site generator.&lt;/p&gt;
 &lt;h4 id=&#34;windows&#34;&gt;Windows&lt;/h4&gt;
 &lt;p&gt;Open the command line prompt as an Administrator and type:&lt;/p&gt;
-&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;choco install hugo -confirm&lt;/code&gt;&lt;/p&gt;
-&lt;h4 id=&#34;maclinux&#34;&gt;Mac/Linux&lt;/h4&gt;
-&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;brew install hugo&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;More instructions for the &lt;a href=&#34;https://gohugo.io/getting-started/installing/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo installation&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;choco install hugo -confirm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;maclinux&#34;&gt;Mac/Linux&lt;/h4&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;brew install hugo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;More instructions for the &lt;a href=&#34;https://gohugo.io/getting-started/installing/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo installation&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id=&#34;setting-up-the-repository-on-github&#34;&gt;Setting up the repository on GitHub&lt;/h3&gt;
-&lt;p&gt;Since Hugo is pre-generated site and served from a Git repository, we need to create a&lt;/p&gt;
-&lt;figure id=&#34;attachment_354&#34; aria-describedby=&#34;caption-attachment-354&#34; style=&#34;width: 506px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-354&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png&#34; alt=&#34;Create new private repository in GitHub&#34; width=&#34;516&#34; height=&#34;290&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png 516w, https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1-300x169.png 300w&#34; sizes=&#34;(max-width: 516px) 100vw, 516px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-354&#34; class=&#34;wp-caption-text&#34;&gt;Create new private repository in GitHub&lt;/figcaption&gt;&lt;/figure&gt;
-&lt;p&gt;new repository on GitHub.&lt;/p&gt;
+&lt;p&gt;Since Hugo is pre-generated site and served from a Git repository, we need to create a
+new repository on GitHub.&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png&#34;
+         alt=&#34;Create new private repository in GitHub&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Create new private repository in GitHub&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
 &lt;ol&gt;
 &lt;li&gt;In your web browser, go to &lt;a href=&#34;https://github.com/new&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;a href=&#34;https://github.com/new&#34;&gt;https://github.com/new&lt;/a&gt;&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;Choose the name for the repository. For this example, we are going to use: myhugoblog&lt;/li&gt;
+&lt;li&gt;Choose the name for the repository. For this example, we are going to use: &lt;code&gt;myhugoblog&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Since we are not creating an open source project, but the repository that will contain my blog, we will set the repository to ‘Private’. This step is not mandatory as you can setup the site and the custom domain with public repositories as well.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h3 id=&#34;heading&#34;&gt;&lt;/h3&gt;
-&lt;h3 id=&#34;heading-1&#34;&gt;&lt;/h3&gt;
 &lt;h3 id=&#34;setting-up-the-local-directory-for-the-site&#34;&gt;Setting up the local directory for the site&lt;/h3&gt;
 &lt;ol&gt;
-&lt;li&gt;Create a local directory that will contain the theme and the pre-generated site. For this example, we will use: c:\sites\ directory.&lt;/li&gt;
-&lt;li&gt;Open the command line prompt at c:\sites\ and type:&lt;/li&gt;
+&lt;li&gt;Create a local directory that will contain the theme and the pre-generated site. For this example, we will use: &lt;code&gt;c:\sites\&lt;/code&gt; directory.&lt;/li&gt;
+&lt;li&gt;Open the command line prompt at &lt;code&gt;c:\sites\&lt;/code&gt; and type:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;li style=&#34;list-style-type: none;&#34;&gt;
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt; git clone https://github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      Note: In some cases, you might get an error that repository does not exists. In such case, try to clone with following url (you will be prompted for the password):&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;&lt;/code&gt; &lt;ul&gt;
-        &lt;li&gt;
-          &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://&amp;lt;user_name&amp;gt;@github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
-        &lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/li&gt;
-&lt;h3 id=&#34;generate-new-hugo-site&#34;&gt;Generate new Hugo site&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;git clone https://github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note: In some cases, you might get an error that repository does not exists. In such case, try to clone with following url (you will be prompted for the password):&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;git clone https://&amp;lt;user_name&amp;gt;@github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&amp;lt;/code&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;generate-new-hugo-site&#34;&gt;Generate new Hugo site&lt;/h3&gt;
 &lt;p&gt;At this stage, we have an empty repository connected to our local directory. Now we need to generate the Hugo site.&lt;/p&gt;
 &lt;ol&gt;
-&lt;li&gt;In the command line prompt make sure that the current directory is c:\sites\ and type:
-&lt;ul&gt;
-&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo new site myhugoblog --force&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
+&lt;li&gt;In the command line prompt make sure that the current directory is &lt;code&gt;c:\sites\&lt;/code&gt; and type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;hugo new site myhugoblog --force
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;Important note: The root directory of the repository in Git and the root directory of the pre-generated site &lt;span style=&#34;text-decoration: underline;&#34;&gt;must be the same&lt;/span&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;choosing-the-hugo-theme&#34;&gt;Choosing the Hugo theme&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&#34;https://themes.gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo site generator&lt;/a&gt; has a few hundreds of free themes available. I decided to go with &lt;a href=&#34;https://themes.gohugo.io//theme/bodhi/blog&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Bodhi blog theme&lt;/a&gt;. It is clean, simple and minimalistic. A perfection solution for my new blog.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://themes.gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo site generator&lt;/a&gt; has a few hundreds of free themes available. I decided to go with &lt;a href=&#34;https://themes.gohugo.io//theme/bodhi/blog&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Bodhi blog theme&lt;/a&gt;. It is clean, simple and minimalistic. A perfect solution for my new blog.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Download the zip archive of the theme from the theme repository. In our case, it is &lt;a href=&#34;https://github.com/rhnvrm/bodhi/archive/master.zip&#34;&gt;https://github.com/rhnvrm/bodhi/archive/master.zip&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Extract the zip file to c:\sites&amp;lt;repository_name&amp;gt;\themes. In our case, it’s c:\sites\myhugoblog.&lt;/li&gt;
-&lt;li&gt;Typically, your directory name in the zip file will be: “&amp;lt;theme_name&amp;gt;_master”. Remove the “_master” suffix from the directory name. In our case, we will have “c:\sites\myhugoblog\themes\bodhi” directory.&lt;/li&gt;
-&lt;li&gt;Open the config.toml from the site root directory in the text editor and paste the default configuration of the theme as described in your theme page. Please note that different themes might have different configurations options.
+&lt;li&gt;Extract the zip file to &lt;code&gt;c:\sites\&amp;lt;repository_name&amp;gt;\themes&lt;/code&gt;. In our case, it’s &lt;code&gt;c:\sites\myhugoblog&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Typically, your directory name in the zip file will be: &lt;code&gt;&amp;lt;theme_name&amp;gt;\_master&lt;/code&gt;. Remove the &lt;code&gt;_master&lt;/code&gt; suffix from the directory name. In our case, we will have &lt;code&gt;c:\sites\myhugoblog\themes\bodhi&lt;/code&gt; directory.&lt;/li&gt;
+&lt;li&gt;Open the &lt;code&gt;config.toml&lt;/code&gt; from the site root directory in the text editor and paste the default configuration of the theme as described in your theme page. Please note that different themes might have different configurations options.
 &lt;ul&gt;
 &lt;li&gt;Make sure you change the baseUrl property to your custom domain url.&lt;/li&gt;
-&lt;li&gt;Make sure you add/change the default publish directory in the config.toml  to:
+&lt;li&gt;Make sure you add/change the default publish directory in the &lt;code&gt;config.toml&lt;/code&gt; to:
 &lt;ul&gt;
-&lt;li&gt;publishDir = “docs”&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;publishDir = docs&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;To run the site locally type the following in your command prompt:
-&lt;ul&gt;
-&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo server&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Open your browser at http://localhost:1313/ to see the site. Currently it should have only the theme’s default page. (Note that the port might be different. Check the console window for the exact address).&lt;/li&gt;
-&lt;li&gt;If you are happy with the site, press CTRL + X to kill the server.&lt;/li&gt;
+&lt;li&gt;To run the site locally type the following in your command prompt:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;  hugo server
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Open your browser at &lt;code&gt;http://localhost:1313/&lt;/code&gt; to see the site. Currently it should have only the theme’s default page. (Note that the port might be different. Check the console window for the exact address).&lt;/li&gt;
+&lt;li&gt;If you are happy with the site, press &lt;code&gt;CTRL + X&lt;/code&gt; to kill the server.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;deploying-the-site-to-git-repository&#34;&gt;Deploying the site to Git repository&lt;/h3&gt;
 &lt;p&gt;Once we have the site running locally, we need to build it (generate the static pages, links, sitemap) and push it to the remote repository.&lt;/p&gt;
@@ -114,13 +105,17 @@
 &lt;ul&gt;
 &lt;li&gt;
 &lt;figure id=&#34;attachment_369&#34; aria-describedby=&#34;caption-attachment-369&#34; style=&#34;width: 258px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-369&#34; src=&#34;https://gotask.net/wp-content/uploads/2021/01/hugo-site-build-console.png&#34; alt=&#34;Build Hugo site console output&#34; width=&#34;268&#34; height=&#34;239&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-369&#34; class=&#34;wp-caption-text&#34;&gt;Build Hugo site console output&lt;/figcaption&gt;&lt;/figure&gt;
-&lt;p&gt;Type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo&lt;/code&gt; to build the site&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Type the following git command to add the new files to the repository, commit and push. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git add .
-git commit -m &amp;quot;Added theme&amp;quot;
-git push origin&lt;/pre&gt;&lt;/p&gt;
-&lt;p&gt;Note that you need to &lt;span style=&#34;text-decoration: underline;&#34;&gt;repeat&lt;/span&gt; this process every time you make &lt;span style=&#34;text-decoration: underline;&#34;&gt;any change&lt;/span&gt; to the site.&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To build the site, type:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;hugo
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;Type the following git command to add the new files to the repository, commit and push.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;ln&#34;&gt;1&lt;/span&gt;git add .
+&lt;span class=&#34;ln&#34;&gt;2&lt;/span&gt;git commit -m &amp;#34;Added theme&amp;#34;
+&lt;span class=&#34;ln&#34;&gt;3&lt;/span&gt;git push origin
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Note that you need to repeat this process every time you make any change to the site.&lt;/p&gt;
 &lt;h2 id=&#34;connecting-to-github-pages&#34;&gt;Connecting to GitHub Pages&lt;/h2&gt;
 &lt;p&gt;Once we have the repository set, we need to enable the GitHub Pages capability for our repository.&lt;/p&gt;
 &lt;figure id=&#34;attachment_355&#34; aria-describedby=&#34;caption-attachment-355&#34; style=&#34;width: 597px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-355&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png&#34; alt=&#34;GitHub Pages Settings&#34; width=&#34;607&#34; height=&#34;285&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png 607w, https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain-300x141.png 300w&#34; sizes=&#34;(max-width: 607px) 100vw, 607px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-355&#34; class=&#34;wp-caption-text&#34;&gt;GitHub Pages Settings for Branch and Custom Domain&lt;/figcaption&gt;&lt;/figure&gt;
@@ -159,10 +154,6 @@ git push origin&lt;/pre&gt;&lt;/p&gt;
 &lt;figure id=&#34;attachment_350&#34; aria-describedby=&#34;caption-attachment-350&#34; style=&#34;width: 715px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-350&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png&#34; alt=&#34;Namecheap Advanced DNS For GitHub Pages&#34; width=&#34;725&#34; height=&#34;293&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png 725w, https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1-300x121.png 300w&#34; sizes=&#34;(max-width: 725px) 100vw, 725px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-350&#34; class=&#34;wp-caption-text&#34;&gt;Namecheap Advanced DNS For GitHub Pages&lt;/figcaption&gt;&lt;/figure&gt;
 &lt;h3 id=&#34;testing-the-site&#34;&gt;Testing the site&lt;/h3&gt;
 &lt;p&gt;Type your domain in the web browser, the site should appear 🙂&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
 
         
       </description>
@@ -351,74 +342,100 @@ In the following posts, I will explain more about MySql configuration, logging, 
       <guid>https://gotask.net/tutorials/how-to-set-up-google-search-console-domain-verification-in-hostgator/</guid>
       <description>
         
-          &lt;p&gt;Recently, I set up a WordPress blog using HostGator’s shared hosting.&lt;/p&gt;
-&lt;p&gt;After writing the first post, I wanted to register the domain in Google Search Console (GSC) (former Google Web Master Tools). This tool provides you with very useful information on how Google’s search engine sees your site. GSC shows you insights regarding the performance of your site, referral links, sitemap, and some other experimental capabilities.&lt;/p&gt;
-&lt;p&gt;For this tutorial, I will use the sample domain name ‘sampleblog.blog’.&lt;/p&gt;
+          &lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Recently, I set up a WordPress blog using HostGator&#39;s shared hosting.&lt;/p&gt;
+&lt;p&gt;After writing the first post, I wanted to register the domain in Google Search Console (GSC) (former Google Web Master Tools). This tool provides you with very useful information on how Google&#39;s search engine sees your site. GSC shows you insights regarding the performance of your site, referral links, sitemap, and some other experimental capabilities.&lt;/p&gt;
+&lt;p&gt;For this tutorial, I will use the sample domain name &lt;code&gt;sampleblog.blog&lt;/code&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
-&lt;p&gt;You will need an access to your HostGator cPanel. If you are not familiar with how to access it, please refer to the &lt;a href=&#34;https://www.hostgator.com/help/article/how-to-log-into-cpanel&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; logging on to cPanel&lt;/a&gt; article.&lt;/p&gt;
-&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;p&gt;You will need an access to your HostGator cPanel. If you are not familiar with how to access it, please refer to the &lt;a href=&#34;https://www.hostgator.com/help/article/how-to-log-into-cpanel&#34;&gt;logging on to cPanel&lt;/a&gt; article.&lt;/p&gt;
+&lt;h3 id=&#34;my-stack&#34;&gt;My Stack&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;HostGator Baby Croc account&lt;/li&gt;
 &lt;li&gt;cPanel version 78.0 (build 47)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;step-1-8211-registering-your-domain-in-gsc&#34;&gt;Step 1 – Registering your domain in GSC&lt;/h2&gt;
-&lt;p&gt;In early 2019, Google announced its ‘domain properties’ capability, providing an easy way to verify ownership of a domain in the Google Search Console.&lt;/p&gt;
+&lt;h2 id=&#34;step-1-registering-your-domain-in-gsc&#34;&gt;Step 1: Registering your domain in GSC&lt;/h2&gt;
+&lt;p&gt;In early 2019, Google announced its &lt;code&gt;domain properties&lt;/code&gt; capability, providing an easy way to verify ownership of a domain in the Google Search Console.&lt;/p&gt;
 &lt;p&gt;If this is the first domain you are registering, once you open the GSC, you will see the following screen:&lt;/p&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-115&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png&#34; alt=&#34;Domain property type in GSC&#34; width=&#34;924&#34; height=&#34;733&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png 924w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-300x238.png 300w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-768x609.png 768w&#34; sizes=&#34;(max-width: 924px) 100vw, 924px&#34; /&gt;&lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png&#34;
+         alt=&#34;Domain property type in GSC&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Domain property type in GSC&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
 &lt;ul&gt;
-&lt;li&gt;Chose ‘Domain’ option and type your domain name ‘sampleblog.blog’&lt;/li&gt;
-&lt;li&gt;Click on the ‘Continue’ button.&lt;/li&gt;
+&lt;li&gt;Chose &lt;code&gt;Domain&lt;/code&gt; option and type your domain name &lt;code&gt;sampleblog.blog&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Click on the &lt;code&gt;Continue&lt;/code&gt; button.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;step-2-8211-verifying-the-ownership-via-dns-record&#34;&gt;Step 2 – Verifying the ownership via DNS record&lt;/h2&gt;
+&lt;h2 id=&#34;step-2-verifying-the-ownership-via-dns-record&#34;&gt;Step 2: Verifying the ownership via DNS record&lt;/h2&gt;
 &lt;p&gt;As GSC requires domain ownership proof, in the following screen it requests adding a new TXT record with a specific code.&lt;/p&gt;
-&lt;figure id=&#34;attachment_105&#34; aria-describedby=&#34;caption-attachment-105&#34; style=&#34;width: 769px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-105&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png&#34; alt=&#34;Verify domain ownership DNS&#34; width=&#34;779&#34; height=&#34;677&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png 779w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-300x261.png 300w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-768x667.png 768w&#34; sizes=&#34;(max-width: 779px) 100vw, 779px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-105&#34; class=&#34;wp-caption-text&#34;&gt;Verifying domain ownership with DNS record.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png&#34;
+         alt=&#34;Verify domain ownership DNS&#34; width=&#34;779&#34; height=&#34;677&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Verify domain ownership DNS&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
 &lt;ul&gt;
-&lt;li&gt;In the ‘Instructions for’ dropdown, you can find domain providers like GoDaddy and Name.com, for which Google is able to write the DNS records automatically. Unfortunately, HostGator is not supported in the list, so we will have to write them manually.&lt;/li&gt;
-&lt;li&gt;Make sure ‘Any DNS Provider’ is selected.&lt;/li&gt;
-&lt;li&gt;Click on the ‘Copy’ button to copy the text to your clipboard. Note this functionality is not fully supported in all browsers. In case the text is not copied, copy it manually using &lt;kbd&gt;CTRL&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Windows or &lt;kbd&gt;Command&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Mac.&lt;/li&gt;
+&lt;li&gt;In the &lt;code&gt;Instructions for&lt;/code&gt; dropdown, you can find domain providers like GoDaddy and Name.com, for which Google is able to write the DNS records automatically. Unfortunately, HostGator is not supported in the list, so we will have to write them manually.&lt;/li&gt;
+&lt;li&gt;Make sure &lt;code&gt;Any DNS Provider&lt;/code&gt; is selected.&lt;/li&gt;
+&lt;li&gt;Click on the &lt;code&gt;Copy&lt;/code&gt; button to copy the text to your clipboard. Note this functionality is not fully supported in all browsers. In case the text is not copied, copy it manually using &lt;kbd&gt;CTRL&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Windows or &lt;kbd&gt;Command&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Mac.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&#34;step-3-8211-setting-the-txt-record-in-hostgator&#34;&gt;Step 3 – Setting the TXT record in HostGator&lt;/h2&gt;
-&lt;h3 id=&#34;opening-8216advanced-zone-editor8217&#34;&gt;Opening ‘Advanced Zone Editor’&lt;/h3&gt;
+&lt;h2 id=&#34;step-3-setting-the-txt-record-in-hostgator&#34;&gt;Step 3: Setting the TXT record in HostGator&lt;/h2&gt;
+&lt;h3 id=&#34;opening-advanced-zone-editor&#34;&gt;Opening &#39;Advanced Zone Editor&#39;&lt;/h3&gt;
 &lt;ul&gt;
 &lt;li&gt;Open the cPanel main screen&lt;/li&gt;
-&lt;li&gt;Locate the ‘DOMAINS’ group&lt;/li&gt;
-&lt;li&gt;Click on ‘Advanced Zone Editor’&lt;/li&gt;
+&lt;li&gt;Locate the &lt;code&gt;DOMAINS&lt;/code&gt; group&lt;/li&gt;
+&lt;li&gt;Click on &lt;code&gt;Advanced Zone Editor&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-106&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png&#34; alt=&#34;cPanel Advanced Zone Editor&#34; width=&#34;844&#34; height=&#34;545&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png 844w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-300x194.png 300w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-768x496.png 768w&#34; sizes=&#34;(max-width: 844px) 100vw, 844px&#34; /&gt;&lt;/p&gt;
-&lt;p&gt; &lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png&#34;
+         alt=&#34;cPanel Advanced Zone Editor&#34; width=&#34;844&#34; height=&#34;545&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;cPanel Advanced Zone Editor&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
 &lt;h3 id=&#34;selecting-the-txt-record-type&#34;&gt;Selecting the TXT record type&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;In the following screen, locate the ‘Add Record’ section&lt;/li&gt;
-&lt;li&gt;From the ‘Type’ dropdown, select ‘TXT’&lt;/li&gt;
+&lt;li&gt;In the following screen, locate the &lt;code&gt;Add Record&lt;/code&gt; section&lt;/li&gt;
+&lt;li&gt;From the &lt;code&gt;Type&lt;/code&gt; dropdown, select &lt;code&gt;TXT&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;figure id=&#34;attachment_107&#34; aria-describedby=&#34;caption-attachment-107&#34; style=&#34;width: 565px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-107&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png&#34; alt=&#34;Add TXT record in cPanel&#34; width=&#34;575&#34; height=&#34;452&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png 768w, https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record-300x236.png 300w&#34; sizes=&#34;(max-width: 575px) 100vw, 575px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-107&#34; class=&#34;wp-caption-text&#34;&gt;Choose TXT in the &amp;#8216;Type&amp;#8217; dropdown&lt;/figcaption&gt;&lt;/figure&gt;
-&lt;p&gt; &lt;/p&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png&#34;
+         alt=&#34;Choose TXT in the Type dropdown&#34; width=&#34;575&#34; height=&#34;452&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Choose TXT in the Type dropdown&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
 &lt;h3 id=&#34;filling-the-record-fields&#34;&gt;Filling the record fields&lt;/h3&gt;
 &lt;ul&gt;
-&lt;li&gt;Leave the ‘Name’ field blank, as HostGator will set it automatically to your domain name.&lt;/li&gt;
-&lt;li&gt;Set the TTL (Time to live) records to 14400 (meaning 4 hours). This tells the named server resolver how long in seconds to store the value in it’s cache. Since we are not expected to change this value, 4 hours is reasonable.&lt;/li&gt;
-&lt;li&gt;In the ‘TXT Data’ field, paste the text you copied from Google Search Console.&lt;/li&gt;
-&lt;li&gt;Click on ‘Add Record’ to finish.&lt;/li&gt;
-&lt;li&gt;Please note that it might take between a few seconds to a few hours until this change takes effect, so don’t get discouraged if GSC is not able to immediately verify your site.&lt;/li&gt;
+&lt;li&gt;Leave the &lt;code&gt;Name&lt;/code&gt; field blank, as HostGator will set it automatically to your domain name.&lt;/li&gt;
+&lt;li&gt;Set the TTL (Time to live) records to 14400 (meaning 4 hours). This tells the named server resolver how long in seconds to store the value in it&#39;s cache. Since we are not expected to change this value, 4 hours is reasonable.&lt;/li&gt;
+&lt;li&gt;In the &lt;code&gt;TXT Data&lt;/code&gt; field, paste the text you copied from Google Search Console.&lt;/li&gt;
+&lt;li&gt;Click on &lt;code&gt;Add Record&lt;/code&gt; to finish.&lt;/li&gt;
+&lt;li&gt;Please note that it might take between a few seconds to a few hours until this change takes effect, so don&#39;t get discouraged if GSC is not able to immediately verify your site.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;figure id=&#34;attachment_109&#34; aria-describedby=&#34;caption-attachment-109&#34; style=&#34;width: 451px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-109&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png&#34; alt=&#34;TXT record form in cPanel&#34; width=&#34;461&#34; height=&#34;369&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png 761w, https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form-300x240.png 300w&#34; sizes=&#34;(max-width: 461px) 100vw, 461px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-109&#34; class=&#34;wp-caption-text&#34;&gt;Fill TXT records for site verification&lt;/figcaption&gt;&lt;/figure&gt;
-&lt;p&gt; &lt;/p&gt;
-&lt;h2 id=&#34;step-4-8211-verifying-in-google-search-console&#34;&gt;Step 4 – Verifying in Google Search Console&lt;/h2&gt;
+&lt;figure&gt;
+    &lt;img src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png&#34;
+         alt=&#34;Fill TXT records for site verification&#34; width=&#34;461&#34; height=&#34;369&#34;/&gt; &lt;figcaption&gt;
+            &lt;p&gt;Fill TXT records for site verification&lt;/p&gt;
+        &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;h2 id=&#34;step-4-verifying-in-google-search-console&#34;&gt;Step 4: Verifying in Google Search Console&lt;/h2&gt;
 &lt;p&gt;Assuming you set the TXT record correctly, the only part left is to let Google verify the record.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Go back to Google Search Console&lt;/li&gt;
-&lt;li&gt;Click on the ‘Verify’ button&lt;/li&gt;
+&lt;li&gt;Click on the &lt;code&gt;Verify&lt;/code&gt; button&lt;/li&gt;
 &lt;li&gt;This process might take a few seconds. By the end of the process, you should see a message displaying that your domain is verified and added to Google Search Console.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;In case Google is not able to find the TXT records, it’s recommended to wait a few minutes/hours until the DNS TXT record is fully updated.&lt;/li&gt;
+&lt;li&gt;In case Google is not able to find the TXT records, it&#39;s recommended to wait a few minutes/hours until the DNS TXT record is fully updated.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt; &lt;/p&gt;
 &lt;h2 id=&#34;useful-resources&#34;&gt;Useful Resources&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;Google &lt;a href=&#34;https://webmasters.googleblog.com/2019/02/announcing-domain-wide-data-in-search.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;announces ‘domain properties’&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Google &lt;a href=&#34;https://webmasters.googleblog.com/2019/02/announcing-domain-wide-data-in-search.html&#34;&gt;announces domain properties&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
         

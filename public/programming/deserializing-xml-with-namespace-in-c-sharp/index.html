@@ -18,15 +18,15 @@
 <meta property="og:locale" content="en" />
 
 <meta property="og:type" content="article">
-<meta name="description" content="I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.
-In this post, I will provide some samples in C# of …">
+<meta name="description" content="Introduction I&#39;ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.
+In this post, I will provide some …">
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:creator" content="@realdjole">
 <meta name="twitter:title" content="C# Deserializing XML with namespace in .NET core" />
 <meta property="og:url" content="https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/" />
 <meta property="og:title" content="C# Deserializing XML with namespace in .NET core" />
-<meta property="og:description" content="I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.
-In this post, I will provide some samples in C# of …" />
+<meta property="og:description" content="Introduction I&#39;ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.
+In this post, I will provide some …" />
 <meta property="og:image" content="https://gotask.net/images/thumbnail.png" />
 <link rel="apple-touch-icon" sizes="180x180" href='https://gotask.net/icons/apple-touch-icon.png'>
 <link rel="icon" type="image/png" sizes="32x32" href='https://gotask.net/icons/favicon-32x32.png'>
@@ -41,19 +41,20 @@ In this post, I will provide some samples in C# of …" />
 
     
     
-    <link rel="preload" href="https://gotask.net/css/styles.2b3290fc6e94839826981c23ed76e1831472bd3f8af68332da00b97d9430b56bfb7e9394d5c09aca633c093c621709cdd745eec940be733933ac5d876223de52.css" integrity = "sha512-KzKQ/G6Ug5gmmBwj7XbhgxRyvT&#43;K9oMy2gC5fZQwtWv7fpOU1cCaymM8CTxiFwnN10XuyUC&#43;czkzrF2HYiPeUg==" as="style" crossorigin="anonymous">
-    <link rel="preload" href="https://gotask.net/js/bundle.min.3f299644427120ea21660e27ee384b9a7d76a4e14f342fba655013e1834890bc4a288c8403bf368b6ee57c5b450456a563646850ad8f5997d857fc61268a6e23.js" as="script" integrity=
-    "sha512-PymWREJxIOohZg4n7jhLmn12pOFPNC&#43;6ZVAT4YNIkLxKKIyEA782i27lfFtFBFalY2RoUK2PWZfYV/xhJopuIw==" crossorigin="anonymous">
+    <link rel="preload" href="https://gotask.net/css/styles.782bf96a82b3cc5b3cee4c47a42cc81321f16960a6d41fab3277c4abe047bc7ae044ea1bb7ae4d237c12baa0143e02f95969e5e8b6e68d9dcfd14158cfa244ac.css" integrity = "sha512-eCv5aoKzzFs87kxHpCzIEyHxaWCm1B&#43;rMnfEq&#43;BHvHrgROobt65NI3wSuqAUPgL5WWnl6LbmjZ3P0UFYz6JErA==" as="style" crossorigin="anonymous">
+    <link rel="preload" href="https://gotask.net/js/bundle.min.4a8e559be3e9fc67a31c9b60741d936e497d63fb708e691ef5b7ad3504ec8cf3bfcf9896401d5b6dadf0e705482942367c15dd7bf96a2e93daaabe74deeaed72.js" as="script" integrity=
+    "sha512-So5Vm&#43;Pp/GejHJtgdB2Tbkl9Y/twjmke9betNQTsjPO/z5iWQB1bba3w5wVIKUI2fBXde/lqLpPaqr503urtcg==" crossorigin="anonymous">
 
     
-    <link rel="stylesheet" type="text/css" href="https://gotask.net/css/styles.2b3290fc6e94839826981c23ed76e1831472bd3f8af68332da00b97d9430b56bfb7e9394d5c09aca633c093c621709cdd745eec940be733933ac5d876223de52.css" integrity="sha512-KzKQ/G6Ug5gmmBwj7XbhgxRyvT&#43;K9oMy2gC5fZQwtWv7fpOU1cCaymM8CTxiFwnN10XuyUC&#43;czkzrF2HYiPeUg==" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://gotask.net/css/styles.782bf96a82b3cc5b3cee4c47a42cc81321f16960a6d41fab3277c4abe047bc7ae044ea1bb7ae4d237c12baa0143e02f95969e5e8b6e68d9dcfd14158cfa244ac.css" integrity="sha512-eCv5aoKzzFs87kxHpCzIEyHxaWCm1B&#43;rMnfEq&#43;BHvHrgROobt65NI3wSuqAUPgL5WWnl6LbmjZ3P0UFYz6JErA==" crossorigin="anonymous"><link rel="stylesheet" href="/css/custom.css">
     
   </head>
   
   
+  
     
   
-  <body data-code="7" data-lines="false" id="documentTop">
+  <body data-code="50" data-lines="true" id="documentTop">
 
 <header class="nav_header" >
   <nav class="nav">
@@ -76,8 +77,45 @@ In this post, I will provide some samples in C# of …" />
       
         
 
+  <div class="nav_parent">
+    <a href="https://gotask.net/" class="nav_item">Home </a>
+  </div>
+  <div class="nav_parent">
+    <a href="https://gotask.net/post/rich-content/" class="nav_item">Archives </a>
+  </div>
+  <div class="nav_parent">
+    <a href="https://gotask.net/" class="nav_item">Links <img src='https://gotask.net/icons/caret-icon.svg' alt="icon" class="nav_icon"></a>
+    <div class="nav_sub">
+      <span class="nav_child"></span>
+        <a href="https://www.linkedin.com/in/eyalmolad/" class="nav_child nav_item">LinkedIn</a>
+        <a href="https://twitter.com/realdjole" class="nav_child nav_item">Twitter</a>
+    </div>
+  </div>
+  <div class="nav_parent">
+    <a href="https://gotask.net/about/" class="nav_item">About </a>
+  </div>
       
 <div class='follow'>
+  <a href="https://github.com/eyalmolad">
+    <svg class="icon">
+  <use xlink:href="#github"></use>
+</svg>
+  </a>
+  <a href="https://stackoverflow.com/users/1410246/eylm">
+    <svg class="icon">
+  <use xlink:href="#stackoverflow"></use>
+</svg>
+  </a>
+  <a href="https://www.linkedin.com/in/eyalmolad/">
+    <svg class="icon">
+  <use xlink:href="#linkedin"></use>
+</svg>
+  </a>
+  <a href="https://twitter.com/realdjole">
+    <svg class="icon">
+  <use xlink:href="#twitter"></use>
+</svg>
+  </a>
 <div class="color_mode">
   <input type="checkbox" class="color_choice" id="mode">
 </div>
@@ -137,10 +175,11 @@ In this post, I will provide some samples in C# of …" />
   </div>
 
     
-    <p>I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.</p>
+    <h2 id="introduction">Introduction</h2>
+<p>I've been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.</p>
 <p>In this post, I will provide some samples in C# of how to deserialize such XML files with minimal amount of code.</p>
 <p>My goal for this article is to provide working examples with minimal amount of code and class attributes.</p>
-<p>The full source code available at <a href="https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+<p>The full source code available at <a href="https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore">GitHub</a>.</p>
 <h2 id="my-stack">My Stack</h2>
 <ul>
 <li>Visual Studio 2019</li>
@@ -149,101 +188,101 @@ In this post, I will provide some samples in C# of …" />
 </ul>
 <h2 id="background">Background</h2>
 <p>Why do we need namespaces?</p>
-<p>There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it’s own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.</p>
-<p>For example, <code class="EnlighterJSRAW" data-enlighter-language="csharp" data-enlighter-theme="git">XmlSerializer</code> class that I will use in this sample is actually <code class="EnlighterJSRAW" data-enlighter-language="csharp" data-enlighter-theme="git">System.Xml.Serialization.XmlSerializer</code>.</p>
-<p>I could easily define a class named XmlSerializer in my namespace without any conflicts.</p>
+<p>There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it's own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.</p>
+<p>For example, <code>XmlSerializer</code> class that I will use in this sample is actually <code>System.Xml.Serialization.XmlSerializer</code>.</p>
+<p>I could easily define a class named <code>XmlSerializer</code> in my namespace without any conflicts.</p>
 <p>When you work alone on a project, class naming conflict might be a rare thing, but when using external library without namespaces, the conflict could be a common thing.</p>
 <p>A similar thing happens in XML files. Once you define a namespace, you can create elements with a same name, but different namespace.</p>
-<p>A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in <a href="https://www.xml.com/pub/a/2005/04/13/namespace-uris.html" target="_blank" rel="noopener noreferrer">XML namespaces</a>.</p>
+<p>A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in <a href="https://www.xml.com/pub/a/2005/04/13/namespace-uris.html">XML namespaces</a>.</p>
 <p>XML standard attribute xmlns enables us to define a multiple namespaces for element.</p>
 <ul>
-<li>xmlns=”https://somename.org” creates a default namespace.</li>
+<li><code>xmlns=&quot;https://somename.org&quot;</code> creates a default namespace.</li>
 <li>In cased we would like to add more namespaces, we need to use a prefix.
 <ul>
-<li>xmlns:gt=”https://somename2.org” creates a namespace with prefix gt</li>
+<li><code>xmlns:gt=&quot;https://somename2.org&quot;</code> creates a namespace with prefix <code>gt</code></li>
 </ul>
 </li>
 </ul>
 <h2 id="preparing-the-project">Preparing the project</h2>
 <ul>
 <li>In Visual Studio, create a new .NET Core Console App.</li>
-<li>Add a SimpleBooks.xml as shown below. I used a default namespace xmlns=”https://gotask.net” attribute for Books element.</li>
+<li>Add a <code>SimpleBooks.xml</code> as shown below. I used a default namespace <code>xmlns=&quot;https://gotask.net&quot; </code> attribute for Books element.</li>
 </ul>
-<pre class="EnlighterJSRAW" data-enlighter-language="xml">&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;Books xmlns="https://gotask.net"&gt;
-  &lt;Book&gt;
-    &lt;ISBN&gt;978-1788478120&lt;/ISBN&gt;
-    &lt;Name&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;/Name&gt;
-    &lt;Price&gt;35.99&lt;/Price&gt;
-  &lt;/Book&gt;
-  &lt;Book&gt;
-    &lt;ISBN&gt;978-1789133646&lt;/ISBN&gt;
-    &lt;Name&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;/Name&gt;
-    &lt;Price&gt;34.99&lt;/Price&gt;
-  &lt;/Book&gt;
-&lt;/Books&gt;</pre>
-<ul>
-<li>Add 2 classes Book and Books.</li>
-<li>The only class attribute I will use is <code class="EnlighterJSRAW" data-enlighter-language="csharp" data-enlighter-theme="git">XmlRoot</code> and set the name of the root element and the namespace.</li>
+<div class="highlight"><pre class="chroma"><code class="language-XML" data-lang="XML"><span class="ln"> 1</span><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&gt;</span>
+<span class="ln"> 2</span><span class="nt">&lt;Books</span> <span class="na">xmlns=</span><span class="s">&#34;https://gotask.net&#34;</span><span class="nt">&gt;</span>
+<span class="ln"> 3</span>  <span class="nt">&lt;Book&gt;</span>
+<span class="ln"> 4</span>    <span class="nt">&lt;ISBN&gt;</span>978-1788478120<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln"> 5</span>    <span class="nt">&lt;Name&gt;</span>C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition<span class="nt">&lt;/Name&gt;</span>
+<span class="ln"> 6</span>    <span class="nt">&lt;Price&gt;</span>35.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln"> 7</span>  <span class="nt">&lt;/Book&gt;</span>
+<span class="ln"> 8</span>  <span class="nt">&lt;Book&gt;</span>
+<span class="ln"> 9</span>    <span class="nt">&lt;ISBN&gt;</span>978-1789133646<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln">10</span>    <span class="nt">&lt;Name&gt;</span>Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems<span class="nt">&lt;/Name&gt;</span>
+<span class="ln">11</span>    <span class="nt">&lt;Price&gt;</span>34.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln">12</span>  <span class="nt">&lt;/Book&gt;</span>
+<span class="ln">13</span><span class="nt">&lt;/Books&gt;</span>
+</code></pre></div><ul>
+<li>Add 2 classes <code>Book</code> and <code>Books</code>.</li>
+<li>The only class attribute I will use is <code>XmlRoot</code> and set the name of the root element and the namespace.</li>
 </ul>
-<pre class="EnlighterJSRAW" data-enlighter-language="null">public class Book
-{
-  public string ISBN { get; set; }
-
-  public string Name { get; set; }
-
-  public decimal Price { get; set; }
-}
-
-[XmlRoot("Books", Namespace = "https://gotask.net")]
-public class Books : List&lt;Book&gt;
-{
-}</pre>
-<h2 id="deserializing">Deserializing</h2>
+<div class="highlight"><pre class="chroma"><code class="language-C#" data-lang="C#"><span class="ln"> 1</span><span class="k">public</span> <span class="k">class</span> <span class="nc">Book</span>
+<span class="ln"> 2</span><span class="p">{</span>
+<span class="ln"> 3</span>    <span class="k">public</span> <span class="kt">string</span> <span class="n">ISBN</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="ln"> 4</span>
+<span class="ln"> 5</span>    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="ln"> 6</span>
+<span class="ln"> 7</span>    <span class="k">public</span> <span class="kt">decimal</span> <span class="n">Price</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
+<span class="ln"> 8</span><span class="p">}</span>
+<span class="ln"> 9</span><span class="na">
+</span><span class="ln">10</span><span class="na">[XmlRoot(&#34;Books&#34;, Namespace = &#34;https://gotask.net&#34;)]</span>
+<span class="ln">11</span><span class="k">public</span> <span class="k">class</span> <span class="nc">Books</span> <span class="p">:</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Book</span><span class="p">&gt;</span>
+<span class="ln">12</span><span class="p">{</span>
+<span class="ln">13</span><span class="p">}</span>
+</code></pre></div><h2 id="deserializing">Deserializing</h2>
 <h3 id="simple-case">Simple Case</h3>
 <p>Once we have the classes and the XML data set properly, the deserialize function is really simple.</p>
 <p>In the list we have 2 books now.</p>
-<pre class="EnlighterJSRAW" data-enlighter-language="null">var serializer = new XmlSerializer(typeof(Books));
-
-using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
-{
-    var books = (Books)serializer.Deserialize(reader);
-    Console.WriteLine($"Number of books is {books.Count}");
-}</pre>
-<h3 id="multiple-namespaces">Multiple namespaces</h3>
-<p>I added another namespace to the declaration of the Books element. This namespace has gt prefix and value “https://github.org”.  Running the code above on this XML will produce the same results (2 books) since there is no Book element in gt namespace.</p>
-<pre class="EnlighterJSRAW" data-enlighter-language="null">&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;Books xmlns="https://gotask.net" xmlns:gt="https://github.org"&gt;
-  &lt;Book&gt;
-    &lt;ISBN&gt;978-1788478120&lt;/ISBN&gt;
-    &lt;Name&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;/Name&gt;
-    &lt;Price&gt;35.99&lt;/Price&gt;
-  &lt;/Book&gt;
-  &lt;Book&gt;
-    &lt;ISBN&gt;978-1789133646&lt;/ISBN&gt;
-    &lt;Name&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;/Name&gt;
-    &lt;Price&gt;34.99&lt;/Price&gt;
-  &lt;/Book&gt;
-&lt;/Books&gt;</pre>
-<p>Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:</p>
-<pre class="EnlighterJSRAW" data-enlighter-language="null">&lt;?xml version="1.0" encoding="utf-8" ?&gt;
-&lt;Books xmlns="https://gotask.net" xmlns:gt="https://github.org"&gt;
-  &lt;Book&gt;
-    &lt;ISBN&gt;978-1788478120&lt;/ISBN&gt;
-    &lt;Name&gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&lt;/Name&gt;
-    &lt;Price&gt;35.99&lt;/Price&gt;
-  &lt;/Book&gt;
-  &lt;gt:Book&gt;
-    &lt;ISBN&gt;978-1789133646&lt;/ISBN&gt;
-    &lt;Name&gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&lt;/Name&gt;
-    &lt;Price&gt;34.99&lt;/Price&gt;
-  &lt;/gt:Book&gt;
-&lt;/Books&gt;</pre>
-<p>Now the code above will deserialize only the first book (ISBN 978-1788478120), since it’s the only book that exists in the default namespace.</p>
-<h4 id="useful-links">Useful links</h4>
+<div class="highlight"><pre class="chroma"><code class="language-C#" data-lang="C#"><span class="ln">1</span><span class="kt">var</span> <span class="n">serializer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">XmlSerializer</span><span class="p">(</span><span class="k">typeof</span><span class="p">(</span><span class="n">Books</span><span class="p">));</span>
+<span class="ln">2</span>
+<span class="ln">3</span><span class="k">using</span> <span class="p">(</span><span class="kt">var</span> <span class="n">reader</span> <span class="p">=</span> <span class="k">new</span> <span class="n">FileStream</span><span class="p">(</span><span class="s">&#34;SimpleBooks.xml&#34;</span><span class="p">,</span> <span class="n">FileMode</span><span class="p">.</span><span class="n">Open</span><span class="p">))</span>
+<span class="ln">4</span><span class="p">{</span>
+<span class="ln">5</span>  <span class="kt">var</span> <span class="n">books</span> <span class="p">=</span> <span class="p">(</span><span class="n">Books</span><span class="p">)</span><span class="n">serializer</span><span class="p">.</span><span class="n">Deserialize</span><span class="p">(</span><span class="n">reader</span><span class="p">);</span>
+<span class="ln">6</span>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">$&#34;Number of books is {books.Count}&#34;</span><span class="p">);</span>
+<span class="ln">7</span><span class="p">}</span>
+</code></pre></div><h3 id="multiple-namespaces">Multiple namespaces</h3>
+<p>I added another namespace to the declaration of the Books element. This namespace has <code>gt</code> prefix and value <code>&quot;https://github.org&quot;</code>.  Running the code above on this XML will produce the same results (2 books) since there is no <code>Book</code> element in <code>gt</code> namespace.</p>
+<div class="highlight"><pre class="chroma"><code class="language-XML" data-lang="XML"><span class="ln"> 1</span><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&gt;</span>
+<span class="ln"> 2</span><span class="nt">&lt;Books</span> <span class="na">xmlns=</span><span class="s">&#34;https://gotask.net&#34;</span> <span class="na">xmlns:gt=</span><span class="s">&#34;https://github.org&#34;</span><span class="nt">&gt;</span>
+<span class="ln"> 3</span>  <span class="nt">&lt;Book&gt;</span>
+<span class="ln"> 4</span>    <span class="nt">&lt;ISBN&gt;</span>978-1788478120<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln"> 5</span>    <span class="nt">&lt;Name&gt;</span>C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition<span class="nt">&lt;/Name&gt;</span>
+<span class="ln"> 6</span>    <span class="nt">&lt;Price&gt;</span>35.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln"> 7</span>  <span class="nt">&lt;/Book&gt;</span>
+<span class="ln"> 8</span>  <span class="nt">&lt;Book&gt;</span>
+<span class="ln"> 9</span>    <span class="nt">&lt;ISBN&gt;</span>978-1789133646<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln">10</span>    <span class="nt">&lt;Name&gt;</span>Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems<span class="nt">&lt;/Name&gt;</span>
+<span class="ln">11</span>    <span class="nt">&lt;Price&gt;</span>34.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln">12</span>  <span class="nt">&lt;/Book&gt;</span>
+<span class="ln">13</span><span class="nt">&lt;/Books&gt;</span>
+</code></pre></div><p>Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:</p>
+<div class="highlight"><pre class="chroma"><code class="language-XML" data-lang="XML"><span class="ln"> 1</span><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&gt;</span>
+<span class="ln"> 2</span><span class="nt">&lt;Books</span> <span class="na">xmlns=</span><span class="s">&#34;https://gotask.net&#34;</span> <span class="na">xmlns:gt=</span><span class="s">&#34;https://github.org&#34;</span><span class="nt">&gt;</span>
+<span class="ln"> 3</span>  <span class="nt">&lt;Book&gt;</span>
+<span class="ln"> 4</span>    <span class="nt">&lt;ISBN&gt;</span>978-1788478120<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln"> 5</span>    <span class="nt">&lt;Name&gt;</span>C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition<span class="nt">&lt;/Name&gt;</span>
+<span class="ln"> 6</span>    <span class="nt">&lt;Price&gt;</span>35.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln"> 7</span>  <span class="nt">&lt;/Book&gt;</span>
+<span class="ln"> 8</span>  <span class="nt">&lt;gt:Book&gt;</span>
+<span class="ln"> 9</span>    <span class="nt">&lt;ISBN&gt;</span>978-1789133646<span class="nt">&lt;/ISBN&gt;</span>
+<span class="ln">10</span>    <span class="nt">&lt;Name&gt;</span>Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems<span class="nt">&lt;/Name&gt;</span>
+<span class="ln">11</span>    <span class="nt">&lt;Price&gt;</span>34.99<span class="nt">&lt;/Price&gt;</span>
+<span class="ln">12</span>  <span class="nt">&lt;/gt:Book&gt;</span>
+<span class="ln">13</span><span class="nt">&lt;/Books&gt;</span>
+</code></pre></div><p>Now the code above will deserialize only the first book (ISBN 978-1788478120), since it's the only book that exists in the default namespace.</p>
+<h2 id="useful-links">Useful links</h2>
 <ul>
-<li>The full source code available at <a href="https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore" target="_blank" rel="noopener noreferrer">GitHub</a>.</li>
-<li><a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml" target="_blank" rel="noopener noreferrer">XML Linq namespaces</a> overview</li>
+<li>The full source code available at <a href="https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore">GitHub</a></li>
+<li><a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml">XML Linq namespaces</a> overview</li>
 </ul>
 
     
@@ -254,7 +293,7 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
   <section class="sidebar_inner">
     
       <h2>Eyal Molad</h2>
-      <div>
+      <div class="sidebar_description">
         A coder, dreamer and complex problem solver
       </div>
       <a href='https://gotask.net/about/' class="button mt-1" role="button">Read More</a>
@@ -316,17 +355,17 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
       <nav class="tags_nav">
         <a href='https://gotask.net/tags/c%23/' class="post_tag button button_translucent">
           C#
-          <span class="button_tally">8</span>
-        </a>
-        
-        <a href='https://gotask.net/tags/.net/' class="post_tag button button_translucent">
-          .NET
-          <span class="button_tally">4</span>
+          <span class="button_tally">7</span>
         </a>
         
         <a href='https://gotask.net/tags/serialization/' class="post_tag button button_translucent">
           SERIALIZATION
           <span class="button_tally">4</span>
+        </a>
+        
+        <a href='https://gotask.net/tags/.net/' class="post_tag button button_translucent">
+          .NET
+          <span class="button_tally">3</span>
         </a>
         
         <a href='https://gotask.net/tags/.netcore/' class="post_tag button button_translucent">
@@ -390,7 +429,7 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
         <div class="post_tags">
           <div class="tags_list">
             
-            <a href='https://gotask.net/tags/.net/' class=" post_tag button button_translucent" data-position=4>.NET<span class="button_tally">4</span>
+            <a href='https://gotask.net/tags/.net/' class=" post_tag button button_translucent" data-position=3>.NET<span class="button_tally">3</span>
             </a>
             
             
@@ -410,7 +449,11 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
             </a>
             
             
-            <a href='https://gotask.net/tags/c%23/' class=" post_tag button button_translucent" data-position=8>C#<span class="button_tally">8</span>
+            <a href='https://gotask.net/tags/c%23/' class=" post_tag button button_translucent" data-position=7>C#<span class="button_tally">7</span>
+            </a>
+            
+            
+            <a href='https://gotask.net/tags/c-sharp/' class=" post_tag button button_translucent" data-position=1>C-SHARP<span class="button_tally">1</span>
             </a>
             
             
@@ -451,6 +494,10 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
             
             
             <a href='https://gotask.net/tags/domain/' class=" post_tag button button_translucent" data-position=1>DOMAIN<span class="button_tally">1</span>
+            </a>
+            
+            
+            <a href='https://gotask.net/tags/dot-net/' class=" post_tag button button_translucent" data-position=1>DOT-NET<span class="button_tally">1</span>
             </a>
             
             
@@ -652,6 +699,15 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
   <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" id="github">
     <path d="M255.968 5.329C114.624 5.329 0 120.401 0 262.353c0 113.536 73.344 209.856 175.104 243.872 12.8 2.368 17.472-5.568 17.472-12.384 0-6.112-.224-22.272-.352-43.712-71.2 15.52-86.24-34.464-86.24-34.464-11.616-29.696-28.416-37.6-28.416-37.6-23.264-15.936 1.728-15.616 1.728-15.616 25.696 1.824 39.2 26.496 39.2 26.496 22.848 39.264 59.936 27.936 74.528 21.344 2.304-16.608 8.928-27.936 16.256-34.368-56.832-6.496-116.608-28.544-116.608-127.008 0-28.064 9.984-51.008 26.368-68.992-2.656-6.496-11.424-32.64 2.496-68 0 0 21.504-6.912 70.4 26.336 20.416-5.696 42.304-8.544 64.096-8.64 21.728.128 43.648 2.944 64.096 8.672 48.864-33.248 70.336-26.336 70.336-26.336 13.952 35.392 5.184 61.504 2.56 68 16.416 17.984 26.304 40.928 26.304 68.992 0 98.72-59.84 120.448-116.864 126.816 9.184 7.936 17.376 23.616 17.376 47.584 0 34.368-.32 62.08-.32 70.496 0 6.88 4.608 14.88 17.6 12.352C438.72 472.145 512 375.857 512 262.353 512 120.401 397.376 5.329 255.968 5.329z"></path>
   </symbol>
+  <symbol xmlns="http://www.w3.org/2000/svg" viewBox="0 0 212 212" id="gitlab">
+    <path d="M12.3 74.7h54L43.3 3c-1-3.6-6.4-3.6-7.6 0L12.3 74.8z" />
+    <path d="M12.3 74.7L.5 111c-1 3.2 0 6.8 3 8.8l101.6 74-92.5-119z"/>
+    <path d="M105 193.7l-38.6-119h-54l92.7 119z"/>
+    <path d="M105 193.7l38.7-119H66.4l38.7 119z"/>
+    <path d="M105 193.7l38.7-119H198l-93 119z"/>
+    <path d="M198 74.7l11.6 36.2c1 3 0 6.6-3 8.6l-101.5 74 93-119z"/>
+    <path d="M198 74.7h-54.3L167 3c1.2-3.6 6.4-3.6 7.6 0L198 74.8z"/> 
+  </symbol>
   <symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="rss">
     <circle cx="3.429" cy="20.571" r="3.429"></circle>
     <path d="M11.429 24h4.57C15.999 15.179 8.821 8.001 0 8v4.572c6.302.001 11.429 5.126 11.429 11.428z"></path>
@@ -698,7 +754,8 @@ using (var reader = new FileStream("SimpleBooks.xml", FileMode.Open))
 
   </div>
 </footer>
-    <script type="text/javascript" src="https://gotask.net/js/bundle.min.3f299644427120ea21660e27ee384b9a7d76a4e14f342fba655013e1834890bc4a288c8403bf368b6ee57c5b450456a563646850ad8f5997d857fc61268a6e23.js" integrity="sha512-PymWREJxIOohZg4n7jhLmn12pOFPNC&#43;6ZVAT4YNIkLxKKIyEA782i27lfFtFBFalY2RoUK2PWZfYV/xhJopuIw==" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://gotask.net/js/bundle.min.4a8e559be3e9fc67a31c9b60741d936e497d63fb708e691ef5b7ad3504ec8cf3bfcf9896401d5b6dadf0e705482942367c15dd7bf96a2e93daaabe74deeaed72.js" integrity="sha512-So5Vm&#43;Pp/GejHJtgdB2Tbkl9Y/twjmke9betNQTsjPO/z5iWQB1bba3w5wVIKUI2fBXde/lqLpPaqr503urtcg==" crossorigin="anonymous"></script>
     
   </body>
 </html>
