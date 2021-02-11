@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>message-loop on GoTask</title>
+    <link>https://gotask.net/tags/message-loop/</link>
+    <description>Recent content in message-loop on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sat, 07 Nov 2020 05:12:49 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/message-loop/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MFC Dialog – Get event on the first appearance</title>
+      <link>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</link>
+      <pubDate>Sat, 07 Nov 2020 05:12:49 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Sometimes we still need to maintain some legacy code that was written ages ago. A long time ago, MFC library was the default choice for many programmers wanted to develop a Windows Desktop Application in C++.  Today, there are much better alternatives for the Desktop Applications developments that include: WPF, WinForms, Electron and more. &lt;/p&gt;
+&lt;p&gt;In this post, I am going to show a simple technique of how to get a callback in the CDialog derived class when the dialog is first shown.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;MFC Dialog Based application (32-bit)&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;
+&lt;p&gt;Consider the following requirement: Show a modal dialog for the user to enter a username and&lt;figure id=&#34;attachment_304&#34; aria-describedby=&#34;caption-attachment-304&#34; style=&#34;width: 357px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-304&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png&#34; alt=&#34;Modal dialog over dialog&#34; width=&#34;367&#34; height=&#34;223&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png 402w, https://gotask.net/wp-content/uploads/2020/11/form_on_form-300x182.png 300w&#34; sizes=&#34;(max-width: 367px) 100vw, 367px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-304&#34; class=&#34;wp-caption-text&#34;&gt;Modal dialog over dialog in C# Winforms&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;a password, once the main dialog has been first shown. In .NET WinForms, all we have to do is add a handler to &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.shown?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Form.Shown&lt;/a&gt; event and show the modal dialog.   The sample code in C# would look something like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private void Form1_Shown(object sender, EventArgs e)
+{
+  using (var loginDlg = new LoginForm())
+  {
+    loginDlg.ShowDialog(this);
+  }
+}&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;MFC comes with &lt;a href=&#34;https://docs.microsoft.com/en-us/cpp/mfc/reference/cdialog-class?view=msvc-160#oninitdialog&#34;&gt;OnInitDialog&lt;/a&gt; overridable function in case we need to perform some processing during the dialog initialization. Once called, all our controls are already created and have the valid window handle. The problem with OnInitDialog function is that the dialog is not yet been shown to the user. If we attempt to show the modal dialog in the OnInitDialog function of the main dialog, the main dialog will not be shown until we close the second modal dialog. Unfortunately, MFC does not provide us with the dialog “shown” event.&lt;/p&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
+&lt;p&gt;The main idea is to postpone the second modal dialog creation for after the main dialog has been shown. This means that after OnInitDialog, we will need to get some callback function called and display our second dialog.&lt;/p&gt;
+&lt;p&gt;How do we achieve this? Fortunately, Win32 API enables us to register &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; custom windows messages &lt;/a&gt;for a private window use. We will use the &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-postmessagea&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PostMessage&lt;/a&gt; Win32 API function to post such message to our window’s thread message loop. PostMessage function returns immediately and the message handler would be called asynchronously. &lt;/p&gt;
+&lt;h3 id=&#34;define-the-new-window-message&#34;&gt;Define the new window message&lt;/h3&gt;
+&lt;p&gt;Every window message has it’s own unique number. According to &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34;&gt;this MSDN article&lt;/a&gt;, we can use messages from WM_USER to 0x7FFF.&lt;/p&gt;
+&lt;p&gt;So lets define the message as:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;#define WM_FIRST_SHOWN WM_USER + 100&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;adding-the-callback-function&#34;&gt;Adding the callback function&lt;/h3&gt;
+&lt;p&gt;In the main dialog class, define the WM_FIRST_SHOWN message handler. It must have the return type of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT&lt;/code&gt; and get &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;WPARAM&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LPARAM&lt;/code&gt; as the function parameters although we are not going to use the parameters in this sample.&lt;/p&gt;
+&lt;p&gt;Place the second dialog creation in the callback’s implementation code.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT CMFCDialogOnLoadDlg::OnDialogShown(WPARAM,LPARAM)
+{
+  CLoginDialog dlg;
+  dlg.DoModal();
+  
+  return 0;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-the-message-to-the-message-map&#34;&gt;Adding the message to the message map&lt;/h3&gt;
+&lt;p&gt;We need to bind the message id (WM_FIRST_SHOWN) to the message handler function.&lt;/p&gt;
+&lt;p&gt;Please the following code in your message map:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;ON_MESSAGE(WM_FIRST_SHOWN,OnDialogShown)&lt;/pre&gt;
+&lt;h3 id=&#34;posting-the-messagefigure-idattachment_310-aria-describedbycaption-attachment-310-stylewidth-352px-classwp-caption-alignright&#34;&gt;Posting the message&lt;figure id=&#34;attachment_310&#34; aria-describedby=&#34;caption-attachment-310&#34; style=&#34;width: 352px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-310&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png&#34; alt=&#34;Dialog on dialog in MFC&#34; width=&#34;362&#34; height=&#34;263&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png 362w, https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog-300x218.png 300w&#34; sizes=&#34;(max-width: 362px) 100vw, 362px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-310&#34; class=&#34;wp-caption-text&#34;&gt;Dialog on dialog in MFC&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we need to post the WM_FIRST_SHOWN message to the main window’s thread message queue. Place the following code to the end of you OnInitDialog memeber function.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;PostMessage(WM_FIRST_SHOWN);&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;MFC source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/MFC/MFCDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;C# Source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/Winforms/WindowsFormsDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

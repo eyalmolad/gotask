@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>win32 on GoTask</title>
+    <link>https://gotask.net/tags/win32/</link>
+    <description>Recent content in win32 on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sat, 07 Nov 2020 05:12:49 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/win32/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MFC Dialog – Get event on the first appearance</title>
+      <link>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</link>
+      <pubDate>Sat, 07 Nov 2020 05:12:49 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Sometimes we still need to maintain some legacy code that was written ages ago. A long time ago, MFC library was the default choice for many programmers wanted to develop a Windows Desktop Application in C++.  Today, there are much better alternatives for the Desktop Applications developments that include: WPF, WinForms, Electron and more. &lt;/p&gt;
+&lt;p&gt;In this post, I am going to show a simple technique of how to get a callback in the CDialog derived class when the dialog is first shown.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;MFC Dialog Based application (32-bit)&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;
+&lt;p&gt;Consider the following requirement: Show a modal dialog for the user to enter a username and&lt;figure id=&#34;attachment_304&#34; aria-describedby=&#34;caption-attachment-304&#34; style=&#34;width: 357px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-304&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png&#34; alt=&#34;Modal dialog over dialog&#34; width=&#34;367&#34; height=&#34;223&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png 402w, https://gotask.net/wp-content/uploads/2020/11/form_on_form-300x182.png 300w&#34; sizes=&#34;(max-width: 367px) 100vw, 367px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-304&#34; class=&#34;wp-caption-text&#34;&gt;Modal dialog over dialog in C# Winforms&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;a password, once the main dialog has been first shown. In .NET WinForms, all we have to do is add a handler to &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.shown?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Form.Shown&lt;/a&gt; event and show the modal dialog.   The sample code in C# would look something like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private void Form1_Shown(object sender, EventArgs e)
+{
+  using (var loginDlg = new LoginForm())
+  {
+    loginDlg.ShowDialog(this);
+  }
+}&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;MFC comes with &lt;a href=&#34;https://docs.microsoft.com/en-us/cpp/mfc/reference/cdialog-class?view=msvc-160#oninitdialog&#34;&gt;OnInitDialog&lt;/a&gt; overridable function in case we need to perform some processing during the dialog initialization. Once called, all our controls are already created and have the valid window handle. The problem with OnInitDialog function is that the dialog is not yet been shown to the user. If we attempt to show the modal dialog in the OnInitDialog function of the main dialog, the main dialog will not be shown until we close the second modal dialog. Unfortunately, MFC does not provide us with the dialog “shown” event.&lt;/p&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
+&lt;p&gt;The main idea is to postpone the second modal dialog creation for after the main dialog has been shown. This means that after OnInitDialog, we will need to get some callback function called and display our second dialog.&lt;/p&gt;
+&lt;p&gt;How do we achieve this? Fortunately, Win32 API enables us to register &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; custom windows messages &lt;/a&gt;for a private window use. We will use the &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-postmessagea&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PostMessage&lt;/a&gt; Win32 API function to post such message to our window’s thread message loop. PostMessage function returns immediately and the message handler would be called asynchronously. &lt;/p&gt;
+&lt;h3 id=&#34;define-the-new-window-message&#34;&gt;Define the new window message&lt;/h3&gt;
+&lt;p&gt;Every window message has it’s own unique number. According to &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34;&gt;this MSDN article&lt;/a&gt;, we can use messages from WM_USER to 0x7FFF.&lt;/p&gt;
+&lt;p&gt;So lets define the message as:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;#define WM_FIRST_SHOWN WM_USER + 100&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;adding-the-callback-function&#34;&gt;Adding the callback function&lt;/h3&gt;
+&lt;p&gt;In the main dialog class, define the WM_FIRST_SHOWN message handler. It must have the return type of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT&lt;/code&gt; and get &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;WPARAM&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LPARAM&lt;/code&gt; as the function parameters although we are not going to use the parameters in this sample.&lt;/p&gt;
+&lt;p&gt;Place the second dialog creation in the callback’s implementation code.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT CMFCDialogOnLoadDlg::OnDialogShown(WPARAM,LPARAM)
+{
+  CLoginDialog dlg;
+  dlg.DoModal();
+  
+  return 0;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-the-message-to-the-message-map&#34;&gt;Adding the message to the message map&lt;/h3&gt;
+&lt;p&gt;We need to bind the message id (WM_FIRST_SHOWN) to the message handler function.&lt;/p&gt;
+&lt;p&gt;Please the following code in your message map:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;ON_MESSAGE(WM_FIRST_SHOWN,OnDialogShown)&lt;/pre&gt;
+&lt;h3 id=&#34;posting-the-messagefigure-idattachment_310-aria-describedbycaption-attachment-310-stylewidth-352px-classwp-caption-alignright&#34;&gt;Posting the message&lt;figure id=&#34;attachment_310&#34; aria-describedby=&#34;caption-attachment-310&#34; style=&#34;width: 352px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-310&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png&#34; alt=&#34;Dialog on dialog in MFC&#34; width=&#34;362&#34; height=&#34;263&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png 362w, https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog-300x218.png 300w&#34; sizes=&#34;(max-width: 362px) 100vw, 362px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-310&#34; class=&#34;wp-caption-text&#34;&gt;Dialog on dialog in MFC&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we need to post the WM_FIRST_SHOWN message to the main window’s thread message queue. Place the following code to the end of you OnInitDialog memeber function.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;PostMessage(WM_FIRST_SHOWN);&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;MFC source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/MFC/MFCDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;C# Source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/Winforms/WindowsFormsDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Checking if a directory is writable in C#</title>
+      <link>https://gotask.net/programming/checking-if-directory-is-writable-in-c-sharp/</link>
+      <pubDate>Thu, 02 Apr 2020 21:21:36 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/checking-if-directory-is-writable-in-c-sharp/</guid>
+      <description>
+        
+          &lt;p&gt;Today, I am going to demonstrate a simple way to check if the current executing user has a writing permission for a directory in the Windows file system. I came across this issue in a project when I needed to write a utility program that would do the following: Output a list of all directories that the current user is &lt;span style=&#34;text-decoration: underline;&#34;&gt;not&lt;/span&gt; able to write to.&lt;/p&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Microsoft provides an API for manipulating or viewing security access permission via the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.security.accesscontrol?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;System.Security.AccessControl&lt;/a&gt; namespace. However, using the AccessControl based solution, requires computing the effective permissions for the user identity running your code. It might not be an easy task, as it involves fetching a security descriptor, an access token, and properly calculating the effective permissions.&lt;/p&gt;
+&lt;p&gt;As a general solution approach, I am going to try to write a file in a specific directory without any permissions calculations. In case an exception is raised by the operating system, I am going to properly handle it and assume the directory is not writable.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;implementation&#34;&gt;Implementation&lt;/h2&gt;
+&lt;h3 id=&#34;setting-up-the-pinvoke-imports&#34;&gt;Setting up the pInvoke imports&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt; So as a first step, I am going to create a utility static class DirectoryUtils that will include the implementation.&lt;/li&gt;
+&lt;li&gt;As I am going to use several Win32 API functions in the sample, so let’s import the following:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;CreateFile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfiletime&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;SetFileTime&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note: When importing a Win32 API function into a .NET project, you need to generate the pInvoke signature. For such an operation, I highly recommend you use &lt;a href=&#34;https://www.pinvoke.net&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pinvoke.net&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public static class DirectoryUtils
+{
+        [DllImport(&#34;kernel32.dll&#34;, CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern SafeFileHandle CreateFile(
+            string fileName,
+            uint dwDesiredAccess,
+            FileShare dwShareMode,
+            IntPtr securityAttrs_MustBeZero,
+            FileMode dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile_MustBeZero);
+
+        [DllImport(&#34;kernel32.dll&#34;, SetLastError = true, EntryPoint = &#34;SetFileTime&#34;, ExactSpelling = true)]
+        private static extern bool SetFileTime(
+            SafeFileHandle hFile,
+            IntPtr lpCreationTimeUnused,
+            IntPtr lpLastAccessTimeUnused,
+            ref long lpLastWriteTime);
+
+        private const uint FILE_ACCESS_GENERIC_READ = 0x80000000;
+        private const uint FILE_ACCESS_GENERIC_WRITE = 0x40000000;
+
+        private const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+        private const int OPEN_EXISTING = 3;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;implementing-the-class&#34;&gt;Implementing the class&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;In the DirectoryUtils class, create a static function DirectoryUtils.IsWritable that gets a directory path to check and returns bool.&lt;/li&gt;
+&lt;li&gt;We need to create the temporary file using C# &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;File.Create&lt;/code&gt; with a random generated file name. Note the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;FileOptions.DeleteOnClose&lt;/code&gt; flag, which ensures the file is deleted once we go out of the using scope.&lt;/li&gt;
+&lt;li&gt;If the code below throws an exception, we assume the directory is not writable.&lt;/li&gt;
+&lt;li&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;using (File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;{
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;So far it looks very easy, but there is a small catch. If the directory is writable, its last write time will change every time we call DirectoryUtils.IsWritable, since we are creating a temporary file. This might look very ugly and unprofessional, especially if we are traversing a long directory tree. All directories will  have the &amp;amp;#8216;Date modified&amp;amp;#8217; changed in Windows Explorer as shown in the picture:
+
+&amp;lt;figure id=&amp;quot;attachment_174&amp;quot; aria-describedby=&amp;quot;caption-attachment-174&amp;quot; style=&amp;quot;width: 835px&amp;quot; class=&amp;quot;wp-caption alignnone&amp;quot;&amp;gt;&amp;lt;img loading=&amp;quot;lazy&amp;quot; class=&amp;quot;size-full wp-image-174&amp;quot; src=&amp;quot;https://gotask.net/wp-content/uploads/2020/04/windows-explorer.png&amp;quot; alt=&amp;quot;Windows File Explorer&amp;quot; width=&amp;quot;845&amp;quot; height=&amp;quot;273&amp;quot; srcset=&amp;quot;https://gotask.net/wp-content/uploads/2020/04/windows-explorer.png 845w, https://gotask.net/wp-content/uploads/2020/04/windows-explorer-300x97.png 300w, https://gotask.net/wp-content/uploads/2020/04/windows-explorer-768x248.png 768w&amp;quot; sizes=&amp;quot;(max-width: 845px) 100vw, 845px&amp;quot; /&amp;gt;&amp;lt;figcaption id=&amp;quot;caption-attachment-174&amp;quot; class=&amp;quot;wp-caption-text&amp;quot;&amp;gt;Windows File Explorer&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&amp;lt;/li&amp;gt; &amp;lt;/ol&amp;gt; 
+
+The solution is the following:
+
+  1. Save the write time before creating the temporary file by using &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;Directory.GetLastWriteTimeUtc&amp;lt;/code&amp;gt;
+  2. Restore the write time after the temporary file is deleted by using &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;SetFileTime&amp;lt;/code&amp;gt; Win32 API.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;public static bool SetDirectoryLastWriteUtc(string dirPath, DateTime lastWriteDate)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;{
+using (var hDir = CreateFile(dirPath, FILE_ACCESS_GENERIC_READ | FILE_ACCESS_GENERIC_WRITE,
+FileShare.ReadWrite, IntPtr.Zero, (FileMode) OPEN_EXISTING,
+FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero))
+{
+// put back to the date before checking.
+var lastWriteTime = lastWriteDate.ToFileTime();
+if (!SetFileTime(hDir, IntPtr.Zero, IntPtr.Zero, ref lastWriteTime))
+{
+return false;
+}
+}&lt;/p&gt;
+&lt;p&gt;return true;
+}&lt;/p&gt;
+&lt;p&gt;public static bool IsWritable(string dirPath)
+{
+try
+{
+// Since there is a temp file that is being created,
+// this will change the modified date of the directory.
+// So if we have successful write operation, we need to
+// revert the last write date.
+var lastWriteDate = Directory.GetLastWriteTimeUtc(dirPath);&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// if this fails -&amp;amp;gt; it raises an exception.
+using (File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+{
+}
+
+try
+{
+  SetDirectoryLastWriteUtc(dirPath, lastWriteDate);
+}
+catch (Exception)
+{
+  // add some log.
+}
+
+return true;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}
+catch (UnauthorizedAccessException)
+{
+// add some log.
+}
+catch (Exception)
+{
+// add some log.
+}&lt;/p&gt;
+&lt;p&gt;return false;
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## Testing
+
+Running some tests on a development machine:
+
+  1. Positive result: I used &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot; data-enlighter-theme=&amp;quot;git&amp;quot;&amp;gt;Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)&amp;lt;/code&amp;gt;. In most cases, this directory is writable for the current non-admin user. Check that the last write date did not change after the function returned a &amp;amp;#8216;true&amp;amp;#8217; value.
+  2. Negative result: If you are running the Visual Studio as a non-elevated process, the function should fail if you check the &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;Environment.SystemDirectory&amp;lt;/code&amp;gt;.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;var dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;var result = DirectoryUtils.IsWritable(dir);
+Console.Write($&amp;quot;{dir} - result={result}&amp;quot;);&lt;/p&gt;
+&lt;p&gt;dir = Environment.SystemDirectory;
+result = DirectoryUtils.IsWritable(dir);
+Console.Write($&amp;quot;{dir} - result={result}&amp;quot;);&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## Useful resources
+
+  * Source code of this project on [GitHub][1]
+&lt;/code&gt;&lt;/pre&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>VSTO on GoTask</title>
+    <link>https://gotask.net/categories/vsto/</link>
+    <description>Recent content in VSTO on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sat, 31 Oct 2020 07:43:24 +0000</lastBuildDate><atom:link href="https://gotask.net/categories/vsto/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C# – VSTO – Extract images from PowerPoint presentation</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-extract-images-from-powerpoint-presentation/</link>
+      <pubDate>Sat, 31 Oct 2020 07:43:24 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-extract-images-from-powerpoint-presentation/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I created a very basic VSTO example that adds a button to the &lt;a href=&#34;https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/&#34;&gt;PowerPoint ribbon&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Recently, I had a task I needed to enumerate all the pictures in the Power Point presentation and extract them into a zip file.&lt;/p&gt;
+&lt;p&gt;Power Point presentation might contain many different shapes, such as rectangles, lines, arrows, textboxes, pictures and more. Each shape might contain a text, but it might also contain a picture. &lt;/p&gt;
+&lt;p&gt;In this post, I am going to show how to extract the images using 2 different techniques:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PowerPoint COM Interop API&lt;/li&gt;
+&lt;li&gt;Extract directly from ZIP file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;li&gt;PowerPoint Interop DLL version 15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;working-with-powerpoint-c-interop-version-15000&#34;&gt;Working with PowerPoint C# Interop version 15.0.0.0&lt;/h2&gt;
+&lt;h3 id=&#34;step-1-8211-create-a-button&#34;&gt;Step 1 – Create a button&lt;/h3&gt;
+&lt;p&gt;As shown in the previous example, I am adding a button element to the Ribbon XML. This button will have a callback set in the action attribute.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+  &amp;lt;ribbon&amp;gt;
+     &amp;lt;tabs&amp;gt;
+      &amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+        &amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;
+          &amp;lt;button id=&#39;extract_images&#39; label=&#39;Extract Images&#39; size=&#39;large&#39; getImage=&#39;OnGetImage&#39; onAction=&#39;OnExtractImage&#39;/&amp;gt;
+        &amp;lt;/group&amp;gt;
+      &amp;lt;/tab&amp;gt;
+    &amp;lt;/tabs&amp;gt;
+  &amp;lt;/ribbon&amp;gt;
+&amp;lt;/customUI&amp;gt;&lt;/pre&gt;
+&lt;h3 id=&#34;heading&#34;&gt; &lt;/h3&gt;
+&lt;h3 id=&#34;step-2-8211-collect-the-images-from-different-shapes&#34;&gt;Step 2 – Collect the images from different shapes&lt;/h3&gt;
+&lt;p&gt;PowerPoint presentation can store the images in a few shapes types. All the different shape types are represented by &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/office.msoshapetype&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;MsoShapeType&lt;/a&gt; enum.  In order to recognize the Shape type, we are going to use &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.shape.type&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Shape.Type&lt;/a&gt; and &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.shape.placeholderformat&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Shape.PlaceholderFormat.ContainedType&lt;/a&gt; properties: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Picture –  MsoShapeType.msoPicture or MsoShapeType.msoLinkedPicture&lt;/li&gt;
+&lt;li&gt;Picture contained in a placeholder MsoShapeType.msoPlaceholder&lt;/li&gt;
+&lt;li&gt;Other shapes that might have a &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.pictureformat&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PictureFormat&lt;/a&gt; property properly initialized.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://github.com/eyalmolad/gotask/blob/master/VSTO/PowerPointExtractImages/SamplePresentation.pptx&#34;&gt;sample presentation&lt;/a&gt;, I’ve created a few shapes that contain pictures in different formats.&lt;/p&gt;
+&lt;p&gt;In order to extract the image, I am going to use the PowerPoint Shape &lt;a href=&#34;https://docs.microsoft.com/en-us/previous-versions/office/office-12/ff761596(v=office.12)&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Export&lt;/a&gt; function.&lt;/p&gt;
+&lt;p&gt;In order to choose a directory for saving the images, I am going to use the CommonOpenFileDialog implemented in &lt;a href=&#34;https://www.nuget.org/packages/Microsoft-WindowsAPICodePack-Shell/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Microsoft-WindowsAPICodePack-Shell&lt;/a&gt;. Here is the sample implementation of using a directory picker:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private string GetSaveDir()
+{
+  using (var dialog = new CommonOpenFileDialog())
+  {
+    dialog.IsFolderPicker = true;
+
+    var result = dialog.ShowDialog();
+
+    if (result == CommonFileDialogResult.Ok)
+    {
+      return dialog.FileName;
+    }
+  }
+
+  return null;
+}&lt;/pre&gt;
+&lt;p&gt;The code below iterates over all slides in the presentation and extracts the images from the shapes.&lt;/p&gt;
+&lt;p&gt;Please note the following remarks:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The extracted images are in PNG format using the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PpShapeFormat.ppShapeFormatPNG&lt;/code&gt; enum. You can specify JPG, BMP or other formats defined in the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PpShapeFormat&lt;/code&gt; enum.&lt;/li&gt;
+&lt;li&gt;Pay attention for the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;shape.PictureFormat.CropBottom&lt;/code&gt; check. Generally, every shape has &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PictureFormat&lt;/code&gt; set to a non-null value. So we can’t count on filtering out the shapes that have this property set to null. The trick is to try to access one of the properties (CropBottom or other). If the exception is thrown, we can skip the object (it’s not a picture).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var i = 1;
+foreach (Slide slide in app.ActivePresentation.Slides)
+{
+  foreach (Shape shape in slide.Shapes)
+  {
+    var doExport = false;
+
+    if (shape.Type == MsoShapeType.msoPicture ||
+      shape.Type == MsoShapeType.msoLinkedPicture)
+    {
+      doExport = true;
+    }
+    else if (shape.Type == MsoShapeType.msoPlaceholder)
+    {
+      if (shape.PlaceholderFormat.ContainedType == MsoShapeType.msoPicture ||
+        shape.PlaceholderFormat.ContainedType == MsoShapeType.msoLinkedPicture)
+      {
+        doExport = true;
+      }
+    }
+    else
+    {
+      try
+      {
+        // this is just a dummy code. In case there is no picture in the
+        // shape, any attempt to read the CropBottom variable will throw 
+        // an exception
+        var test = shape.PictureFormat.CropBottom &amp;gt; -1;
+        doExport = true;
+      }
+      catch
+      {
+        doExport = false;
+      }
+    }
+
+    if(doExport) 
+      shape.Export(Path.Combine(saveDirectory, $&#34;{i++}.png&#34;), PpShapeFormat.ppShapeFormatPNG);
+  }
+}&lt;/pre&gt;
+&lt;p&gt;When running this code on the presentation provided with the project, it should export 4 pictures to the chosen directory. (Picture’s credit: &lt;a href=&#34;https://unsplash.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Unsplash&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;working-with-zip-file-to-extract-the-images&#34;&gt;Working with ZIP file to extract the images&lt;/h2&gt;
+&lt;p&gt;The pptx format is actually a zip file with a well formed structure defined in the Open-XML format. You could open the pptx file with any zip file extractor and look at it’s contents. Fortunately, the pictures are stored in the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;ppt\media&lt;/code&gt; directory within the archive.&lt;/p&gt;
+&lt;p&gt;All I have to do now it to extract the archive and grab the images.&lt;/p&gt;
+&lt;p&gt;I am going to use the .NET &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.io.compression.zipfile?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;ZipFile&lt;/a&gt; class located in System.IO.Compression namespace.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the pptx file using &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ZipFile.Open&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create a temporary &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;temp_zip&lt;/code&gt; directory to extract the files to&lt;/li&gt;
+&lt;li&gt;Copy the media files&lt;/li&gt;
+&lt;li&gt;Delete the temporary &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;temp_zip&lt;/code&gt; directory&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private void ExtractWithZip(string pptxFile, string directory)
+{
+  var zipDir = &#34;&#34;;
+
+  using (var arh = ZipFile.Open(pptxFile, ZipArchiveMode.Read))
+  {
+    zipDir = Path.Combine(directory, &#34;temp_zip&#34;);
+    Directory.CreateDirectory(zipDir);
+    arh.ExtractToDirectory(zipDir); // extract
+
+        // iterate over files in the extracted dir.
+    foreach (var f in Directory.GetFiles(Path.Combine(zipDir, @&#34;ppt\media&#34;)))
+      File.Copy(f, Path.Combine(directory, Path.GetFileName(f)));
+  }
+
+  // clean up
+  try
+  {
+    var dirToDelete = new DirectoryInfo(zipDir);
+    dirToDelete.Delete(true);
+  }
+  catch
+  {
+    //
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/PowerPointExtractImages&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# – Creating an Excel Addin with User Defined Functions</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</link>
+      <pubDate>Wed, 14 Oct 2020 20:00:42 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I demonstrated how to create a simple &lt;a href=&#34;https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;VSTO Addin for Excel&lt;/a&gt; that adds a button on the ribbon. In this post, I am going to show how to add a user defined functions using &lt;a href=&#34;https://excel-dna.net&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Excel-DNA&lt;/a&gt; as well as use the ribbon functionality.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;user-defined-function-udf&#34;&gt;User Defined Function (UDF)&lt;/h2&gt;
+&lt;p&gt;Excel provides a large set of built in functions, giving a user the ability to perform various calculations and manipulations on the data. But what happens if a user needs a custom calculation, that needs to be used over multiple cells? Starting Excel 2002, Microsoft introduced the User Defined Functions. This capability enables you to wrap some common calculation or string manipulation in a function and call it transparently as any other Excel build-in function.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;Lets say we want to reverse a string in a cell. There are lot of examples of how to do that using the Excel built in functions. One of the examples is using &lt;a href=&#34;https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;TEXTJOIN&lt;/a&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;=TEXTJOIN(&#34;&#34;,1,MID(A1,ABS(ROW(INDIRECT(&#34;1:&#34;&amp;LEN(A1)))-(LEN(A1)+1)),1))&lt;/pre&gt;
+&lt;p&gt;Additional techniques could be found &lt;a href=&#34;https://exceljet.net/formula/reverse-text-string&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Much cleaner alternative would be creating a UDF that does this in C# and calling the function from the Excel spreadsheet with:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString(A1)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;creating-an-excel-addin-that-supports-udf&#34;&gt;Creating an Excel Addin that supports UDF&lt;/h2&gt;
+&lt;p&gt;From Visual Studio menu, create a new .NET Framework Class Library project.&lt;/p&gt;
+&lt;h3 id=&#34;installing-dependencies&#34;&gt;Installing dependencies&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to reference the Excel-DNA project that enables us to make native XLL addins using C#. In the Visual Studio Package Manager Console type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;Install-Package ExcelDna.AddIn&lt;/pre&gt;
+&lt;p&gt;Note: After installing the ExcelDna.Addin package, your project extension will be changed to xll which is a format for an addin that adds UDF functionality. You can read more about the &lt;a href=&#34;https://docs.microsoft.com/en-us/office/client-developer/excel/creating-xlls&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XLL addins on MSDN&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;    2. Since we want to create also some visual components and interact will the Excel elements we need to add the reference to: Microsoft.Office.Interop.Excel.dll. This component is usually located in your Office directory.&lt;/p&gt;
+&lt;h3 id=&#34;setting-up-the-control-classes&#34;&gt;Setting up the control classes&lt;/h3&gt;
+&lt;p&gt;Since we want to combine the ExcelDna.Addin and the Ribbon objects, we can’t use the regular VSTO, but need to create the control classes manually.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a class that implements the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ExcelDna.Integration.IExcelAddIn&lt;/code&gt; interface. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public class ExcelRibbonUDFAddin : IExcelAddIn
+{
+public void AutoOpen()
+{
+// startup code
+}&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;public void AutoClose()
+{
+// clean up
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. Create the ribbon controller class that derives from &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;ExcelDna.Integration.CustomUI.ExcelRibbon&amp;lt;/code&amp;gt;base class.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;[ComVisible(true)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;public class RibbonController : ExcelRibbon, IDisposable
+{
+private Microsoft.Office.Core.IRibbonUI _ribbonUi;&lt;/p&gt;
+&lt;p&gt;private Application App
+{
+get =&amp;gt; (Application)ExcelDnaUtil.Application;
+}&lt;/p&gt;
+&lt;p&gt;public override string GetCustomUI(string ribbonID) =&amp;gt;
+@&amp;quot;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+&amp;lt;ribbon&amp;gt;
+&amp;lt;tabs&amp;gt;
+&amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+&amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;                                     &lt;br&gt;
+&amp;lt;button id=&#39;do_reverse_range&#39; label=&#39;Reverse&#39; size=&#39;large&#39; getImage=&#39;OnDoReverseGetImage&#39; onAction=&#39;OnDoReverse&#39;/&amp;gt;
+&amp;lt;/group&amp;gt;
+&amp;lt;/tab&amp;gt;
+&amp;lt;/tabs&amp;gt;
+&amp;lt;/ribbon&amp;gt;
+&amp;lt;/customUI&amp;gt;&amp;quot;;&lt;/p&gt;
+&lt;p&gt;public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
+{
+_ribbonUi = ribbonUI;       &lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;public void Dispose()
+{         &lt;br&gt;
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;amp;nbsp;
+
+a) ExcelDnaUtil.Application returns the Excel Application object instance. b) GetCustomUI returns the Ribbon XML string. You can find the full specification regarding the 
+
+&amp;lt;a href=&amp;quot;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&amp;quot; target=&amp;quot;_blank&amp;quot; rel=&amp;quot;noopener noreferrer&amp;quot;&amp;gt;Ribbon XML format on MSDN&amp;lt;/a&amp;gt;.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;adding-the-udf-functionality&#34;&gt;Adding the UDF functionality&lt;/h3&gt;
+&lt;p&gt;Create a new static class that will contain the Reverse string function implementation. Make sure that you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;ExcelFunction&lt;/code&gt;attribute to it.&lt;/p&gt;
+&lt;p&gt;Every time you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt;to any cell in the Excel, this function will be called.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public static class CustomFunctions
+{
+  [ExcelFunction(Description = &#34;Reverse string function&#34;)]
+  public static string ReverseString(string str)
+  {
+    var charArray = str.ToCharArray();
+    Array.Reverse(charArray);
+    return new string(charArray);
+  }
+}&lt;/pre&gt;
+&lt;h3 id=&#34;testing-the-project&#34;&gt;Testing the project&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Build the project and run it in Debug mode. This should open the Excel application with the addin loaded.&lt;figure id=&#34;attachment_249&#34; aria-describedby=&#34;caption-attachment-249&#34; style=&#34;width: 230px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-249&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/reverse-string-excel-e1602775342176.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;240&#34; height=&#34;228&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-249&#34; class=&#34;wp-caption-text&#34;&gt;Excel functions intellisense&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Go to some cell and type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt; passing a reference to a cell or hard coded string.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Your target cell should contain the reversed string. Since you are running in the debug mode, you can always set a breakpoint in the ReverseString function.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;adding-the-reverse-function-to-an-existing-range&#34;&gt;Adding the reverse function to an existing range&lt;/h2&gt;
+&lt;p&gt;After we built the basic sample, we can connect it to a button on the ribbon that reverses the string of the selected range and inserts the results to the new column.&lt;/p&gt;
+&lt;p&gt;For this, we need to implement the ribbon button action function in the Ribbon Controller class:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void OnDoReverse(Microsoft.Office.Core.IRibbonControl control)
+{
+  var selectedRange = App.Selection;
+
+  if (selectedRange == null) return;
+
+  foreach (Range cell in selectedRange)
+  {
+    var next = cell.Offset[0, 1];
+    next.Formula = $&#34;=ReverseString({cell.Address})&#34;;
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/UDF/ExcelRibbonUDF&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;figure id=&#34;attachment_254&#34; aria-describedby=&#34;caption-attachment-254&#34; style=&#34;width: 290px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-254 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/image_2020-10-15_184255-e1602780284748.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;300&#34; height=&#34;294&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-254&#34; class=&#34;wp-caption-text&#34;&gt;Reverse string in Excel Result&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# VSTO Addin Sample for Excel, Word, Power Point, Outlook</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</link>
+      <pubDate>Fri, 20 Mar 2020 19:27:52 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</guid>
+      <description>
+        
+          &lt;p&gt;Microsoft Office provides a variety of component types you could develop to extend its existing functionality or to add more useful features. These components include VBA macros, VSTO components, XLL Addons, and more.&lt;/p&gt;
+&lt;p&gt;In this sample, I will focus on creating a C# VSTO project that displays a simple ribbon.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18362)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;minimal-requirements&#34;&gt;Minimal requirements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2015&lt;/li&gt;
+&lt;li&gt;Office 2013&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34; target=&#34;_new&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Note that the following Ribbon sample can be used for extending these Office applications: Excel, Word, Outlook, and PowerPoint.&lt;/p&gt;
+&lt;p&gt;In this post, I will use Excel as a hosting application.&lt;/p&gt;
+&lt;h2 id=&#34;setting-up-the-environment&#34;&gt;Setting up the environment&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Open Visual Studio 2019 and create a new Excel VSTO Addin C# project. &lt;figure id=&#34;attachment_22&#34; aria-describedby=&#34;caption-attachment-22&#34; style=&#34;width: 289px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-22&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; alt=&#34;Visual Studio Setup for Office/SharePoint&#34; width=&#34;299&#34; height=&#34;316&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png 708w, https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup-284x300.png 284w&#34; sizes=&#34;(max-width: 299px) 100vw, 299px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-22&#34; class=&#34;wp-caption-text&#34;&gt;Visual Studio Setup for Office/SharePoint&lt;/figcaption&gt;&lt;/figure&gt;&lt;br&gt;
+In case you cannot find such a project on a Visual Studio templates list, complete the following steps:
+&lt;ul&gt;
+&lt;li&gt;Open the Visual Studio 2019 setup from the Windows Control Panel.&lt;/li&gt;
+&lt;li&gt;Make sure “Office/SharePoint development option” is selected as shown in the picture.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;In the generated project, open the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddin.cs&lt;/code&gt; file:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; event handler will be called by the Excel application only once in the hosting application lifetime, during the application startup. This is the recommended place for initialization.&lt;/li&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; event handler will be called by the application before it exits. Do your cleanups here.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Note: Outlook no longer raises this event. If you have code that must run when Outlook shuts down, see &lt;a href=&#34;https://go.microsoft.com/fwlink/?LinkId=506785&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;this link&lt;/a&gt;.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public partial class ThisAddIn
+{
+  private void ThisAddIn_Startup(object sender, System.EventArgs e)
+  {
+  }
+
+  private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+  {
+  }
+
+  #region VSTO generated code
+
+  /// &amp;lt;summary&amp;gt;
+  /// Required method for Designer support - do not modify
+  /// the contents of this method with the code editor.
+  /// &amp;lt;/summary&amp;gt;
+  private void InternalStartup()
+  {
+    this.Startup += new System.EventHandler(ThisAddIn_Startup);
+    this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+  }
+  
+  #endregion
+}&lt;/pre&gt;
+&lt;h2 id=&#34;testing-the-environment&#34;&gt;Testing the environment&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Set a breakpoint in both &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; functions.&lt;/li&gt;
+&lt;li&gt;Hit F5 to run the project’s debugger. An Excel splash screen should appear and shortly after &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; breakpoint will hit.&lt;/li&gt;
+&lt;li&gt;Close the Excel application, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; should hit.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;adding-the-ribbon&#34;&gt;Adding the Ribbon&lt;/h2&gt;
+&lt;p&gt;When developing a VSTO, I prefer creating the ribbon by manualy creating the XML rather than using the Ribbon Designer, which covers only a subset of the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OfficeFluentUI&lt;/code&gt; model.&lt;br&gt;
+You can find more explanations of the difference between using the Ribbon Designer and manually building the XML in these links: &lt;a href=&#34;https://stackoverflow.com/questions/22483329/office-ribbon-xml-vs-office-standard-ribbon-designer&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml vs ribbon designer&lt;/a&gt; and &lt;a href=&#34;https://social.msdn.microsoft.com/Forums/vstudio/en-US/e3a68e06-9e27-4d6c-bd1e-e566ab8b7506/ribbon-xml-vs-ribbon-designer?forum=vsto&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml to ribbon designer comparison&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;ribbon-controller&#34;&gt;Ribbon Controller&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Add a new class RibbonConroller implementing &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;Microsoft.Office.Core.IRibbonExtensibility&lt;/code&gt; interface.&lt;/li&gt;
+&lt;li&gt;Make sure to set the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;[ComVisible(true)]&lt;/code&gt; class attribute.&lt;/li&gt;
+&lt;li&gt;The only function you should implement is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;GetCustomUI&lt;/code&gt; that returns the XML representation of the ribbon you wish to create.&lt;/li&gt;
+&lt;li&gt;For this sample, we will create a simple button that display a message box.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;[ComVisible(true)]
+public class RibbonController : Microsoft.Office.Core.IRibbonExtensibility
+{
+  private Microsoft.Office.Core.IRibbonUI _ribbonUi;
+
+  public string GetCustomUI(string ribbonID) =&amp;gt;
+  @&#34;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+    &amp;lt;ribbon&amp;gt;
+       &amp;lt;tabs&amp;gt;
+        &amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+          &amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;
+            &amp;lt;button id=&#39;do_1&#39; label=&#39;Do 1&#39; size=&#39;large&#39; getImage=&#39;OnDo1GetImage&#39; onAction=&#39;OnDo1Click&#39;/&amp;gt;
+          &amp;lt;/group&amp;gt;
+        &amp;lt;/tab&amp;gt;
+      &amp;lt;/tabs&amp;gt;
+    &amp;lt;/ribbon&amp;gt;
+    &amp;lt;/customUI&amp;gt;&#34;;
+
+  public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
+  {
+    _ribbonUi = ribbonUI;
+  }
+
+  public void OnDo1Click(Microsoft.Office.Core.IRibbonControl control)
+  {
+    MessageBox.Show(Resources.Do1Action);
+  }
+
+  public Bitmap OnDo1GetImage(Microsoft.Office.Core.IRibbonControl control) =&amp;gt; Resources.Do1_128px;
+}&lt;/pre&gt;
+&lt;p&gt;The sample XML above adds the ribbon to the Excel application, which includes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A new ribbon tab labeled ‘GoTask’ containing a new group labeled ‘Operations’.&lt;/li&gt;
+&lt;li&gt;The group containing a button labeled ‘Do 1’ with click handler implemented in OnDo1Click function.&lt;/li&gt;
+&lt;li&gt;The button displaying an image located in the Resource section.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Notes for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;onAction&lt;/code&gt; callback function:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It must be public and have the following signature: &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void SomeName(Microsoft.Office.Core.IRibbonControl control)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You could use any valid name, however it must match the name provided in onAction attribute in XML.&lt;/li&gt;
+&lt;li&gt;For the proper initialization of the Ribbon, add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OnLoad&lt;/code&gt; function, which will be called by the hosting application once the ribbon is ready to show.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;creating-an-instance-of-the-controller-class&#34;&gt;Creating an Instance of the Controller class&lt;/h3&gt;
+&lt;p&gt;Once we have the RibbonController class, we need to create the instance of it.&lt;br&gt;
+This is done by overriding the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;CreateRibbonExtensibilityObject()&lt;/code&gt; function in the ThisAddIn class.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject() =&amp;gt; new RibbonController();&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;running-the-project&#34;&gt;Running the project&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Hit F5 to run the project again.&lt;/li&gt;
+&lt;li&gt;The Excel Application should show the ribbon with a new button.&lt;figure id=&#34;attachment_34&#34; aria-describedby=&#34;caption-attachment-34&#34; style=&#34;width: 800px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-34 size-large&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png&#34; alt=&#34;VSTO Excel Sample ribbon with button&#34; width=&#34;810&#34; height=&#34;146&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png 1024w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-300x54.png 300w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-768x139.png 768w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png 1328w&#34; sizes=&#34;(max-width: 810px) 100vw, 810px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-34&#34; class=&#34;wp-caption-text&#34;&gt;VSTO Excel Sample ribbon with button&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Full documentation of &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&#34;&gt;Ribbon XML&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-designer?view=vs-2019&#34;&gt;Ribbon Designer&lt;/a&gt; documentation&lt;/li&gt;
+&lt;li&gt;Office applications that &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/features-available-by-office-application-and-project-type?view=vs-2019&#34;&gt;supports VSTO Addins&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

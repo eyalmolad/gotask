@@ -1,0 +1,1950 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on GoTask</title>
+    <link>https://gotask.net/posts/</link>
+    <description>Recent content in Posts on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sun, 13 Dec 2020 14:49:18 +0000</lastBuildDate><atom:link href="https://gotask.net/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Setup Hugo Site Generator on GitHub Pages with a Custom Domain</title>
+      <link>https://gotask.net/tutorials/setup-hugo-on-github-pages-custom-domain/</link>
+      <pubDate>Sun, 13 Dec 2020 14:49:18 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/setup-hugo-on-github-pages-custom-domain/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Recently, I wanted to setup a new blog. I have purchased the domain and started looking for the hosting.&lt;/p&gt;
+&lt;p&gt;My main goal was to build a clean and a simple site that loads fast. Instead of working with the traditional WordPress platform and trying to configure dozens of plugins to increase the performance, I decided to go with a Jamstack based solution. &lt;a href=&#34;https://jamstack.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Jamstack&lt;/a&gt; based sites are pre-generated and served from the static repositories or CDNs, so no pages are generated on the fly when the users access the site.&lt;/p&gt;
+&lt;p&gt;To pre-generate the site, I chose &lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo&lt;/a&gt;, which is a static site generator optimized for speed and relatively easy to configure. Hugo is an open source project written in Go language.&lt;/p&gt;
+&lt;p&gt;Since the site is pre-generated and can be stored in the GitHub, I chose the GitHub Pages as a hosting. The deployment on GitHub Pages is very simple (a single git push) command, it can setup a custom domain and it has the built-in support for SSL.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://git-scm.com/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Git&lt;/a&gt; installed on your local machine (including the command line interface)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt; account&lt;/li&gt;
+&lt;li&gt;If you wish to setup a ‘private’ repository with the custom domain, you will need to purchase one of the GitHub subscriptions. I use the ‘Team’ subscription which costs 4$ per month (as of Dec/2020). You may check the &lt;a href=&#34;https://github.com/pricing&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pricing &lt;span style=&#34;text-decoration: underline;&#34;&gt;for more information.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;A Text editor, I use &lt;a href=&#34;https://notepad-plus-plus.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Notepad ++&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;A basic command line knowledge&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;setting-up-the-repository&#34;&gt;Setting up the repository&lt;/h2&gt;
+&lt;h3 id=&#34;installing-hugo-on-the-local-computer&#34;&gt;Installing Hugo on the local computer&lt;/h3&gt;
+&lt;p&gt;As described in the &lt;a href=&#34;https://github.com/gohugoio/hugo&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo Git repository&lt;/a&gt;, there are two ways to install the Hugo site generator on the local machine:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install binary files using one of the common Package Managers&lt;/li&gt;
+&lt;li&gt;Build from the sources&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For this post we will proceed with the binary files’ installation. Since I am using Windows 10 operating system, I used the &lt;a href=&#34;https://chocolatey.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Chocolatey Package Manager&lt;/a&gt;. I installed Chocolatey as an Administrator as described in the &lt;a href=&#34;https://chocolatey.org/install&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;install page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For Mac/Linux users, I recommend working with &lt;a href=&#34;https://brew.sh&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Homebrew&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;After having the package manager installed, we can use a command line to install the Hugo site generator.&lt;/p&gt;
+&lt;h4 id=&#34;windows&#34;&gt;Windows&lt;/h4&gt;
+&lt;p&gt;Open the command line prompt as an Administrator and type:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;choco install hugo -confirm&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;maclinux&#34;&gt;Mac/Linux&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;brew install hugo&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;More instructions for the &lt;a href=&#34;https://gohugo.io/getting-started/installing/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo installation&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;setting-up-the-repository-on-github&#34;&gt;Setting up the repository on GitHub&lt;/h3&gt;
+&lt;p&gt;Since Hugo is pre-generated site and served from a Git repository, we need to create a&lt;/p&gt;
+&lt;figure id=&#34;attachment_354&#34; aria-describedby=&#34;caption-attachment-354&#34; style=&#34;width: 506px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-354&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png&#34; alt=&#34;Create new private repository in GitHub&#34; width=&#34;516&#34; height=&#34;290&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png 516w, https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1-300x169.png 300w&#34; sizes=&#34;(max-width: 516px) 100vw, 516px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-354&#34; class=&#34;wp-caption-text&#34;&gt;Create new private repository in GitHub&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;new repository on GitHub.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;In your web browser, go to &lt;a href=&#34;https://github.com/new&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;a href=&#34;https://github.com/new&#34;&gt;https://github.com/new&lt;/a&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Choose the name for the repository. For this example, we are going to use: myhugoblog&lt;/li&gt;
+&lt;li&gt;Since we are not creating an open source project, but the repository that will contain my blog, we will set the repository to ‘Private’. This step is not mandatory as you can setup the site and the custom domain with public repositories as well.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;heading&#34;&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;heading-1&#34;&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;setting-up-the-local-directory-for-the-site&#34;&gt;Setting up the local directory for the site&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a local directory that will contain the theme and the pre-generated site. For this example, we will use: c:\sites\ directory.&lt;/li&gt;
+&lt;li&gt;Open the command line prompt at c:\sites\ and type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt; git clone https://github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      Note: In some cases, you might get an error that repository does not exists. In such case, try to clone with following url (you will be prompted for the password):&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;&lt;/code&gt; &lt;ul&gt;
+        &lt;li&gt;
+          &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://&amp;lt;user_name&amp;gt;@github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;h3 id=&#34;generate-new-hugo-site&#34;&gt;Generate new Hugo site&lt;/h3&gt;
+&lt;p&gt;At this stage, we have an empty repository connected to our local directory. Now we need to generate the Hugo site.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;In the command line prompt make sure that the current directory is c:\sites\ and type:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo new site myhugoblog --force&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Important note: The root directory of the repository in Git and the root directory of the pre-generated site &lt;span style=&#34;text-decoration: underline;&#34;&gt;must be the same&lt;/span&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;choosing-the-hugo-theme&#34;&gt;Choosing the Hugo theme&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://themes.gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo site generator&lt;/a&gt; has a few hundreds of free themes available. I decided to go with &lt;a href=&#34;https://themes.gohugo.io//theme/bodhi/blog&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Bodhi blog theme&lt;/a&gt;. It is clean, simple and minimalistic. A perfection solution for my new blog.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the zip archive of the theme from the theme repository. In our case, it is &lt;a href=&#34;https://github.com/rhnvrm/bodhi/archive/master.zip&#34;&gt;https://github.com/rhnvrm/bodhi/archive/master.zip&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Extract the zip file to c:\sites&amp;lt;repository_name&amp;gt;\themes. In our case, it’s c:\sites\myhugoblog.&lt;/li&gt;
+&lt;li&gt;Typically, your directory name in the zip file will be: “&amp;lt;theme_name&amp;gt;_master”. Remove the “_master” suffix from the directory name. In our case, we will have “c:\sites\myhugoblog\themes\bodhi” directory.&lt;/li&gt;
+&lt;li&gt;Open the config.toml from the site root directory in the text editor and paste the default configuration of the theme as described in your theme page. Please note that different themes might have different configurations options.
+&lt;ul&gt;
+&lt;li&gt;Make sure you change the baseUrl property to your custom domain url.&lt;/li&gt;
+&lt;li&gt;Make sure you add/change the default publish directory in the config.toml  to:
+&lt;ul&gt;
+&lt;li&gt;publishDir = “docs”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;To run the site locally type the following in your command prompt:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open your browser at http://localhost:1313/ to see the site. Currently it should have only the theme’s default page. (Note that the port might be different. Check the console window for the exact address).&lt;/li&gt;
+&lt;li&gt;If you are happy with the site, press CTRL + X to kill the server.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;deploying-the-site-to-git-repository&#34;&gt;Deploying the site to Git repository&lt;/h3&gt;
+&lt;p&gt;Once we have the site running locally, we need to build it (generate the static pages, links, sitemap) and push it to the remote repository.&lt;/p&gt;
+&lt;p&gt;Open the root directory of the site in the command prompt:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;figure id=&#34;attachment_369&#34; aria-describedby=&#34;caption-attachment-369&#34; style=&#34;width: 258px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-369&#34; src=&#34;https://gotask.net/wp-content/uploads/2021/01/hugo-site-build-console.png&#34; alt=&#34;Build Hugo site console output&#34; width=&#34;268&#34; height=&#34;239&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-369&#34; class=&#34;wp-caption-text&#34;&gt;Build Hugo site console output&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo&lt;/code&gt; to build the site&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Type the following git command to add the new files to the repository, commit and push. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git add .
+git commit -m &amp;quot;Added theme&amp;quot;
+git push origin&lt;/pre&gt;&lt;/p&gt;
+&lt;p&gt;Note that you need to &lt;span style=&#34;text-decoration: underline;&#34;&gt;repeat&lt;/span&gt; this process every time you make &lt;span style=&#34;text-decoration: underline;&#34;&gt;any change&lt;/span&gt; to the site.&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
+&lt;h2 id=&#34;connecting-to-github-pages&#34;&gt;Connecting to GitHub Pages&lt;/h2&gt;
+&lt;p&gt;Once we have the repository set, we need to enable the GitHub Pages capability for our repository.&lt;/p&gt;
+&lt;figure id=&#34;attachment_355&#34; aria-describedby=&#34;caption-attachment-355&#34; style=&#34;width: 597px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-355&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png&#34; alt=&#34;GitHub Pages Settings&#34; width=&#34;607&#34; height=&#34;285&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png 607w, https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain-300x141.png 300w&#34; sizes=&#34;(max-width: 607px) 100vw, 607px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-355&#34; class=&#34;wp-caption-text&#34;&gt;GitHub Pages Settings for Branch and Custom Domain&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ol&gt;
+&lt;li&gt;In your web browser, go the ‘Settings’ page of your repository.&lt;/li&gt;
+&lt;li&gt;At the bottom of the page (make sure you scroll down), you fill find GitHub Pages section.&lt;/li&gt;
+&lt;li&gt;Choose the ‘main’ branch and the ‘/docs’ directory.&lt;/li&gt;
+&lt;li&gt;Click ‘Save’&lt;/li&gt;
+&lt;li&gt;In the ‘Custom Domain’ section, type your domain name (without http/https).&lt;/li&gt;
+&lt;li&gt;Click ‘Save’&lt;/li&gt;
+&lt;li&gt;Note that https (ssl) support comes out of the box, but you will need wait up to 24 hours until your certificate is generated. Make sure ‘Enforce HTTPS ‘ option is checked.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;configuring-your-dns&#34;&gt;Configuring your DNS&lt;/h3&gt;
+&lt;p&gt;The last but not the least part we need to perform is to setup our domain’s DNS settings to work with GitHub pages. I registered my domain via NameCheap domain registrar, but this process can be done from any domain registrar.&lt;/p&gt;
+&lt;p&gt;All we have to do is to setup a few ‘A Records’ and ‘CNAME record’ to work with GitHub pages.&lt;/p&gt;
+&lt;p&gt;In your domain management screen, open your Advanced DNS settings screen.&lt;/p&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ol&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.108.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.109.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.110.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.111.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;CNAME Record&amp;#8217; for @ host with &lt;username&gt;.github.io value.
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/li&gt;
+&lt;figure id=&#34;attachment_350&#34; aria-describedby=&#34;caption-attachment-350&#34; style=&#34;width: 715px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-350&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png&#34; alt=&#34;Namecheap Advanced DNS For GitHub Pages&#34; width=&#34;725&#34; height=&#34;293&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png 725w, https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1-300x121.png 300w&#34; sizes=&#34;(max-width: 725px) 100vw, 725px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-350&#34; class=&#34;wp-caption-text&#34;&gt;Namecheap Advanced DNS For GitHub Pages&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;testing-the-site&#34;&gt;Testing the site&lt;/h3&gt;
+&lt;p&gt;Type your domain in the web browser, the site should appear 🙂&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>MFC Dialog – Get event on the first appearance</title>
+      <link>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</link>
+      <pubDate>Sat, 07 Nov 2020 05:12:49 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/mfc-dialog-get-event-on-the-first-appearance/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Sometimes we still need to maintain some legacy code that was written ages ago. A long time ago, MFC library was the default choice for many programmers wanted to develop a Windows Desktop Application in C++.  Today, there are much better alternatives for the Desktop Applications developments that include: WPF, WinForms, Electron and more. &lt;/p&gt;
+&lt;p&gt;In this post, I am going to show a simple technique of how to get a callback in the CDialog derived class when the dialog is first shown.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;MFC Dialog Based application (32-bit)&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;the-challenge&#34;&gt;The challenge&lt;/h2&gt;
+&lt;p&gt;Consider the following requirement: Show a modal dialog for the user to enter a username and&lt;figure id=&#34;attachment_304&#34; aria-describedby=&#34;caption-attachment-304&#34; style=&#34;width: 357px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-304&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png&#34; alt=&#34;Modal dialog over dialog&#34; width=&#34;367&#34; height=&#34;223&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/form_on_form.png 402w, https://gotask.net/wp-content/uploads/2020/11/form_on_form-300x182.png 300w&#34; sizes=&#34;(max-width: 367px) 100vw, 367px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-304&#34; class=&#34;wp-caption-text&#34;&gt;Modal dialog over dialog in C# Winforms&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;a password, once the main dialog has been first shown. In .NET WinForms, all we have to do is add a handler to &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.shown?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Form.Shown&lt;/a&gt; event and show the modal dialog.   The sample code in C# would look something like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private void Form1_Shown(object sender, EventArgs e)
+{
+  using (var loginDlg = new LoginForm())
+  {
+    loginDlg.ShowDialog(this);
+  }
+}&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;MFC comes with &lt;a href=&#34;https://docs.microsoft.com/en-us/cpp/mfc/reference/cdialog-class?view=msvc-160#oninitdialog&#34;&gt;OnInitDialog&lt;/a&gt; overridable function in case we need to perform some processing during the dialog initialization. Once called, all our controls are already created and have the valid window handle. The problem with OnInitDialog function is that the dialog is not yet been shown to the user. If we attempt to show the modal dialog in the OnInitDialog function of the main dialog, the main dialog will not be shown until we close the second modal dialog. Unfortunately, MFC does not provide us with the dialog “shown” event.&lt;/p&gt;
+&lt;h2 id=&#34;the-solution&#34;&gt;The solution&lt;/h2&gt;
+&lt;p&gt;The main idea is to postpone the second modal dialog creation for after the main dialog has been shown. This means that after OnInitDialog, we will need to get some callback function called and display our second dialog.&lt;/p&gt;
+&lt;p&gt;How do we achieve this? Fortunately, Win32 API enables us to register &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; custom windows messages &lt;/a&gt;for a private window use. We will use the &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-postmessagea&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PostMessage&lt;/a&gt; Win32 API function to post such message to our window’s thread message loop. PostMessage function returns immediately and the message handler would be called asynchronously. &lt;/p&gt;
+&lt;h3 id=&#34;define-the-new-window-message&#34;&gt;Define the new window message&lt;/h3&gt;
+&lt;p&gt;Every window message has it’s own unique number. According to &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-user&#34;&gt;this MSDN article&lt;/a&gt;, we can use messages from WM_USER to 0x7FFF.&lt;/p&gt;
+&lt;p&gt;So lets define the message as:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;#define WM_FIRST_SHOWN WM_USER + 100&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;adding-the-callback-function&#34;&gt;Adding the callback function&lt;/h3&gt;
+&lt;p&gt;In the main dialog class, define the WM_FIRST_SHOWN message handler. It must have the return type of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT&lt;/code&gt; and get &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;WPARAM&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LPARAM&lt;/code&gt; as the function parameters although we are not going to use the parameters in this sample.&lt;/p&gt;
+&lt;p&gt;Place the second dialog creation in the callback’s implementation code.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;LRESULT CMFCDialogOnLoadDlg::OnDialogShown(WPARAM,LPARAM)
+{
+  CLoginDialog dlg;
+  dlg.DoModal();
+  
+  return 0;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-the-message-to-the-message-map&#34;&gt;Adding the message to the message map&lt;/h3&gt;
+&lt;p&gt;We need to bind the message id (WM_FIRST_SHOWN) to the message handler function.&lt;/p&gt;
+&lt;p&gt;Please the following code in your message map:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;ON_MESSAGE(WM_FIRST_SHOWN,OnDialogShown)&lt;/pre&gt;
+&lt;h3 id=&#34;posting-the-messagefigure-idattachment_310-aria-describedbycaption-attachment-310-stylewidth-352px-classwp-caption-alignright&#34;&gt;Posting the message&lt;figure id=&#34;attachment_310&#34; aria-describedby=&#34;caption-attachment-310&#34; style=&#34;width: 352px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-310&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png&#34; alt=&#34;Dialog on dialog in MFC&#34; width=&#34;362&#34; height=&#34;263&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog.png 362w, https://gotask.net/wp-content/uploads/2020/11/dialog_on_dialog-300x218.png 300w&#34; sizes=&#34;(max-width: 362px) 100vw, 362px&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-310&#34; class=&#34;wp-caption-text&#34;&gt;Dialog on dialog in MFC&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Finally, we need to post the WM_FIRST_SHOWN message to the main window’s thread message queue. Place the following code to the end of you OnInitDialog memeber function.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;PostMessage(WM_FIRST_SHOWN);&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;resources&#34;&gt;Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;MFC source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/MFC/MFCDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;C# Source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/Winforms/WindowsFormsDialogOnLoad&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# – VSTO – Extract images from PowerPoint presentation</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-extract-images-from-powerpoint-presentation/</link>
+      <pubDate>Sat, 31 Oct 2020 07:43:24 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-extract-images-from-powerpoint-presentation/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I created a very basic VSTO example that adds a button to the &lt;a href=&#34;https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/&#34;&gt;PowerPoint ribbon&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Recently, I had a task I needed to enumerate all the pictures in the Power Point presentation and extract them into a zip file.&lt;/p&gt;
+&lt;p&gt;Power Point presentation might contain many different shapes, such as rectangles, lines, arrows, textboxes, pictures and more. Each shape might contain a text, but it might also contain a picture. &lt;/p&gt;
+&lt;p&gt;In this post, I am going to show how to extract the images using 2 different techniques:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;PowerPoint COM Interop API&lt;/li&gt;
+&lt;li&gt;Extract directly from ZIP file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;li&gt;PowerPoint Interop DLL version 15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;working-with-powerpoint-c-interop-version-15000&#34;&gt;Working with PowerPoint C# Interop version 15.0.0.0&lt;/h2&gt;
+&lt;h3 id=&#34;step-1-8211-create-a-button&#34;&gt;Step 1 – Create a button&lt;/h3&gt;
+&lt;p&gt;As shown in the previous example, I am adding a button element to the Ribbon XML. This button will have a callback set in the action attribute.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+  &amp;lt;ribbon&amp;gt;
+     &amp;lt;tabs&amp;gt;
+      &amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+        &amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;
+          &amp;lt;button id=&#39;extract_images&#39; label=&#39;Extract Images&#39; size=&#39;large&#39; getImage=&#39;OnGetImage&#39; onAction=&#39;OnExtractImage&#39;/&amp;gt;
+        &amp;lt;/group&amp;gt;
+      &amp;lt;/tab&amp;gt;
+    &amp;lt;/tabs&amp;gt;
+  &amp;lt;/ribbon&amp;gt;
+&amp;lt;/customUI&amp;gt;&lt;/pre&gt;
+&lt;h3 id=&#34;heading&#34;&gt; &lt;/h3&gt;
+&lt;h3 id=&#34;step-2-8211-collect-the-images-from-different-shapes&#34;&gt;Step 2 – Collect the images from different shapes&lt;/h3&gt;
+&lt;p&gt;PowerPoint presentation can store the images in a few shapes types. All the different shape types are represented by &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/office.msoshapetype&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;MsoShapeType&lt;/a&gt; enum.  In order to recognize the Shape type, we are going to use &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.shape.type&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Shape.Type&lt;/a&gt; and &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.shape.placeholderformat&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Shape.PlaceholderFormat.ContainedType&lt;/a&gt; properties: &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Picture –  MsoShapeType.msoPicture or MsoShapeType.msoLinkedPicture&lt;/li&gt;
+&lt;li&gt;Picture contained in a placeholder MsoShapeType.msoPlaceholder&lt;/li&gt;
+&lt;li&gt;Other shapes that might have a &lt;a href=&#34;https://docs.microsoft.com/en-us/office/vba/api/powerpoint.pictureformat&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;PictureFormat&lt;/a&gt; property properly initialized.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the &lt;a href=&#34;https://github.com/eyalmolad/gotask/blob/master/VSTO/PowerPointExtractImages/SamplePresentation.pptx&#34;&gt;sample presentation&lt;/a&gt;, I’ve created a few shapes that contain pictures in different formats.&lt;/p&gt;
+&lt;p&gt;In order to extract the image, I am going to use the PowerPoint Shape &lt;a href=&#34;https://docs.microsoft.com/en-us/previous-versions/office/office-12/ff761596(v=office.12)&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Export&lt;/a&gt; function.&lt;/p&gt;
+&lt;p&gt;In order to choose a directory for saving the images, I am going to use the CommonOpenFileDialog implemented in &lt;a href=&#34;https://www.nuget.org/packages/Microsoft-WindowsAPICodePack-Shell/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Microsoft-WindowsAPICodePack-Shell&lt;/a&gt;. Here is the sample implementation of using a directory picker:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private string GetSaveDir()
+{
+  using (var dialog = new CommonOpenFileDialog())
+  {
+    dialog.IsFolderPicker = true;
+
+    var result = dialog.ShowDialog();
+
+    if (result == CommonFileDialogResult.Ok)
+    {
+      return dialog.FileName;
+    }
+  }
+
+  return null;
+}&lt;/pre&gt;
+&lt;p&gt;The code below iterates over all slides in the presentation and extracts the images from the shapes.&lt;/p&gt;
+&lt;p&gt;Please note the following remarks:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The extracted images are in PNG format using the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PpShapeFormat.ppShapeFormatPNG&lt;/code&gt; enum. You can specify JPG, BMP or other formats defined in the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PpShapeFormat&lt;/code&gt; enum.&lt;/li&gt;
+&lt;li&gt;Pay attention for the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;shape.PictureFormat.CropBottom&lt;/code&gt; check. Generally, every shape has &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;PictureFormat&lt;/code&gt; set to a non-null value. So we can’t count on filtering out the shapes that have this property set to null. The trick is to try to access one of the properties (CropBottom or other). If the exception is thrown, we can skip the object (it’s not a picture).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var i = 1;
+foreach (Slide slide in app.ActivePresentation.Slides)
+{
+  foreach (Shape shape in slide.Shapes)
+  {
+    var doExport = false;
+
+    if (shape.Type == MsoShapeType.msoPicture ||
+      shape.Type == MsoShapeType.msoLinkedPicture)
+    {
+      doExport = true;
+    }
+    else if (shape.Type == MsoShapeType.msoPlaceholder)
+    {
+      if (shape.PlaceholderFormat.ContainedType == MsoShapeType.msoPicture ||
+        shape.PlaceholderFormat.ContainedType == MsoShapeType.msoLinkedPicture)
+      {
+        doExport = true;
+      }
+    }
+    else
+    {
+      try
+      {
+        // this is just a dummy code. In case there is no picture in the
+        // shape, any attempt to read the CropBottom variable will throw 
+        // an exception
+        var test = shape.PictureFormat.CropBottom &amp;gt; -1;
+        doExport = true;
+      }
+      catch
+      {
+        doExport = false;
+      }
+    }
+
+    if(doExport) 
+      shape.Export(Path.Combine(saveDirectory, $&#34;{i++}.png&#34;), PpShapeFormat.ppShapeFormatPNG);
+  }
+}&lt;/pre&gt;
+&lt;p&gt;When running this code on the presentation provided with the project, it should export 4 pictures to the chosen directory. (Picture’s credit: &lt;a href=&#34;https://unsplash.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Unsplash&lt;/a&gt;)&lt;/p&gt;
+&lt;h2 id=&#34;working-with-zip-file-to-extract-the-images&#34;&gt;Working with ZIP file to extract the images&lt;/h2&gt;
+&lt;p&gt;The pptx format is actually a zip file with a well formed structure defined in the Open-XML format. You could open the pptx file with any zip file extractor and look at it’s contents. Fortunately, the pictures are stored in the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;ppt\media&lt;/code&gt; directory within the archive.&lt;/p&gt;
+&lt;p&gt;All I have to do now it to extract the archive and grab the images.&lt;/p&gt;
+&lt;p&gt;I am going to use the .NET &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.io.compression.zipfile?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;ZipFile&lt;/a&gt; class located in System.IO.Compression namespace.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open the pptx file using &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ZipFile.Open&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create a temporary &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;temp_zip&lt;/code&gt; directory to extract the files to&lt;/li&gt;
+&lt;li&gt;Copy the media files&lt;/li&gt;
+&lt;li&gt;Delete the temporary &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;temp_zip&lt;/code&gt; directory&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;private void ExtractWithZip(string pptxFile, string directory)
+{
+  var zipDir = &#34;&#34;;
+
+  using (var arh = ZipFile.Open(pptxFile, ZipArchiveMode.Read))
+  {
+    zipDir = Path.Combine(directory, &#34;temp_zip&#34;);
+    Directory.CreateDirectory(zipDir);
+    arh.ExtractToDirectory(zipDir); // extract
+
+        // iterate over files in the extracted dir.
+    foreach (var f in Directory.GetFiles(Path.Combine(zipDir, @&#34;ppt\media&#34;)))
+      File.Copy(f, Path.Combine(directory, Path.GetFileName(f)));
+  }
+
+  // clean up
+  try
+  {
+    var dirToDelete = new DirectoryInfo(zipDir);
+    dirToDelete.Delete(true);
+  }
+  catch
+  {
+    //
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/PowerPointExtractImages&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# Parsing XML with namespace using LINQ</title>
+      <link>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</link>
+      <pubDate>Sun, 18 Oct 2020 12:58:33 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I wrote about &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;deserializing XML with namespace&lt;/a&gt; using XmlSerializer that requires creating custom model classes in&lt;/p&gt;
+&lt;p&gt;order to perform the serialization. Today, I am going to cover another powerful method for parsing – &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-overview&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;LINQ to XML&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;my-stackfigure-idattachment_269-aria-describedbycaption-attachment-269-stylewidth-277px-classwp-caption-alignright&#34;&gt;My Stack&lt;figure id=&#34;attachment_269&#34; aria-describedby=&#34;caption-attachment-269&#34; style=&#34;width: 277px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-269&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/xml_logo.png&#34; alt=&#34;Xml element tag&#34; width=&#34;287&#34; height=&#34;65&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-269&#34; class=&#34;wp-caption-text&#34;&gt;Xml element tag&lt;/figcaption&gt;&lt;/figure&gt; &lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Core 3.1 / C#&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;implementation&#34;&gt;Implementation&lt;/h2&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading&#34;&gt;Simple LINQ-XML reading&lt;/h3&gt;
+&lt;p&gt;Consider the following XML that contains no namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In order to read the Books elements, we could use the following sample code:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;var root = XElement.Load(&#34;SimpleBooks.xml&#34;);
+
+var books = root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(&#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;Another approach could be taking an advantage of the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/anonymous-types&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;anonymous types&lt;/a&gt; in .NET. The sample code below reads all the books into an anonymous type containing the 3 elements from the XML as read only properties.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;// 2. Convert to anonymous type.
+var books = from book in root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;)
+      select new
+      {
+        Name = book.Element(&#34;Name&#34;).Value,
+        ISBN = book.Element(&#34;ISBN&#34;).Value,
+        Price = book.Element(&#34;Price&#34;).Value
+      };
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Name}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading-with-namespaces&#34;&gt;Simple LINQ-XML reading with namespaces&lt;/h3&gt;
+&lt;p&gt;A quick reminder from the previous article – why do we need &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;namespaces in our XML files&lt;/a&gt;?&lt;/p&gt;
+&lt;p&gt;The short answer would be to prevent any element’s naming conflicts in the same file. Remember, XML files can be very long and complex written by different people, so naming conflicts might be very common. A comparable example could be names of the classes in the C# code – once inside namespace the chance for conflict is very low. To create the uniqueness, we usually use URI’s that we own, but actually the namespace name can be any string. There are more details in this question regarding &lt;a href=&#34;https://softwareengineering.stackexchange.com/questions/122002/why-do-we-need-uris-for-xml-namespaces&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;URI’s and namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For the sample, I am going to add a namespace to the Books element of the XML.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=&#34;https://gotask.net&#34;&lt;/pre&gt;
+&lt;p&gt;So our XML looks like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;        
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Running the previous code on this code will produce no results. The reason is that each element has it’s own fully qualified name once we have a namespace – the element Books is actually &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt;:Books. and our code is searching for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;items.Descendants(&amp;quot;Books&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to correctly parse the file above, we need to specify the namespace using &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.xml.linq.xnamespace?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XNamespace&lt;/a&gt; class in every call for Descendants.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+   Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;nested-namespaces&#34;&gt;Nested namespaces&lt;/h3&gt;
+&lt;p&gt;Consider the following XML, where the Items element is in one namespace, but the Books child element is in other:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books xmlns=&#34;https://books.net&#34;&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In the sample code below, we need to specify both namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace y = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(y + &#34;Books&#34;).Descendants(y + &#34;Book&#34;);
+
+foreach (var book in books)
+    Console.WriteLine($&#34;Book is {book.Element(y + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;multiple-namespaces-with-prefix&#34;&gt;Multiple namespaces with prefix&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML standard&lt;/a&gt; allows us to define multiple namespaces for the same element. Once we define &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=https://somename.net&lt;/code&gt;, we are actually defining a default namespace without a prefix. In order to define another namespace, we need to specify the prefix &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns:bk=https://books.net&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to create child elements that belongs to &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; namespace, we need to declare with &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;bk:book&amp;gt;&amp;lt;/bk:book&amp;gt;&lt;/code&gt;. Elements without the prefix will belong to the default namespace.&lt;/p&gt;
+&lt;p&gt;So lets consider this is our new XML. We have 2 namespaces defined, &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt; is the default one and &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; has the bk prefix.&lt;/p&gt;
+&lt;p&gt;We have one Book element in the bk namespace and the other one in the default.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34; xmlns:bk=&#34;https://books.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;bk:Book&amp;gt;
+        &amp;lt;bk:ISBN&amp;gt;978-1788478120&amp;lt;/bk:ISBN&amp;gt;
+        &amp;lt;bk:Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/bk:Name&amp;gt;
+        &amp;lt;bk:Price&amp;gt;35.99&amp;lt;/bk:Price&amp;gt;
+      &amp;lt;/bk:Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the bk namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace b = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(b + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(b + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the default namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/LinqToXML&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# – Creating an Excel Addin with User Defined Functions</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</link>
+      <pubDate>Wed, 14 Oct 2020 20:00:42 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I demonstrated how to create a simple &lt;a href=&#34;https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;VSTO Addin for Excel&lt;/a&gt; that adds a button on the ribbon. In this post, I am going to show how to add a user defined functions using &lt;a href=&#34;https://excel-dna.net&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Excel-DNA&lt;/a&gt; as well as use the ribbon functionality.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;user-defined-function-udf&#34;&gt;User Defined Function (UDF)&lt;/h2&gt;
+&lt;p&gt;Excel provides a large set of built in functions, giving a user the ability to perform various calculations and manipulations on the data. But what happens if a user needs a custom calculation, that needs to be used over multiple cells? Starting Excel 2002, Microsoft introduced the User Defined Functions. This capability enables you to wrap some common calculation or string manipulation in a function and call it transparently as any other Excel build-in function.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;Lets say we want to reverse a string in a cell. There are lot of examples of how to do that using the Excel built in functions. One of the examples is using &lt;a href=&#34;https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;TEXTJOIN&lt;/a&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;=TEXTJOIN(&#34;&#34;,1,MID(A1,ABS(ROW(INDIRECT(&#34;1:&#34;&amp;LEN(A1)))-(LEN(A1)+1)),1))&lt;/pre&gt;
+&lt;p&gt;Additional techniques could be found &lt;a href=&#34;https://exceljet.net/formula/reverse-text-string&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Much cleaner alternative would be creating a UDF that does this in C# and calling the function from the Excel spreadsheet with:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString(A1)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;creating-an-excel-addin-that-supports-udf&#34;&gt;Creating an Excel Addin that supports UDF&lt;/h2&gt;
+&lt;p&gt;From Visual Studio menu, create a new .NET Framework Class Library project.&lt;/p&gt;
+&lt;h3 id=&#34;installing-dependencies&#34;&gt;Installing dependencies&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to reference the Excel-DNA project that enables us to make native XLL addins using C#. In the Visual Studio Package Manager Console type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;Install-Package ExcelDna.AddIn&lt;/pre&gt;
+&lt;p&gt;Note: After installing the ExcelDna.Addin package, your project extension will be changed to xll which is a format for an addin that adds UDF functionality. You can read more about the &lt;a href=&#34;https://docs.microsoft.com/en-us/office/client-developer/excel/creating-xlls&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XLL addins on MSDN&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;    2. Since we want to create also some visual components and interact will the Excel elements we need to add the reference to: Microsoft.Office.Interop.Excel.dll. This component is usually located in your Office directory.&lt;/p&gt;
+&lt;h3 id=&#34;setting-up-the-control-classes&#34;&gt;Setting up the control classes&lt;/h3&gt;
+&lt;p&gt;Since we want to combine the ExcelDna.Addin and the Ribbon objects, we can’t use the regular VSTO, but need to create the control classes manually.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a class that implements the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ExcelDna.Integration.IExcelAddIn&lt;/code&gt; interface. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public class ExcelRibbonUDFAddin : IExcelAddIn
+{
+public void AutoOpen()
+{
+// startup code
+}&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;public void AutoClose()
+{
+// clean up
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. Create the ribbon controller class that derives from &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;ExcelDna.Integration.CustomUI.ExcelRibbon&amp;lt;/code&amp;gt;base class.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;[ComVisible(true)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;public class RibbonController : ExcelRibbon, IDisposable
+{
+private Microsoft.Office.Core.IRibbonUI _ribbonUi;&lt;/p&gt;
+&lt;p&gt;private Application App
+{
+get =&amp;gt; (Application)ExcelDnaUtil.Application;
+}&lt;/p&gt;
+&lt;p&gt;public override string GetCustomUI(string ribbonID) =&amp;gt;
+@&amp;quot;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+&amp;lt;ribbon&amp;gt;
+&amp;lt;tabs&amp;gt;
+&amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+&amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;                                     &lt;br&gt;
+&amp;lt;button id=&#39;do_reverse_range&#39; label=&#39;Reverse&#39; size=&#39;large&#39; getImage=&#39;OnDoReverseGetImage&#39; onAction=&#39;OnDoReverse&#39;/&amp;gt;
+&amp;lt;/group&amp;gt;
+&amp;lt;/tab&amp;gt;
+&amp;lt;/tabs&amp;gt;
+&amp;lt;/ribbon&amp;gt;
+&amp;lt;/customUI&amp;gt;&amp;quot;;&lt;/p&gt;
+&lt;p&gt;public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
+{
+_ribbonUi = ribbonUI;       &lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;public void Dispose()
+{         &lt;br&gt;
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;amp;nbsp;
+
+a) ExcelDnaUtil.Application returns the Excel Application object instance. b) GetCustomUI returns the Ribbon XML string. You can find the full specification regarding the 
+
+&amp;lt;a href=&amp;quot;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&amp;quot; target=&amp;quot;_blank&amp;quot; rel=&amp;quot;noopener noreferrer&amp;quot;&amp;gt;Ribbon XML format on MSDN&amp;lt;/a&amp;gt;.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;adding-the-udf-functionality&#34;&gt;Adding the UDF functionality&lt;/h3&gt;
+&lt;p&gt;Create a new static class that will contain the Reverse string function implementation. Make sure that you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;ExcelFunction&lt;/code&gt;attribute to it.&lt;/p&gt;
+&lt;p&gt;Every time you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt;to any cell in the Excel, this function will be called.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public static class CustomFunctions
+{
+  [ExcelFunction(Description = &#34;Reverse string function&#34;)]
+  public static string ReverseString(string str)
+  {
+    var charArray = str.ToCharArray();
+    Array.Reverse(charArray);
+    return new string(charArray);
+  }
+}&lt;/pre&gt;
+&lt;h3 id=&#34;testing-the-project&#34;&gt;Testing the project&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Build the project and run it in Debug mode. This should open the Excel application with the addin loaded.&lt;figure id=&#34;attachment_249&#34; aria-describedby=&#34;caption-attachment-249&#34; style=&#34;width: 230px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-249&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/reverse-string-excel-e1602775342176.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;240&#34; height=&#34;228&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-249&#34; class=&#34;wp-caption-text&#34;&gt;Excel functions intellisense&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Go to some cell and type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt; passing a reference to a cell or hard coded string.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Your target cell should contain the reversed string. Since you are running in the debug mode, you can always set a breakpoint in the ReverseString function.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;adding-the-reverse-function-to-an-existing-range&#34;&gt;Adding the reverse function to an existing range&lt;/h2&gt;
+&lt;p&gt;After we built the basic sample, we can connect it to a button on the ribbon that reverses the string of the selected range and inserts the results to the new column.&lt;/p&gt;
+&lt;p&gt;For this, we need to implement the ribbon button action function in the Ribbon Controller class:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void OnDoReverse(Microsoft.Office.Core.IRibbonControl control)
+{
+  var selectedRange = App.Selection;
+
+  if (selectedRange == null) return;
+
+  foreach (Range cell in selectedRange)
+  {
+    var next = cell.Offset[0, 1];
+    next.Formula = $&#34;=ReverseString({cell.Address})&#34;;
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/UDF/ExcelRibbonUDF&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;figure id=&#34;attachment_254&#34; aria-describedby=&#34;caption-attachment-254&#34; style=&#34;width: 290px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-254 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/image_2020-10-15_184255-e1602780284748.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;300&#34; height=&#34;294&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-254&#34; class=&#34;wp-caption-text&#34;&gt;Reverse string in Excel Result&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# – How to add or remove items from Windows recent files</title>
+      <link>https://gotask.net/programming/c-sharp-how-to-add-or-remove-items-from-windows-recent-files/</link>
+      <pubDate>Sat, 02 May 2020 23:19:51 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/c-sharp-how-to-add-or-remove-items-from-windows-recent-files/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Starting Windows 7, Microsoft added a capability for displaying recently used files. This usually includes documents, pictures, and movies we’ve recently accessed. These files can be seen in various Windows components, including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Recent files&lt;/li&gt;
+&lt;li&gt;Recent items&lt;/li&gt;
+&lt;li&gt;Start menu or application’s Jump List&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The management of the listed files is done by the operating system.&lt;/p&gt;
+&lt;p&gt;In this post, I will show how to programmatically add and remove items from the Recent files list using C#.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;Console application built on .NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;I created a helper class that uses Windows Shell API &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shaddtorecentdocs&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;SHAddToRecentDocs&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Imported the function using PInvoke.&lt;/li&gt;
+&lt;li&gt;Added 2 functions:
+&lt;ul&gt;
+&lt;li&gt;AddFile -&amp;gt; adds the file to Recent files view.&lt;/li&gt;
+&lt;li&gt;ClearAll -&amp;gt; clears all files from Recent files view.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public static class RecentDocsHelpers
+{
+  public enum ShellAddToRecentDocsFlags
+  {
+    Pidl = 0x001,
+    Path = 0x002,
+    PathW = 0x003
+  }
+
+  [DllImport(&#34;shell32.dll&#34;, CharSet = CharSet.Unicode)]
+  private static extern void SHAddToRecentDocs(ShellAddToRecentDocsFlags flag, string path);
+
+  public static void AddFile(string path)
+  {
+    SHAddToRecentDocs(ShellAddToRecentDocsFlags.PathW, path);
+  }
+
+  public static void ClearAll()
+  {
+    SHAddToRecentDocs(ShellAddToRecentDocsFlags.Pidl, null);
+  }
+}&lt;/pre&gt;
+&lt;h3 id=&#34;usage&#34;&gt;Usage&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;class Program
+{
+  static void Main(string[] args)
+  {
+    RecentDocsHelpers.ClearAll();
+
+    // add c:\temp\sample.json to recent files.
+    RecentDocsHelpers.AddFile(@&#34;c:\temp\sample.json&#34;);
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;limitation&#34;&gt;Limitation&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;You can not add executable files to Recent files.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;result&#34;&gt;Result&lt;/h2&gt;
+&lt;figure id=&#34;attachment_231&#34; aria-describedby=&#34;caption-attachment-231&#34; style=&#34;width: 790px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-231&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/05/windows-recent-files-added-e1588421810539.png&#34; alt=&#34;Windows recent files&#34; width=&#34;800&#34; height=&#34;261&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-231&#34; class=&#34;wp-caption-text&#34;&gt;Windows recent files&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/Utils/RecentFiles&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Serialize and Deserialize array in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</link>
+      <pubDate>Tue, 28 Apr 2020 18:56:46 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In my previous article, I covered &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;serializing/deserializing JSON&lt;/a&gt; in C++ to a simple object using &lt;a href=&#34;https://rapidjson.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When working with JSON, my goal is to work always with object models and keep the actual JSON parsing behind the scenes. This keeps the readability and maintainability of the code as JSON manipulation, type checking and exception handling is done is a single class and not across the entire application. This also enables a future replacement of the JSON parsing library without the need to change the code of the entire application.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;I am going to use the same C++ Console Application from the previous post about &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;JSON Serialization in C++&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;My JSON will be an array of products in an inventory. Here is the sample of 3 products in inventory:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;[
+  {
+    &#34;id&#34;: 1,
+    &#34;name&#34;: &#34;Bush Somerset Collection Bookcase&#34;,
+    &#34;category&#34;: &#34;Furniture&#34;,
+    &#34;sales&#34;: 22.0
+  },
+  {
+    &#34;id&#34;: 2,
+    &#34;name&#34;: &#34;Mitel 5320 IP Phone VoIP phone&#34;,
+    &#34;category&#34;: &#34;Technology&#34;,
+    &#34;sales&#34;: 907.1519775390625
+  },
+  {
+    &#34;id&#34;: 3,
+    &#34;name&#34;: &#34;Poly String Tie Envelopes&#34;,
+    &#34;category&#34;: &#34;Office Supplies&#34;,
+    &#34;sales&#34;: 3.2639999389648439
+  }
+]&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-object-models&#34;&gt;Creating the object models&lt;/h2&gt;
+&lt;p&gt;For the single product, we used the following object model:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We added member variable for every JSON property with the correct type (id, name, sales, category)&lt;/li&gt;
+&lt;li&gt;Implemented getters/setters&lt;/li&gt;
+&lt;li&gt;Implemented Serialize and Deserialize functions&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Product : public JSONBase
+  {
+  public:
+    Product();		
+    virtual ~Product();			
+
+    virtual bool Deserialize(const rapidjson::Value&amp; obj);
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+    // Getters/Setters.
+    const std::string&amp; Name() const { return _name; }
+    void Name(const std::string&amp; name) { _name = name; }
+
+    const std::string&amp; Category() const { return _category; }
+    void Category(const std::string&amp; category) { _category = category; }
+
+    float Sales() const { return _sales; }
+    void Sales(float sales) { _sales = sales; }
+
+    int Id() const { return _id; }
+    void Id(int id) { _id = id; }		
+  private:
+    std::string _name;
+    std::string _category;
+    float _sales;
+    int _id;
+  };	
+}&lt;/pre&gt;
+&lt;p&gt;In the next step, we need to create a class that will hold a list of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;Product&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Products : public JSONBase
+  {
+  public:		
+    virtual ~Products() {};
+    virtual bool Deserialize(const std::string&amp; s);		
+
+    // Getters/Setters.
+    std::list&amp;lt;Product&amp;gt;&amp; ProductsList() { return _products; }
+  public:
+    virtual bool Deserialize(const rapidjson::Value&amp; obj) { return false; };
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+  private:
+    std::list&amp;lt;Product&amp;gt; _products;
+  };
+}&lt;/pre&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by JSONBase class once the object is being serialized. Our list is stored in the memory, so we need to write it to the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In this code, we iterate over all Product in our &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;_product&lt;/code&gt; list and call for Serialize function of the Product class.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const
+{
+  writer-&amp;gt;StartArray();
+
+     for (std::list&amp;lt;Product&amp;gt;::const_iterator it = _products.begin(); it != _products.end(); it++)
+     {
+        (*it).Serialize(writer);
+     }
+  writer-&amp;gt;EndArray();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with JSON string parameter.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to call for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;InitDocument&lt;/code&gt; function to parse the string&lt;/li&gt;
+&lt;li&gt;Once the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;doc&lt;/code&gt; object is initialized, we need to iterate over all JSON objects, call for Deserialize and finally add to _products list.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Deserialize(const std::string&amp; s)
+{
+  rapidjson::Document doc;
+  if (!InitDocument(s, doc))
+    return false;
+
+  if (!doc.IsArray())
+    return false;
+
+  for (rapidjson::Value::ConstValueIterator itr = doc.Begin(); itr != doc.End(); ++itr)
+  {
+    Product p;
+    p.Deserialize(*itr);
+    _products.push_back(p);
+  }
+
+  return true;
+}&lt;/pre&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;h3 id=&#34;loading-json-array-from-file&#34;&gt;Loading JSON array from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// load json array
+JSONModels::Products products;
+products.DeserializeFromFile(&#34;DataSampleArray.json&#34;);
+
+for (std::list&amp;lt;JSONModels::Product&amp;gt;::const_iterator it = products.ProductsList().begin();
+  it != products.ProductsList().end(); it++)
+{
+  // print some values.
+  printf(&#34;Name:%s, Sales:%.3f&#34;, (*it).Name().c_str(), (*it).Sales());
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-a-new-object-to-the-existing-list&#34;&gt;Adding a new object to the existing list&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// add new product
+JSONModels::Product newProduct;
+newProduct.Id(101);
+newProduct.Name(&#34;Global Value Mid-Back Manager&#39;s Chair, Gray&#34;);
+newProduct.Category(&#34;Furniture&#34;);
+newProduct.Sales(213.115f);    
+products.ProductsList().push_back(product);&lt;/pre&gt;
+&lt;h3 id=&#34;saving-the-list-to-a-new-file&#34;&gt;Saving the list to a new file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// save to new array file.
+products.SerializeToFile(&#34;DataSampleArrayNew.json&#34;)&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>How to set the focus during loading to a control in WinForms</title>
+      <link>https://gotask.net/programming/winforms/how-to-set-a-focus-to-a-control-in-winforms-during-loading/</link>
+      <pubDate>Thu, 16 Apr 2020 18:13:46 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/winforms/how-to-set-a-focus-to-a-control-in-winforms-during-loading/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Usually when creating forms with different controls, we would like the form be opened with a specific control in focus. This is usually true for Textboxes, but could be also very relevant for other controls such as ComboBox, Radio control, Listbox, and more. There are several ways to achieve this functionality with a very little of coding.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;WinForms application built on .NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;solutions&#34;&gt;Solutions&lt;/h2&gt;
+&lt;figure id=&#34;attachment_216&#34; aria-describedby=&#34;caption-attachment-216&#34; style=&#34;width: 490px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-216 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1.png&#34; alt=&#34;Windows Form in sample controls&#34; width=&#34;500&#34; height=&#34;303&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1.png 500w, https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1-300x182.png 300w&#34; sizes=&#34;(max-width: 500px) 100vw, 500px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-216&#34; class=&#34;wp-caption-text&#34;&gt;Windows Form in sample controls&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;1-default-behavior-8211-the-lowest-tabindex&#34;&gt;#1 Default behavior – the lowest TabIndex&lt;/h3&gt;
+&lt;p&gt;By default, Windows will set the initial focus to the control with the lowest &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;TabIndex&lt;/code&gt; value.&lt;/p&gt;
+&lt;h3 id=&#34;2-setting-the-active-control-property&#34;&gt;#2 Setting the active control property&lt;/h3&gt;
+&lt;p&gt;A &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Form&lt;/code&gt; inherited class contains the inherited property &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ActiveControl&lt;/code&gt; of type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Control&lt;/code&gt;. As all Windows UI elements inherit from a Control, setting this reference to one of our controls in the Load event handler will automatically make it focused once the dialog is first shown.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;private void Form1_Load(object sender, EventArgs e)
+{
+  ActiveControl = textBox1;
+}&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;Note that the control must have the following properties set to True value:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visible&lt;/li&gt;
+&lt;li&gt;Enabled&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In case the one of the properties above is False, the focused control will be the next control according to the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;TabIndex.&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;3-calling-the-focus-member-function&#34;&gt;#3 Calling the Focus() member function&lt;/h3&gt;
+&lt;p&gt;I mentioned before that all Windows UI elements are inherited from the Control class. This class provides us the Focus() member function.&lt;/p&gt;
+&lt;p&gt;We can use this function to capture the focus to a specific control, but unfortunately it will not work in &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.load?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Load&lt;/a&gt; event handler. The reason is that we can not set focus to a control that haven’t been rendered (shown).&lt;/p&gt;
+&lt;p&gt;However, WinForms provides us the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.shown?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Show&lt;/a&gt; event that occurs whenever the form is first displayed. In the event handler, we can call for Focus function as shown in the code below:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;private void Form1_Shown(object sender, EventArgs e)
+{
+  textBox1.Focus();
+}&lt;/pre&gt;
+&lt;h3 id=&#34;4-calling-the-select-member-function&#34;&gt;#4 Calling the Select() member function&lt;/h3&gt;
+&lt;p&gt;Looking at the &lt;a href=&#34;https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/Control.cs,6c9dc153b2c496ae&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;source code of Control.cs class&lt;/a&gt;, calling the Select function without parameters is similar to setting the ActiveControl.&lt;/p&gt;
+&lt;h2 id=&#34;heading&#34;&gt;&lt;/h2&gt;
+&lt;p&gt; &lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>How to manually setup MySQL server on Windows</title>
+      <link>https://gotask.net/tutorials/how-to-manually-setup-mysql-on-windows/</link>
+      <pubDate>Sun, 12 Apr 2020 19:25:09 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/how-to-manually-setup-mysql-on-windows/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;figure id=&#34;attachment_198&#34; aria-describedby=&#34;caption-attachment-198&#34; style=&#34;width: 381px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-198&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs.png&#34; alt=&#34;MySql installer hangs&#34; width=&#34;391&#34; height=&#34;146&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs.png 391w, https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs-300x112.png 300w&#34; sizes=&#34;(max-width: 391px) 100vw, 391px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-198&#34; class=&#34;wp-caption-text&#34;&gt;MySql installer hangs&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Recently I tried to install MySQL server on my Windows 10 development machine.&lt;/p&gt;
+&lt;p&gt;First, I tried the MSI installer which is available from &lt;a href=&#34;https://dev.mysql.com/downloads/mysql/5.7.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;MySql Community Downloads&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;as both 32-bit and 64-bit editions.&lt;/p&gt;
+&lt;p&gt;Unfortunately, after running the installer, it kept hanging in the middle of the setup as shown in the picture.&lt;/p&gt;
+&lt;p&gt;I could’t find the solution for this, so I decided to try to manually setup and configure MySql.&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;li&gt;MySql Server Community Edition 5.7.29&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;heading&#34;&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;downloading-the-binary-zipped-version&#34;&gt;Downloading the binary zipped version&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Go to the MySql developers site and download the latest zipped version  – (Windows (x86, 64-bit), ZIP Archive)
+&lt;figure id=&#34;attachment_199&#34; aria-describedby=&#34;caption-attachment-199&#34; style=&#34;width: 464px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-199&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-directory.png&#34; alt=&#34;My Sql directory&#34; width=&#34;474&#34; height=&#34;188&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-directory.png 827w, https://gotask.net/wp-content/uploads/2020/04/my-sql-directory-300x119.png 300w, https://gotask.net/wp-content/uploads/2020/04/my-sql-directory-768x305.png 768w&#34; sizes=&#34;(max-width: 474px) 100vw, 474px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-199&#34; class=&#34;wp-caption-text&#34;&gt;My Sql directory in Windows Explorer&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In case you have a 32-bit operating system, download Windows (x86, 32-bit), ZIP Archive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Extract the zip archive into a new folder. In this case, I am extracting to c:\MySql.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pay attention to extract the files into the main c:\MySql directory as shown in the picture.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Looking at the c:\MySql\bin directory, we can find a few important executables&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mysqld.exe – this is the actual database server that will accept connections from clients. It listens by default for requests from port 3306. (the suffix letter ‘d’ is for daemon or service).&lt;/li&gt;
+&lt;li&gt;mysql.exe – this is the command line client that can be used to view/create/edit the databases and the tables.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;initializing-the-database&#34;&gt;Initializing the database&lt;/h2&gt;
+&lt;p&gt;Before staring the database building process, we need to open the Windows Command Prompt with the Administrator privileges.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First thing we need to do is to initialize the MySql database on our machine. It will create the ‘data’ folder and setup the system tables.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In the command prompt, change the directory to c:\MySql\bin and type the following command:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysqld.exe --console --initialize&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;If the command succeeded, the new folder ‘data’ should be created at the root directory folder. (c:\MySql\Data).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pay attention to the command prompt as the command provided the default username (root@localhost) and the password. I recommend copying the password to a notepad file.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Alternatively, you could use the same initialize command without the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;--console&lt;/code&gt; switch. In this case, the output will be written to the log file located in the data directory (you_computer_name.err).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run the server via command line:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysqld.exe --console&lt;/code&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;The console window should show an output similar to the one shown in the picture.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      The server should be listening on port 3306.
+    &lt;/li&gt;
+    &lt;li&gt;
+      You should see &amp;#8220;mysqld.exe: ready for connections&amp;#8221;.
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;p&gt;Important: Don’t close this console window as it will close the server and we will not be able to connect with clients.&lt;/p&gt;
+&lt;figure id=&#34;attachment_205&#34; aria-describedby=&#34;caption-attachment-205&#34; style=&#34;width: 590px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-205 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sqld-running-e1586541089671.png&#34; alt=&#34;MySql ready for connections&#34; width=&#34;600&#34; height=&#34;215&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-205&#34; class=&#34;wp-caption-text&#34;&gt;MySql server ready for connections&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;connecting-to-the-database&#34;&gt;Connecting to the database&lt;/h2&gt;
+&lt;p&gt;Now that we have the system tables setup and created the root user, we can try connecting to the database.&lt;/p&gt;
+&lt;h3 id=&#34;connecting-via-command-line&#34;&gt;Connecting via command line&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Open another command line window (don’t close the mysqld) and change the directory to c:\MySql\bin.
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysql.exe -u root -p&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once prompted, type the password you previously saved.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You should see mysql command prompt as shown in the picture.&lt;/p&gt;
+&lt;figure id=&#34;attachment_204&#34; aria-describedby=&#34;caption-attachment-204&#34; style=&#34;width: 490px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-204&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-welcome-screen-e1586540996861.png&#34; alt=&#34;Mysql welcome screen&#34; width=&#34;500&#34; height=&#34;308&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-204&#34; class=&#34;wp-caption-text&#34;&gt;My sql command line tool welcome screen&lt;/figcaption&gt;&lt;/figure&gt;&lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; 
+&lt;ul&gt;
+&lt;li&gt;Now lets try to execute a simple SQL statement like:&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;sql&#34;&gt;show databases;&lt;/code&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      Here we get a pretty annoying message that we need to change the password before we execute such statements.
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;em&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.&lt;/code&gt;&lt;/em&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;h3 id=&#34;changing-the-password&#34;&gt;Changing the password:&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;In the same command prompt, type (pay attention to the quotes and the semi-colon at the end of the statement):
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;sql&#34;&gt;alter user &#39;root&#39;@&#39;localhost&#39; identified by &#39;12345&#39;;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You should get the confirmation message: &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;Query OK, 0 rows affected (0.00 sec)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;In order to test the new password, type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;quit&lt;/code&gt; in the mysql prompt to exit to the Windows command prompt. Now repeat the step 1 and login with the new password.&lt;/li&gt;
+&lt;li&gt;Repeat the step 2 to show the databases. You should get a list of system databases on your server.
+&lt;figure id=&#34;attachment_203&#34; aria-describedby=&#34;caption-attachment-203&#34; style=&#34;width: 312px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-203&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/show-databases.png&#34; alt=&#34;Show databases on mysql&#34; width=&#34;322&#34; height=&#34;272&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/show-databases.png 322w, https://gotask.net/wp-content/uploads/2020/04/show-databases-300x253.png 300w&#34; sizes=&#34;(max-width: 322px) 100vw, 322px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-203&#34; class=&#34;wp-caption-text&#34;&gt;Show databases on mysql server&lt;/figcaption&gt;&lt;/figure&gt;&lt;/li&gt; &lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;amp;nbsp;
+        
+## Running the server
+        
+Now that we have a database created and the server binaries&amp;amp;#8217; set, we probably want to set the server running in the background when the Windows machine boots.
+        
+### Installing as a Windows Service
+        
+  1. Quit the mysqld process by pressing CTRL+X in the command prompt window.
+  2. In the command line, type: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;mysqld.exe --install&amp;lt;/code&amp;gt;
+  3. You should get a confirmation message: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;shell&amp;quot;&amp;gt;Service successfully installed.&amp;lt;/code&amp;gt;
+  4. In order to start the service, type: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;net start MySql&amp;lt;/code&amp;gt;
+        
+### Running as a Console Application
+        
+In case you dont want to install MySql as a Windows service, you can run it as a console application in the logon process. Note that MySql will not run until you logon on to the machine.
+        
+  1. In Windows Files Explorer, type &amp;amp;#8220;C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup&amp;amp;#8221; in the address bar. This will open the Windows startup folder that includes exe/bat files that will automatically run when the user is logged on.
+  2. Create a new bat file, runmysql.bat.
+  3. Put the following line in the file: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;call c:\MySql\bin\mysqld --console&amp;lt;/code&amp;gt;
+        
+Note that you can not run both, the server and the console application simultaneously unless you change the MySql listening port.
+        
+## Wrapping up
+        
+I found this manual process very easy and intuitive, so I dont see a reason to use the installer for MySql anymore.
+        
+In the following posts, I will explain more about MySql configuration, logging, permissions and more.&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Serialize and Deserialize object in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</link>
+      <pubDate>Wed, 08 Apr 2020 20:12:03 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In one of my projects in C++, I had to work with an input in JSON format as we were using Django Web API that produces a JSON response for REST API calls.&lt;/p&gt;
+&lt;p&gt;Parsing the JSON format in C++ should be easy with the open source libraries such as &lt;a href=&#34;https://rapidjson.org&#34;&gt;RapidJSON&lt;/a&gt;, &lt;a href=&#34;https://github.com/nlohmann/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;nlohmann/jsonm&lt;/a&gt;, &lt;a href=&#34;https://github.com/CPPAlliance/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Boost.JSON.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;My goal was to work with strongly-typed objects and keep the parsing behind the scenes.&lt;/p&gt;
+&lt;p&gt;Such task sounds trivial if you work in C# or other programming language that supports reflection, but in C++ it requires a bit more work.&lt;/p&gt;
+&lt;p&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub.&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;In Visual Studio, create a new Console Application in C++. It can be both, 32-bit or 64-bit.&lt;/li&gt;
+&lt;li&gt;In Windows Explorer, open the root folder of the project in command line prompt.&lt;/li&gt;
+&lt;li&gt;Clone the RapidJSON repository using the following command line:
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+ &lt;ul&gt;
+   &lt;li&gt;
+     &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://github.com/Tencent/rapidjson.git&lt;/code&gt;
+   &lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;/li&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;I am going to use a very simple JSON  that represents a product in an inventory. It has a few properties of different types: &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;json&#34;&gt;{
+&amp;quot;id&amp;quot;: 9,
+&amp;quot;name&amp;quot;: &amp;quot;Bush Somerset Collection Bookcase&amp;quot;,
+&amp;quot;category&amp;quot;: &amp;quot;Furniture&amp;quot;,
+&amp;quot;sales&amp;quot;:122.0
+}&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;creating-the-object-model&#34;&gt;Creating the object model&lt;/h2&gt;
+&lt;p&gt;As I mentioned before, in the serialize/deserialize process I want to be able to work with classes with strongly typed members and accessors functions.&lt;/p&gt;
+&lt;p&gt;For this purpose, I created an abstract base class &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONBase&lt;/code&gt; that provides following capabilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Document parsing using RapidJSON&lt;/li&gt;
+&lt;li&gt;Serializing to file and Deserializing from file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Inheriting from JSONBase requires an implementation of Serialize and Deserialize pure virtual functions.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class JSONBase
+{
+public:	
+  bool DeserializeFromFile(const std::string&amp; filePath);
+  bool SerializeToFile(const std::string&amp; filePath);	
+
+  virtual std::string Serialize() const;
+  virtual bool Deserialize(const std::string&amp; s);
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj) = 0;
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const = 0;
+protected:
+  bool InitDocument(const std::string &amp; s, rapidjson::Document &amp;doc);
+};&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-product-class&#34;&gt;Creating the Product class&lt;/h2&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class Product : public JSONBase
+{
+public:
+  Product();		
+  virtual ~Product();			
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj);
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+  // Getters/Setters.
+  const std::string&amp; Name() const { return _name; }
+  void Name(const std::string&amp; name) { _name = name; }
+
+  const std::string&amp; Category() const { return _category; }
+  void Category(const std::string&amp; category) { _category = category; }
+
+  float Sales() const { return _sales; }
+  void Sales(float sales) { _sales = sales; }
+
+  int Id() const { return _id; }
+  void Id(int id) { _id = id; }		
+private:
+  std::string _name;
+  std::string _category;
+  float _sales;
+  int _id;
+};&lt;/pre&gt;
+&lt;p&gt;As my goal is to work with objects and not JSON, we need following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a class that derives from JSONBase that represents a Product.&lt;/li&gt;
+&lt;li&gt;Add member variables to the class. (id, name, category, sales)&lt;/li&gt;
+&lt;li&gt;Add Getters/Setters for member variables.&lt;/li&gt;
+&lt;li&gt;Implement the pure virtual functions Serialize and Deserialize&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by the JSON base class passing the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt; pointer. We need to write the property names and values to the buffer.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt; * writer) const
+{
+  writer-&amp;gt;StartObject();
+
+    writer-&amp;gt;String(&#34;id&#34;); // create Id property
+    writer-&amp;gt;Int(_id);     // write the Id value from the object instance
+
+    writer-&amp;gt;String(&#34;name&#34;);
+    writer-&amp;gt;String(_name.c_str());
+
+    writer-&amp;gt;String(&#34;category&#34;);
+    writer-&amp;gt;String(_category.c_str());
+
+    writer-&amp;gt;String(&#34;sales&#34;);
+    writer-&amp;gt;Double(_sales);
+
+  writer-&amp;gt;EndObject();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with the current object being parsed. We need to call the setter functions of our object to update the value from JSON.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Deserialize(const rapidjson::Value &amp; obj)
+{
+  Id(obj[&#34;id&#34;].GetInt());
+  Name(obj[&#34;name&#34;].GetString());
+  Category(obj[&#34;category&#34;].GetString());
+  Sales(obj[&#34;sales&#34;].GetFloat());
+
+  return true;
+}&lt;/pre&gt;
+&lt;p&gt;Notice that you should access every property with the correct type.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;int – GetInt()&lt;/li&gt;
+&lt;li&gt;int64 – GetInt64()&lt;/li&gt;
+&lt;li&gt;string – GetString()&lt;/li&gt;
+&lt;li&gt;float – GetFloat()&lt;/li&gt;
+&lt;li&gt;double – GetDouble()&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check this section in &lt;a href=&#34;https://rapidjson.org/md_doc_tutorial.html#QueryNumber&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON tutorial&lt;/a&gt; for more info about the supported types.&lt;/p&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;p&gt;After we’ve done all the hard work with defining the classes, the usage is very straight forward:&lt;/p&gt;
+&lt;h3 id=&#34;loading-json-from-file&#34;&gt;Loading JSON from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);
+printf(&#34;Name:%s, Sales:%.3f&#34;, product.Name().c_str(), product.Sales());&lt;/pre&gt;
+&lt;h3 id=&#34;loading-json-from-file-changing-values-to-writing-back-to-file&#34;&gt;Loading JSON from file, changing values to writing back to file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);            
+product.Sales(product.Sales() + 100.0f); // increase the sales by 100
+product.SerializeToFile(&#34;DataSampleNew.json&#34;);&lt;/pre&gt;
+&lt;p&gt;In the next article, I am going to cover serializing/deserialzing JSON arrays in C++.&lt;/p&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Reverse list elements in C#</title>
+      <link>https://gotask.net/programming/reverse-list-elements-in-c-sharp/</link>
+      <pubDate>Mon, 06 Apr 2020 22:15:04 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/reverse-list-elements-in-c-sharp/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;.NET core provides a generics class List to store a strongly types objects that can be accessed by index.&lt;/p&gt;
+&lt;p&gt;This class provides us with many methods to add, remove, access, sort or manipulate the objects within the list.&lt;/p&gt;
+&lt;p&gt;In this sample, I am going to demonstrate the following &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Reverse&lt;/code&gt; options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reverse using the System.Collections.Generic List’s methods.&lt;/li&gt;
+&lt;li&gt;Reverse using Linq method&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;code-samples&#34;&gt;Code Samples&lt;/h2&gt;
+&lt;h3 id=&#34;list-initialization&#34;&gt;List Initialization&lt;/h3&gt;
+&lt;p&gt;I am going to create a list of integers and set the values using a collection initializer.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var list = new List&amp;lt;int&amp;gt;
+{
+    1, 5, 6, 7, 9, 10, 99, 777
+};&lt;/pre&gt;
+&lt;p&gt;Note that using a collection initializer as shown above produces the same code as separately using the Add function multiple times:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var list = new List&amp;lt;int&amp;gt;();
+list.Add(1);
+list.Add(5);
+list.Add(6);
+list.Add(7);
+list.Add(9);
+list.Add(10);
+list.Add(99);
+list.Add(777);&lt;/pre&gt;
+&lt;p&gt;Printing to console the original list, produces the following output:&lt;/p&gt;
+&lt;figure id=&#34;attachment_187&#34; aria-describedby=&#34;caption-attachment-187&#34; style=&#34;width: 206px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-187&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/original-list-int.png&#34; alt=&#34;In-place reverse output&#34; width=&#34;216&#34; height=&#34;228&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-187&#34; class=&#34;wp-caption-text&#34;&gt;Original list of items sample output&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;reverse-using-listt-reverse-methods&#34;&gt;Reverse using List&lt;T&gt; Reverse Methods&lt;/h3&gt;
+&lt;p&gt;The name of the method is self-explanatory – it reverses the order of the elements in the list.&lt;/p&gt;
+&lt;p&gt;&lt;span style=&#34;text-decoration: underline;&#34;&gt;Important note:&lt;/span&gt; The Reverse methods are reversing the list in-place, meaning your original List object is being changed.&lt;/p&gt;
+&lt;p&gt;The Reverse  method has 2 overloads:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reverse(void) – Reverses the all the elements in the given list&lt;/li&gt;
+&lt;li&gt;Reverse(int, int) – Reverses the order of the elements in the specified range&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;full-reverse-in-place&#34;&gt;Full reverse in-place&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;figure id=&#34;attachment_188&#34; aria-describedby=&#34;caption-attachment-188&#34; style=&#34;width: 217px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-188&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/reversed-full-list-int.png&#34; alt=&#34;Reverset in place list c#&#34; width=&#34;227&#34; height=&#34;253&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-188&#34; class=&#34;wp-caption-text&#34;&gt;Reverse full list in C#&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h4 id=&#34;partial-reverse-in-place&#34;&gt;Partial reverse in-place&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.Reverse(0, 3)&lt;/code&gt;&lt;/p&gt;
+&lt;figure id=&#34;attachment_189&#34; aria-describedby=&#34;caption-attachment-189&#34; style=&#34;width: 284px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-189&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/reversed-first-3-items-int.png&#34; alt=&#34;3 Items reversed c#&#34; width=&#34;294&#34; height=&#34;223&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-189&#34; class=&#34;wp-caption-text&#34;&gt;Reverse first 3 items in C# List&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;reverse-using-linq-reverse-method&#34;&gt;Reverse using Linq Reverse Method&lt;/h3&gt;
+&lt;p&gt;In case your wish to keep the original list unchanged, the following Linq code will create another list with reversed items:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.AsEnumerable().Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This is also available as query syntax:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;(from i in list select i).Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Full code:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public class Program
+{
+  static void Main(string[] args)
+  {
+    // initialize list.
+    var list = new List&amp;lt;int&amp;gt;
+    {
+      1, 5, 6, 7, 9, 10, 99, 777 
+    };
+
+    PrintList(&#34;Original List:&#34;,  list);
+
+    list.Reverse();
+    PrintList(&#34;Reversed full:&#34;, list);
+    list.Reverse(); // reverse back since the list is changed.
+
+    // reverse first 3 items.
+    list.Reverse(0, 3);
+    PrintList(&#34;Reversed first 3 items:&#34;, list);
+    list.Reverse(0, 3); // reverse back.
+
+
+    PrintList(&#34;Reversed Using LINQ full:&#34;, list.AsEnumerable().Reverse());
+
+    PrintList(&#34;Reversed Using LINQ Query Syntax:&#34;, (from i in list select i).Reverse());
+  }
+
+  static void PrintList&amp;lt;T&amp;gt;(string message, IEnumerable&amp;lt;T&amp;gt; list)
+  {
+    Console.WriteLine($&#34;{message}\r\n{string.Join(&#34;\r\n&#34;, list)}&#34;);
+  }
+}
+&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.reverse?view=netframework-4.8#System_Collections_Generic_List_1_Reverse_System_Int32_System_Int32_&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;List&lt;T&gt; Reverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# Deserializing XML with namespace in .NET core</title>
+      <link>https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/</link>
+      <pubDate>Sat, 04 Apr 2020 15:38:13 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/</guid>
+      <description>
+        
+          &lt;p&gt;I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.&lt;/p&gt;
+&lt;p&gt;In this post, I will provide some samples in C# of how to deserialize such XML files with minimal amount of code.&lt;/p&gt;
+&lt;p&gt;My goal for this article is to provide working examples with minimal amount of code and class attributes.&lt;/p&gt;
+&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019&lt;/li&gt;
+&lt;li&gt;.NET Core 3.1&lt;/li&gt;
+&lt;li&gt;Notepad++ text editor for XML&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Why do we need namespaces?&lt;/p&gt;
+&lt;p&gt;There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it’s own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.&lt;/p&gt;
+&lt;p&gt;For example, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlSerializer&lt;/code&gt; class that I will use in this sample is actually &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;System.Xml.Serialization.XmlSerializer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I could easily define a class named XmlSerializer in my namespace without any conflicts.&lt;/p&gt;
+&lt;p&gt;When you work alone on a project, class naming conflict might be a rare thing, but when using external library without namespaces, the conflict could be a common thing.&lt;/p&gt;
+&lt;p&gt;A similar thing happens in XML files. Once you define a namespace, you can create elements with a same name, but different namespace.&lt;/p&gt;
+&lt;p&gt;A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in &lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;XML standard attribute xmlns enables us to define a multiple namespaces for element.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xmlns=”https://somename.org” creates a default namespace.&lt;/li&gt;
+&lt;li&gt;In cased we would like to add more namespaces, we need to use a prefix.
+&lt;ul&gt;
+&lt;li&gt;xmlns:gt=”https://somename2.org” creates a namespace with prefix gt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;In Visual Studio, create a new .NET Core Console App.&lt;/li&gt;
+&lt;li&gt;Add a SimpleBooks.xml as shown below. I used a default namespace xmlns=”https://gotask.net” attribute for Books element.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Add 2 classes Book and Books.&lt;/li&gt;
+&lt;li&gt;The only class attribute I will use is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlRoot&lt;/code&gt; and set the name of the root element and the namespace.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public class Book
+{
+  public string ISBN { get; set; }
+
+  public string Name { get; set; }
+
+  public decimal Price { get; set; }
+}
+
+[XmlRoot(&#34;Books&#34;, Namespace = &#34;https://gotask.net&#34;)]
+public class Books : List&amp;lt;Book&amp;gt;
+{
+}&lt;/pre&gt;
+&lt;h2 id=&#34;deserializing&#34;&gt;Deserializing&lt;/h2&gt;
+&lt;h3 id=&#34;simple-case&#34;&gt;Simple Case&lt;/h3&gt;
+&lt;p&gt;Once we have the classes and the XML data set properly, the deserialize function is really simple.&lt;/p&gt;
+&lt;p&gt;In the list we have 2 books now.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var serializer = new XmlSerializer(typeof(Books));
+
+using (var reader = new FileStream(&#34;SimpleBooks.xml&#34;, FileMode.Open))
+{
+    var books = (Books)serializer.Deserialize(reader);
+    Console.WriteLine($&#34;Number of books is {books.Count}&#34;);
+}&lt;/pre&gt;
+&lt;h3 id=&#34;multiple-namespaces&#34;&gt;Multiple namespaces&lt;/h3&gt;
+&lt;p&gt;I added another namespace to the declaration of the Books element. This namespace has gt prefix and value “https://github.org”.  Running the code above on this XML will produce the same results (2 books) since there is no Book element in gt namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;gt:Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/gt:Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Now the code above will deserialize only the first book (ISBN 978-1788478120), since it’s the only book that exists in the default namespace.&lt;/p&gt;
+&lt;h4 id=&#34;useful-links&#34;&gt;Useful links&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML Linq namespaces&lt;/a&gt; overview&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Checking if a directory is writable in C#</title>
+      <link>https://gotask.net/programming/checking-if-directory-is-writable-in-c-sharp/</link>
+      <pubDate>Thu, 02 Apr 2020 21:21:36 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/checking-if-directory-is-writable-in-c-sharp/</guid>
+      <description>
+        
+          &lt;p&gt;Today, I am going to demonstrate a simple way to check if the current executing user has a writing permission for a directory in the Windows file system. I came across this issue in a project when I needed to write a utility program that would do the following: Output a list of all directories that the current user is &lt;span style=&#34;text-decoration: underline;&#34;&gt;not&lt;/span&gt; able to write to.&lt;/p&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Microsoft provides an API for manipulating or viewing security access permission via the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.security.accesscontrol?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;System.Security.AccessControl&lt;/a&gt; namespace. However, using the AccessControl based solution, requires computing the effective permissions for the user identity running your code. It might not be an easy task, as it involves fetching a security descriptor, an access token, and properly calculating the effective permissions.&lt;/p&gt;
+&lt;p&gt;As a general solution approach, I am going to try to write a file in a specific directory without any permissions calculations. In case an exception is raised by the operating system, I am going to properly handle it and assume the directory is not writable.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;implementation&#34;&gt;Implementation&lt;/h2&gt;
+&lt;h3 id=&#34;setting-up-the-pinvoke-imports&#34;&gt;Setting up the pInvoke imports&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt; So as a first step, I am going to create a utility static class DirectoryUtils that will include the implementation.&lt;/li&gt;
+&lt;li&gt;As I am going to use several Win32 API functions in the sample, so let’s import the following:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;CreateFile&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfiletime&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;SetFileTime&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note: When importing a Win32 API function into a .NET project, you need to generate the pInvoke signature. For such an operation, I highly recommend you use &lt;a href=&#34;https://www.pinvoke.net&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pinvoke.net&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public static class DirectoryUtils
+{
+        [DllImport(&#34;kernel32.dll&#34;, CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern SafeFileHandle CreateFile(
+            string fileName,
+            uint dwDesiredAccess,
+            FileShare dwShareMode,
+            IntPtr securityAttrs_MustBeZero,
+            FileMode dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile_MustBeZero);
+
+        [DllImport(&#34;kernel32.dll&#34;, SetLastError = true, EntryPoint = &#34;SetFileTime&#34;, ExactSpelling = true)]
+        private static extern bool SetFileTime(
+            SafeFileHandle hFile,
+            IntPtr lpCreationTimeUnused,
+            IntPtr lpLastAccessTimeUnused,
+            ref long lpLastWriteTime);
+
+        private const uint FILE_ACCESS_GENERIC_READ = 0x80000000;
+        private const uint FILE_ACCESS_GENERIC_WRITE = 0x40000000;
+
+        private const int FILE_FLAG_BACKUP_SEMANTICS = 0x02000000;
+        private const int OPEN_EXISTING = 3;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;implementing-the-class&#34;&gt;Implementing the class&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;In the DirectoryUtils class, create a static function DirectoryUtils.IsWritable that gets a directory path to check and returns bool.&lt;/li&gt;
+&lt;li&gt;We need to create the temporary file using C# &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;File.Create&lt;/code&gt; with a random generated file name. Note the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;FileOptions.DeleteOnClose&lt;/code&gt; flag, which ensures the file is deleted once we go out of the using scope.&lt;/li&gt;
+&lt;li&gt;If the code below throws an exception, we assume the directory is not writable.&lt;/li&gt;
+&lt;li&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;using (File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;{
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;So far it looks very easy, but there is a small catch. If the directory is writable, its last write time will change every time we call DirectoryUtils.IsWritable, since we are creating a temporary file. This might look very ugly and unprofessional, especially if we are traversing a long directory tree. All directories will  have the &amp;amp;#8216;Date modified&amp;amp;#8217; changed in Windows Explorer as shown in the picture:
+
+&amp;lt;figure id=&amp;quot;attachment_174&amp;quot; aria-describedby=&amp;quot;caption-attachment-174&amp;quot; style=&amp;quot;width: 835px&amp;quot; class=&amp;quot;wp-caption alignnone&amp;quot;&amp;gt;&amp;lt;img loading=&amp;quot;lazy&amp;quot; class=&amp;quot;size-full wp-image-174&amp;quot; src=&amp;quot;https://gotask.net/wp-content/uploads/2020/04/windows-explorer.png&amp;quot; alt=&amp;quot;Windows File Explorer&amp;quot; width=&amp;quot;845&amp;quot; height=&amp;quot;273&amp;quot; srcset=&amp;quot;https://gotask.net/wp-content/uploads/2020/04/windows-explorer.png 845w, https://gotask.net/wp-content/uploads/2020/04/windows-explorer-300x97.png 300w, https://gotask.net/wp-content/uploads/2020/04/windows-explorer-768x248.png 768w&amp;quot; sizes=&amp;quot;(max-width: 845px) 100vw, 845px&amp;quot; /&amp;gt;&amp;lt;figcaption id=&amp;quot;caption-attachment-174&amp;quot; class=&amp;quot;wp-caption-text&amp;quot;&amp;gt;Windows File Explorer&amp;lt;/figcaption&amp;gt;&amp;lt;/figure&amp;gt;&amp;lt;/li&amp;gt; &amp;lt;/ol&amp;gt; 
+
+The solution is the following:
+
+  1. Save the write time before creating the temporary file by using &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;Directory.GetLastWriteTimeUtc&amp;lt;/code&amp;gt;
+  2. Restore the write time after the temporary file is deleted by using &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;SetFileTime&amp;lt;/code&amp;gt; Win32 API.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;public static bool SetDirectoryLastWriteUtc(string dirPath, DateTime lastWriteDate)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;{
+using (var hDir = CreateFile(dirPath, FILE_ACCESS_GENERIC_READ | FILE_ACCESS_GENERIC_WRITE,
+FileShare.ReadWrite, IntPtr.Zero, (FileMode) OPEN_EXISTING,
+FILE_FLAG_BACKUP_SEMANTICS, IntPtr.Zero))
+{
+// put back to the date before checking.
+var lastWriteTime = lastWriteDate.ToFileTime();
+if (!SetFileTime(hDir, IntPtr.Zero, IntPtr.Zero, ref lastWriteTime))
+{
+return false;
+}
+}&lt;/p&gt;
+&lt;p&gt;return true;
+}&lt;/p&gt;
+&lt;p&gt;public static bool IsWritable(string dirPath)
+{
+try
+{
+// Since there is a temp file that is being created,
+// this will change the modified date of the directory.
+// So if we have successful write operation, we need to
+// revert the last write date.
+var lastWriteDate = Directory.GetLastWriteTimeUtc(dirPath);&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// if this fails -&amp;amp;gt; it raises an exception.
+using (File.Create(Path.Combine(dirPath, Path.GetRandomFileName()), 1, FileOptions.DeleteOnClose))
+{
+}
+
+try
+{
+  SetDirectoryLastWriteUtc(dirPath, lastWriteDate);
+}
+catch (Exception)
+{
+  // add some log.
+}
+
+return true;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;}
+catch (UnauthorizedAccessException)
+{
+// add some log.
+}
+catch (Exception)
+{
+// add some log.
+}&lt;/p&gt;
+&lt;p&gt;return false;
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## Testing
+
+Running some tests on a development machine:
+
+  1. Positive result: I used &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot; data-enlighter-theme=&amp;quot;git&amp;quot;&amp;gt;Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)&amp;lt;/code&amp;gt;. In most cases, this directory is writable for the current non-admin user. Check that the last write date did not change after the function returned a &amp;amp;#8216;true&amp;amp;#8217; value.
+  2. Negative result: If you are running the Visual Studio as a non-elevated process, the function should fail if you check the &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;Environment.SystemDirectory&amp;lt;/code&amp;gt;.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;var dir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;var result = DirectoryUtils.IsWritable(dir);
+Console.Write($&amp;quot;{dir} - result={result}&amp;quot;);&lt;/p&gt;
+&lt;p&gt;dir = Environment.SystemDirectory;
+result = DirectoryUtils.IsWritable(dir);
+Console.Write($&amp;quot;{dir} - result={result}&amp;quot;);&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## Useful resources
+
+  * Source code of this project on [GitHub][1]
+&lt;/code&gt;&lt;/pre&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>How to set up Google Search Console domain verification in Hostgator</title>
+      <link>https://gotask.net/tutorials/how-to-set-up-google-search-console-domain-verification-in-hostgator/</link>
+      <pubDate>Mon, 30 Mar 2020 17:34:17 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/how-to-set-up-google-search-console-domain-verification-in-hostgator/</guid>
+      <description>
+        
+          &lt;p&gt;Recently, I set up a WordPress blog using HostGator’s shared hosting.&lt;/p&gt;
+&lt;p&gt;After writing the first post, I wanted to register the domain in Google Search Console (GSC) (former Google Web Master Tools). This tool provides you with very useful information on how Google’s search engine sees your site. GSC shows you insights regarding the performance of your site, referral links, sitemap, and some other experimental capabilities.&lt;/p&gt;
+&lt;p&gt;For this tutorial, I will use the sample domain name ‘sampleblog.blog’.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You will need an access to your HostGator cPanel. If you are not familiar with how to access it, please refer to the &lt;a href=&#34;https://www.hostgator.com/help/article/how-to-log-into-cpanel&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; logging on to cPanel&lt;/a&gt; article.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;HostGator Baby Croc account&lt;/li&gt;
+&lt;li&gt;cPanel version 78.0 (build 47)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-1-8211-registering-your-domain-in-gsc&#34;&gt;Step 1 – Registering your domain in GSC&lt;/h2&gt;
+&lt;p&gt;In early 2019, Google announced its ‘domain properties’ capability, providing an easy way to verify ownership of a domain in the Google Search Console.&lt;/p&gt;
+&lt;p&gt;If this is the first domain you are registering, once you open the GSC, you will see the following screen:&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-115&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png&#34; alt=&#34;Domain property type in GSC&#34; width=&#34;924&#34; height=&#34;733&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png 924w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-300x238.png 300w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-768x609.png 768w&#34; sizes=&#34;(max-width: 924px) 100vw, 924px&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Chose ‘Domain’ option and type your domain name ‘sampleblog.blog’&lt;/li&gt;
+&lt;li&gt;Click on the ‘Continue’ button.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-2-8211-verifying-the-ownership-via-dns-record&#34;&gt;Step 2 – Verifying the ownership via DNS record&lt;/h2&gt;
+&lt;p&gt;As GSC requires domain ownership proof, in the following screen it requests adding a new TXT record with a specific code.&lt;/p&gt;
+&lt;figure id=&#34;attachment_105&#34; aria-describedby=&#34;caption-attachment-105&#34; style=&#34;width: 769px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-105&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png&#34; alt=&#34;Verify domain ownership DNS&#34; width=&#34;779&#34; height=&#34;677&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png 779w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-300x261.png 300w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-768x667.png 768w&#34; sizes=&#34;(max-width: 779px) 100vw, 779px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-105&#34; class=&#34;wp-caption-text&#34;&gt;Verifying domain ownership with DNS record.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;In the ‘Instructions for’ dropdown, you can find domain providers like GoDaddy and Name.com, for which Google is able to write the DNS records automatically. Unfortunately, HostGator is not supported in the list, so we will have to write them manually.&lt;/li&gt;
+&lt;li&gt;Make sure ‘Any DNS Provider’ is selected.&lt;/li&gt;
+&lt;li&gt;Click on the ‘Copy’ button to copy the text to your clipboard. Note this functionality is not fully supported in all browsers. In case the text is not copied, copy it manually using &lt;kbd&gt;CTRL&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Windows or &lt;kbd&gt;Command&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Mac.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-3-8211-setting-the-txt-record-in-hostgator&#34;&gt;Step 3 – Setting the TXT record in HostGator&lt;/h2&gt;
+&lt;h3 id=&#34;opening-8216advanced-zone-editor8217&#34;&gt;Opening ‘Advanced Zone Editor’&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Open the cPanel main screen&lt;/li&gt;
+&lt;li&gt;Locate the ‘DOMAINS’ group&lt;/li&gt;
+&lt;li&gt;Click on ‘Advanced Zone Editor’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-106&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png&#34; alt=&#34;cPanel Advanced Zone Editor&#34; width=&#34;844&#34; height=&#34;545&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png 844w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-300x194.png 300w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-768x496.png 768w&#34; sizes=&#34;(max-width: 844px) 100vw, 844px&#34; /&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;selecting-the-txt-record-type&#34;&gt;Selecting the TXT record type&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;In the following screen, locate the ‘Add Record’ section&lt;/li&gt;
+&lt;li&gt;From the ‘Type’ dropdown, select ‘TXT’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure id=&#34;attachment_107&#34; aria-describedby=&#34;caption-attachment-107&#34; style=&#34;width: 565px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-107&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png&#34; alt=&#34;Add TXT record in cPanel&#34; width=&#34;575&#34; height=&#34;452&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png 768w, https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record-300x236.png 300w&#34; sizes=&#34;(max-width: 575px) 100vw, 575px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-107&#34; class=&#34;wp-caption-text&#34;&gt;Choose TXT in the &amp;#8216;Type&amp;#8217; dropdown&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;filling-the-record-fields&#34;&gt;Filling the record fields&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Leave the ‘Name’ field blank, as HostGator will set it automatically to your domain name.&lt;/li&gt;
+&lt;li&gt;Set the TTL (Time to live) records to 14400 (meaning 4 hours). This tells the named server resolver how long in seconds to store the value in it’s cache. Since we are not expected to change this value, 4 hours is reasonable.&lt;/li&gt;
+&lt;li&gt;In the ‘TXT Data’ field, paste the text you copied from Google Search Console.&lt;/li&gt;
+&lt;li&gt;Click on ‘Add Record’ to finish.&lt;/li&gt;
+&lt;li&gt;Please note that it might take between a few seconds to a few hours until this change takes effect, so don’t get discouraged if GSC is not able to immediately verify your site.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;figure id=&#34;attachment_109&#34; aria-describedby=&#34;caption-attachment-109&#34; style=&#34;width: 451px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-109&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png&#34; alt=&#34;TXT record form in cPanel&#34; width=&#34;461&#34; height=&#34;369&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png 761w, https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form-300x240.png 300w&#34; sizes=&#34;(max-width: 461px) 100vw, 461px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-109&#34; class=&#34;wp-caption-text&#34;&gt;Fill TXT records for site verification&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;step-4-8211-verifying-in-google-search-console&#34;&gt;Step 4 – Verifying in Google Search Console&lt;/h2&gt;
+&lt;p&gt;Assuming you set the TXT record correctly, the only part left is to let Google verify the record.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Go back to Google Search Console&lt;/li&gt;
+&lt;li&gt;Click on the ‘Verify’ button&lt;/li&gt;
+&lt;li&gt;This process might take a few seconds. By the end of the process, you should see a message displaying that your domain is verified and added to Google Search Console.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;In case Google is not able to find the TXT records, it’s recommended to wait a few minutes/hours until the DNS TXT record is fully updated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Google &lt;a href=&#34;https://webmasters.googleblog.com/2019/02/announcing-domain-wide-data-in-search.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;announces ‘domain properties’&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# VSTO Addin Sample for Excel, Word, Power Point, Outlook</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</link>
+      <pubDate>Fri, 20 Mar 2020 19:27:52 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/</guid>
+      <description>
+        
+          &lt;p&gt;Microsoft Office provides a variety of component types you could develop to extend its existing functionality or to add more useful features. These components include VBA macros, VSTO components, XLL Addons, and more.&lt;/p&gt;
+&lt;p&gt;In this sample, I will focus on creating a C# VSTO project that displays a simple ribbon.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18362)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;minimal-requirements&#34;&gt;Minimal requirements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2015&lt;/li&gt;
+&lt;li&gt;Office 2013&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34; target=&#34;_new&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Note that the following Ribbon sample can be used for extending these Office applications: Excel, Word, Outlook, and PowerPoint.&lt;/p&gt;
+&lt;p&gt;In this post, I will use Excel as a hosting application.&lt;/p&gt;
+&lt;h2 id=&#34;setting-up-the-environment&#34;&gt;Setting up the environment&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Open Visual Studio 2019 and create a new Excel VSTO Addin C# project. &lt;figure id=&#34;attachment_22&#34; aria-describedby=&#34;caption-attachment-22&#34; style=&#34;width: 289px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-22&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png&#34; alt=&#34;Visual Studio Setup for Office/SharePoint&#34; width=&#34;299&#34; height=&#34;316&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup.png 708w, https://gotask.net/wp-content/uploads/2020/03/visual-studio-setup-284x300.png 284w&#34; sizes=&#34;(max-width: 299px) 100vw, 299px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-22&#34; class=&#34;wp-caption-text&#34;&gt;Visual Studio Setup for Office/SharePoint&lt;/figcaption&gt;&lt;/figure&gt;&lt;br&gt;
+In case you cannot find such a project on a Visual Studio templates list, complete the following steps:
+&lt;ul&gt;
+&lt;li&gt;Open the Visual Studio 2019 setup from the Windows Control Panel.&lt;/li&gt;
+&lt;li&gt;Make sure “Office/SharePoint development option” is selected as shown in the picture.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;In the generated project, open the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddin.cs&lt;/code&gt; file:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; event handler will be called by the Excel application only once in the hosting application lifetime, during the application startup. This is the recommended place for initialization.&lt;/li&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; event handler will be called by the application before it exits. Do your cleanups here.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Note: Outlook no longer raises this event. If you have code that must run when Outlook shuts down, see &lt;a href=&#34;https://go.microsoft.com/fwlink/?LinkId=506785&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;this link&lt;/a&gt;.&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public partial class ThisAddIn
+{
+  private void ThisAddIn_Startup(object sender, System.EventArgs e)
+  {
+  }
+
+  private void ThisAddIn_Shutdown(object sender, System.EventArgs e)
+  {
+  }
+
+  #region VSTO generated code
+
+  /// &amp;lt;summary&amp;gt;
+  /// Required method for Designer support - do not modify
+  /// the contents of this method with the code editor.
+  /// &amp;lt;/summary&amp;gt;
+  private void InternalStartup()
+  {
+    this.Startup += new System.EventHandler(ThisAddIn_Startup);
+    this.Shutdown += new System.EventHandler(ThisAddIn_Shutdown);
+  }
+  
+  #endregion
+}&lt;/pre&gt;
+&lt;h2 id=&#34;testing-the-environment&#34;&gt;Testing the environment&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Set a breakpoint in both &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; and &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; functions.&lt;/li&gt;
+&lt;li&gt;Hit F5 to run the project’s debugger. An Excel splash screen should appear and shortly after &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Startup&lt;/code&gt; breakpoint will hit.&lt;/li&gt;
+&lt;li&gt;Close the Excel application, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;ThisAddIn_Shutdown&lt;/code&gt; should hit.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;adding-the-ribbon&#34;&gt;Adding the Ribbon&lt;/h2&gt;
+&lt;p&gt;When developing a VSTO, I prefer creating the ribbon by manualy creating the XML rather than using the Ribbon Designer, which covers only a subset of the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OfficeFluentUI&lt;/code&gt; model.&lt;br&gt;
+You can find more explanations of the difference between using the Ribbon Designer and manually building the XML in these links: &lt;a href=&#34;https://stackoverflow.com/questions/22483329/office-ribbon-xml-vs-office-standard-ribbon-designer&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml vs ribbon designer&lt;/a&gt; and &lt;a href=&#34;https://social.msdn.microsoft.com/Forums/vstudio/en-US/e3a68e06-9e27-4d6c-bd1e-e566ab8b7506/ribbon-xml-vs-ribbon-designer?forum=vsto&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;xml to ribbon designer comparison&lt;/a&gt;.&lt;/p&gt;
+&lt;h3 id=&#34;ribbon-controller&#34;&gt;Ribbon Controller&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Add a new class RibbonConroller implementing &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;Microsoft.Office.Core.IRibbonExtensibility&lt;/code&gt; interface.&lt;/li&gt;
+&lt;li&gt;Make sure to set the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;[ComVisible(true)]&lt;/code&gt; class attribute.&lt;/li&gt;
+&lt;li&gt;The only function you should implement is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;GetCustomUI&lt;/code&gt; that returns the XML representation of the ribbon you wish to create.&lt;/li&gt;
+&lt;li&gt;For this sample, we will create a simple button that display a message box.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;[ComVisible(true)]
+public class RibbonController : Microsoft.Office.Core.IRibbonExtensibility
+{
+  private Microsoft.Office.Core.IRibbonUI _ribbonUi;
+
+  public string GetCustomUI(string ribbonID) =&amp;gt;
+  @&#34;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+    &amp;lt;ribbon&amp;gt;
+       &amp;lt;tabs&amp;gt;
+        &amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+          &amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;
+            &amp;lt;button id=&#39;do_1&#39; label=&#39;Do 1&#39; size=&#39;large&#39; getImage=&#39;OnDo1GetImage&#39; onAction=&#39;OnDo1Click&#39;/&amp;gt;
+          &amp;lt;/group&amp;gt;
+        &amp;lt;/tab&amp;gt;
+      &amp;lt;/tabs&amp;gt;
+    &amp;lt;/ribbon&amp;gt;
+    &amp;lt;/customUI&amp;gt;&#34;;
+
+  public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
+  {
+    _ribbonUi = ribbonUI;
+  }
+
+  public void OnDo1Click(Microsoft.Office.Core.IRibbonControl control)
+  {
+    MessageBox.Show(Resources.Do1Action);
+  }
+
+  public Bitmap OnDo1GetImage(Microsoft.Office.Core.IRibbonControl control) =&amp;gt; Resources.Do1_128px;
+}&lt;/pre&gt;
+&lt;p&gt;The sample XML above adds the ribbon to the Excel application, which includes:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A new ribbon tab labeled ‘GoTask’ containing a new group labeled ‘Operations’.&lt;/li&gt;
+&lt;li&gt;The group containing a button labeled ‘Do 1’ with click handler implemented in OnDo1Click function.&lt;/li&gt;
+&lt;li&gt;The button displaying an image located in the Resource section.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Notes for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;onAction&lt;/code&gt; callback function:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It must be public and have the following signature: &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void SomeName(Microsoft.Office.Core.IRibbonControl control)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You could use any valid name, however it must match the name provided in onAction attribute in XML.&lt;/li&gt;
+&lt;li&gt;For the proper initialization of the Ribbon, add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;OnLoad&lt;/code&gt; function, which will be called by the hosting application once the ribbon is ready to show.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;creating-an-instance-of-the-controller-class&#34;&gt;Creating an Instance of the Controller class&lt;/h3&gt;
+&lt;p&gt;Once we have the RibbonController class, we need to create the instance of it.&lt;br&gt;
+This is done by overriding the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;CreateRibbonExtensibilityObject()&lt;/code&gt; function in the ThisAddIn class.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;protected override Microsoft.Office.Core.IRibbonExtensibility CreateRibbonExtensibilityObject() =&amp;gt; new RibbonController();&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;running-the-project&#34;&gt;Running the project&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Hit F5 to run the project again.&lt;/li&gt;
+&lt;li&gt;The Excel Application should show the ribbon with a new button.&lt;figure id=&#34;attachment_34&#34; aria-describedby=&#34;caption-attachment-34&#34; style=&#34;width: 800px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-34 size-large&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png&#34; alt=&#34;VSTO Excel Sample ribbon with button&#34; width=&#34;810&#34; height=&#34;146&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-1024x185.png 1024w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-300x54.png 300w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon-768x139.png 768w, https://gotask.net/wp-content/uploads/2020/03/excel-with-ribbon.png 1328w&#34; sizes=&#34;(max-width: 810px) 100vw, 810px&#34; /&gt;&lt;/a&gt;&lt;figcaption id=&#34;caption-attachment-34&#34; class=&#34;wp-caption-text&#34;&gt;VSTO Excel Sample ribbon with button&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;h4 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/SimpleRibbon&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Full documentation of &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&#34;&gt;Ribbon XML&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-designer?view=vs-2019&#34;&gt;Ribbon Designer&lt;/a&gt; documentation&lt;/li&gt;
+&lt;li&gt;Office applications that &lt;a href=&#34;https://docs.microsoft.com/en-us/visualstudio/vsto/features-available-by-office-application-and-project-type?view=vs-2019&#34;&gt;supports VSTO Addins&lt;/a&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

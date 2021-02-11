@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tutorials on GoTask</title>
+    <link>https://gotask.net/categories/tutorials/</link>
+    <description>Recent content in Tutorials on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sun, 13 Dec 2020 14:49:18 +0000</lastBuildDate><atom:link href="https://gotask.net/categories/tutorials/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Setup Hugo Site Generator on GitHub Pages with a Custom Domain</title>
+      <link>https://gotask.net/tutorials/setup-hugo-on-github-pages-custom-domain/</link>
+      <pubDate>Sun, 13 Dec 2020 14:49:18 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/setup-hugo-on-github-pages-custom-domain/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Recently, I wanted to setup a new blog. I have purchased the domain and started looking for the hosting.&lt;/p&gt;
+&lt;p&gt;My main goal was to build a clean and a simple site that loads fast. Instead of working with the traditional WordPress platform and trying to configure dozens of plugins to increase the performance, I decided to go with a Jamstack based solution. &lt;a href=&#34;https://jamstack.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Jamstack&lt;/a&gt; based sites are pre-generated and served from the static repositories or CDNs, so no pages are generated on the fly when the users access the site.&lt;/p&gt;
+&lt;p&gt;To pre-generate the site, I chose &lt;a href=&#34;https://gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo&lt;/a&gt;, which is a static site generator optimized for speed and relatively easy to configure. Hugo is an open source project written in Go language.&lt;/p&gt;
+&lt;p&gt;Since the site is pre-generated and can be stored in the GitHub, I chose the GitHub Pages as a hosting. The deployment on GitHub Pages is very simple (a single git push) command, it can setup a custom domain and it has the built-in support for SSL.&lt;/p&gt;
+&lt;h2 id=&#34;requirements&#34;&gt;Requirements&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://git-scm.com/downloads&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Git&lt;/a&gt; installed on your local machine (including the command line interface)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt; account&lt;/li&gt;
+&lt;li&gt;If you wish to setup a ‘private’ repository with the custom domain, you will need to purchase one of the GitHub subscriptions. I use the ‘Team’ subscription which costs 4$ per month (as of Dec/2020). You may check the &lt;a href=&#34;https://github.com/pricing&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;pricing &lt;span style=&#34;text-decoration: underline;&#34;&gt;for more information.&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;A Text editor, I use &lt;a href=&#34;https://notepad-plus-plus.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Notepad ++&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;A basic command line knowledge&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;setting-up-the-repository&#34;&gt;Setting up the repository&lt;/h2&gt;
+&lt;h3 id=&#34;installing-hugo-on-the-local-computer&#34;&gt;Installing Hugo on the local computer&lt;/h3&gt;
+&lt;p&gt;As described in the &lt;a href=&#34;https://github.com/gohugoio/hugo&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo Git repository&lt;/a&gt;, there are two ways to install the Hugo site generator on the local machine:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Install binary files using one of the common Package Managers&lt;/li&gt;
+&lt;li&gt;Build from the sources&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For this post we will proceed with the binary files’ installation. Since I am using Windows 10 operating system, I used the &lt;a href=&#34;https://chocolatey.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Chocolatey Package Manager&lt;/a&gt;. I installed Chocolatey as an Administrator as described in the &lt;a href=&#34;https://chocolatey.org/install&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;install page&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For Mac/Linux users, I recommend working with &lt;a href=&#34;https://brew.sh&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Homebrew&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;After having the package manager installed, we can use a command line to install the Hugo site generator.&lt;/p&gt;
+&lt;h4 id=&#34;windows&#34;&gt;Windows&lt;/h4&gt;
+&lt;p&gt;Open the command line prompt as an Administrator and type:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;choco install hugo -confirm&lt;/code&gt;&lt;/p&gt;
+&lt;h4 id=&#34;maclinux&#34;&gt;Mac/Linux&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;brew install hugo&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;More instructions for the &lt;a href=&#34;https://gohugo.io/getting-started/installing/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo installation&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;setting-up-the-repository-on-github&#34;&gt;Setting up the repository on GitHub&lt;/h3&gt;
+&lt;p&gt;Since Hugo is pre-generated site and served from a Git repository, we need to create a&lt;/p&gt;
+&lt;figure id=&#34;attachment_354&#34; aria-describedby=&#34;caption-attachment-354&#34; style=&#34;width: 506px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-354&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png&#34; alt=&#34;Create new private repository in GitHub&#34; width=&#34;516&#34; height=&#34;290&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1.png 516w, https://gotask.net/wp-content/uploads/2020/12/git-create-repository-1-300x169.png 300w&#34; sizes=&#34;(max-width: 516px) 100vw, 516px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-354&#34; class=&#34;wp-caption-text&#34;&gt;Create new private repository in GitHub&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;new repository on GitHub.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;In your web browser, go to &lt;a href=&#34;https://github.com/new&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;&lt;a href=&#34;https://github.com/new&#34;&gt;https://github.com/new&lt;/a&gt;&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Choose the name for the repository. For this example, we are going to use: myhugoblog&lt;/li&gt;
+&lt;li&gt;Since we are not creating an open source project, but the repository that will contain my blog, we will set the repository to ‘Private’. This step is not mandatory as you can setup the site and the custom domain with public repositories as well.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;heading&#34;&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;heading-1&#34;&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;setting-up-the-local-directory-for-the-site&#34;&gt;Setting up the local directory for the site&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a local directory that will contain the theme and the pre-generated site. For this example, we will use: c:\sites\ directory.&lt;/li&gt;
+&lt;li&gt;Open the command line prompt at c:\sites\ and type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt; git clone https://github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      Note: In some cases, you might get an error that repository does not exists. In such case, try to clone with following url (you will be prompted for the password):&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;&lt;/code&gt; &lt;ul&gt;
+        &lt;li&gt;
+          &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://&amp;lt;user_name&amp;gt;@github.com/&amp;lt;user_name&amp;gt;/&amp;lt;repository_name&amp;gt;.git&lt;/code&gt;
+        &lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;h3 id=&#34;generate-new-hugo-site&#34;&gt;Generate new Hugo site&lt;/h3&gt;
+&lt;p&gt;At this stage, we have an empty repository connected to our local directory. Now we need to generate the Hugo site.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;In the command line prompt make sure that the current directory is c:\sites\ and type:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo new site myhugoblog --force&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Important note: The root directory of the repository in Git and the root directory of the pre-generated site &lt;span style=&#34;text-decoration: underline;&#34;&gt;must be the same&lt;/span&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;choosing-the-hugo-theme&#34;&gt;Choosing the Hugo theme&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://themes.gohugo.io&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Hugo site generator&lt;/a&gt; has a few hundreds of free themes available. I decided to go with &lt;a href=&#34;https://themes.gohugo.io//theme/bodhi/blog&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Bodhi blog theme&lt;/a&gt;. It is clean, simple and minimalistic. A perfection solution for my new blog.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Download the zip archive of the theme from the theme repository. In our case, it is &lt;a href=&#34;https://github.com/rhnvrm/bodhi/archive/master.zip&#34;&gt;https://github.com/rhnvrm/bodhi/archive/master.zip&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Extract the zip file to c:\sites&amp;lt;repository_name&amp;gt;\themes. In our case, it’s c:\sites\myhugoblog.&lt;/li&gt;
+&lt;li&gt;Typically, your directory name in the zip file will be: “&amp;lt;theme_name&amp;gt;_master”. Remove the “_master” suffix from the directory name. In our case, we will have “c:\sites\myhugoblog\themes\bodhi” directory.&lt;/li&gt;
+&lt;li&gt;Open the config.toml from the site root directory in the text editor and paste the default configuration of the theme as described in your theme page. Please note that different themes might have different configurations options.
+&lt;ul&gt;
+&lt;li&gt;Make sure you change the baseUrl property to your custom domain url.&lt;/li&gt;
+&lt;li&gt;Make sure you add/change the default publish directory in the config.toml  to:
+&lt;ul&gt;
+&lt;li&gt;publishDir = “docs”&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;To run the site locally type the following in your command prompt:
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo server&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Open your browser at http://localhost:1313/ to see the site. Currently it should have only the theme’s default page. (Note that the port might be different. Check the console window for the exact address).&lt;/li&gt;
+&lt;li&gt;If you are happy with the site, press CTRL + X to kill the server.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;deploying-the-site-to-git-repository&#34;&gt;Deploying the site to Git repository&lt;/h3&gt;
+&lt;p&gt;Once we have the site running locally, we need to build it (generate the static pages, links, sitemap) and push it to the remote repository.&lt;/p&gt;
+&lt;p&gt;Open the root directory of the site in the command prompt:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;figure id=&#34;attachment_369&#34; aria-describedby=&#34;caption-attachment-369&#34; style=&#34;width: 258px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-369&#34; src=&#34;https://gotask.net/wp-content/uploads/2021/01/hugo-site-build-console.png&#34; alt=&#34;Build Hugo site console output&#34; width=&#34;268&#34; height=&#34;239&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-369&#34; class=&#34;wp-caption-text&#34;&gt;Build Hugo site console output&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;hugo&lt;/code&gt; to build the site&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Type the following git command to add the new files to the repository, commit and push. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git add .
+git commit -m &amp;quot;Added theme&amp;quot;
+git push origin&lt;/pre&gt;&lt;/p&gt;
+&lt;p&gt;Note that you need to &lt;span style=&#34;text-decoration: underline;&#34;&gt;repeat&lt;/span&gt; this process every time you make &lt;span style=&#34;text-decoration: underline;&#34;&gt;any change&lt;/span&gt; to the site.&lt;/li&gt; &lt;/ul&gt;&lt;/p&gt;
+&lt;h2 id=&#34;connecting-to-github-pages&#34;&gt;Connecting to GitHub Pages&lt;/h2&gt;
+&lt;p&gt;Once we have the repository set, we need to enable the GitHub Pages capability for our repository.&lt;/p&gt;
+&lt;figure id=&#34;attachment_355&#34; aria-describedby=&#34;caption-attachment-355&#34; style=&#34;width: 597px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-355&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png&#34; alt=&#34;GitHub Pages Settings&#34; width=&#34;607&#34; height=&#34;285&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain.png 607w, https://gotask.net/wp-content/uploads/2020/12/git-set-branch-custom-domain-300x141.png 300w&#34; sizes=&#34;(max-width: 607px) 100vw, 607px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-355&#34; class=&#34;wp-caption-text&#34;&gt;GitHub Pages Settings for Branch and Custom Domain&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ol&gt;
+&lt;li&gt;In your web browser, go the ‘Settings’ page of your repository.&lt;/li&gt;
+&lt;li&gt;At the bottom of the page (make sure you scroll down), you fill find GitHub Pages section.&lt;/li&gt;
+&lt;li&gt;Choose the ‘main’ branch and the ‘/docs’ directory.&lt;/li&gt;
+&lt;li&gt;Click ‘Save’&lt;/li&gt;
+&lt;li&gt;In the ‘Custom Domain’ section, type your domain name (without http/https).&lt;/li&gt;
+&lt;li&gt;Click ‘Save’&lt;/li&gt;
+&lt;li&gt;Note that https (ssl) support comes out of the box, but you will need wait up to 24 hours until your certificate is generated. Make sure ‘Enforce HTTPS ‘ option is checked.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;configuring-your-dns&#34;&gt;Configuring your DNS&lt;/h3&gt;
+&lt;p&gt;The last but not the least part we need to perform is to setup our domain’s DNS settings to work with GitHub pages. I registered my domain via NameCheap domain registrar, but this process can be done from any domain registrar.&lt;/p&gt;
+&lt;p&gt;All we have to do is to setup a few ‘A Records’ and ‘CNAME record’ to work with GitHub pages.&lt;/p&gt;
+&lt;p&gt;In your domain management screen, open your Advanced DNS settings screen.&lt;/p&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ol&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.108.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.109.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.110.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;A Record&amp;#8217; for @ host with  185.199.111.153 value.
+    &lt;/li&gt;
+    &lt;li&gt;
+      Create &amp;#8216;CNAME Record&amp;#8217; for @ host with &lt;username&gt;.github.io value.
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/li&gt;
+&lt;figure id=&#34;attachment_350&#34; aria-describedby=&#34;caption-attachment-350&#34; style=&#34;width: 715px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-350&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png&#34; alt=&#34;Namecheap Advanced DNS For GitHub Pages&#34; width=&#34;725&#34; height=&#34;293&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1.png 725w, https://gotask.net/wp-content/uploads/2020/12/advanced-dns-namecheap-git-hub-1-300x121.png 300w&#34; sizes=&#34;(max-width: 725px) 100vw, 725px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-350&#34; class=&#34;wp-caption-text&#34;&gt;Namecheap Advanced DNS For GitHub Pages&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;testing-the-site&#34;&gt;Testing the site&lt;/h3&gt;
+&lt;p&gt;Type your domain in the web browser, the site should appear 🙂&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>How to manually setup MySQL server on Windows</title>
+      <link>https://gotask.net/tutorials/how-to-manually-setup-mysql-on-windows/</link>
+      <pubDate>Sun, 12 Apr 2020 19:25:09 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/how-to-manually-setup-mysql-on-windows/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;figure id=&#34;attachment_198&#34; aria-describedby=&#34;caption-attachment-198&#34; style=&#34;width: 381px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-198&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs.png&#34; alt=&#34;MySql installer hangs&#34; width=&#34;391&#34; height=&#34;146&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs.png 391w, https://gotask.net/wp-content/uploads/2020/04/my-sql-hangs-300x112.png 300w&#34; sizes=&#34;(max-width: 391px) 100vw, 391px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-198&#34; class=&#34;wp-caption-text&#34;&gt;MySql installer hangs&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Recently I tried to install MySQL server on my Windows 10 development machine.&lt;/p&gt;
+&lt;p&gt;First, I tried the MSI installer which is available from &lt;a href=&#34;https://dev.mysql.com/downloads/mysql/5.7.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;MySql Community Downloads&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;as both 32-bit and 64-bit editions.&lt;/p&gt;
+&lt;p&gt;Unfortunately, after running the installer, it kept hanging in the middle of the setup as shown in the picture.&lt;/p&gt;
+&lt;p&gt;I could’t find the solution for this, so I decided to try to manually setup and configure MySql.&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;li&gt;MySql Server Community Edition 5.7.29&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;heading&#34;&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;downloading-the-binary-zipped-version&#34;&gt;Downloading the binary zipped version&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Go to the MySql developers site and download the latest zipped version  – (Windows (x86, 64-bit), ZIP Archive)
+&lt;figure id=&#34;attachment_199&#34; aria-describedby=&#34;caption-attachment-199&#34; style=&#34;width: 464px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-199&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-directory.png&#34; alt=&#34;My Sql directory&#34; width=&#34;474&#34; height=&#34;188&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-directory.png 827w, https://gotask.net/wp-content/uploads/2020/04/my-sql-directory-300x119.png 300w, https://gotask.net/wp-content/uploads/2020/04/my-sql-directory-768x305.png 768w&#34; sizes=&#34;(max-width: 474px) 100vw, 474px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-199&#34; class=&#34;wp-caption-text&#34;&gt;My Sql directory in Windows Explorer&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In case you have a 32-bit operating system, download Windows (x86, 32-bit), ZIP Archive.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Extract the zip archive into a new folder. In this case, I am extracting to c:\MySql.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pay attention to extract the files into the main c:\MySql directory as shown in the picture.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Looking at the c:\MySql\bin directory, we can find a few important executables&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;mysqld.exe – this is the actual database server that will accept connections from clients. It listens by default for requests from port 3306. (the suffix letter ‘d’ is for daemon or service).&lt;/li&gt;
+&lt;li&gt;mysql.exe – this is the command line client that can be used to view/create/edit the databases and the tables.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;initializing-the-database&#34;&gt;Initializing the database&lt;/h2&gt;
+&lt;p&gt;Before staring the database building process, we need to open the Windows Command Prompt with the Administrator privileges.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First thing we need to do is to initialize the MySql database on our machine. It will create the ‘data’ folder and setup the system tables.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;In the command prompt, change the directory to c:\MySql\bin and type the following command:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysqld.exe --console --initialize&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;If the command succeeded, the new folder ‘data’ should be created at the root directory folder. (c:\MySql\Data).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Pay attention to the command prompt as the command provided the default username (root@localhost) and the password. I recommend copying the password to a notepad file.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Alternatively, you could use the same initialize command without the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;--console&lt;/code&gt; switch. In this case, the output will be written to the log file located in the data directory (you_computer_name.err).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run the server via command line:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysqld.exe --console&lt;/code&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;The console window should show an output similar to the one shown in the picture.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      The server should be listening on port 3306.
+    &lt;/li&gt;
+    &lt;li&gt;
+      You should see &amp;#8220;mysqld.exe: ready for connections&amp;#8221;.
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;p&gt;Important: Don’t close this console window as it will close the server and we will not be able to connect with clients.&lt;/p&gt;
+&lt;figure id=&#34;attachment_205&#34; aria-describedby=&#34;caption-attachment-205&#34; style=&#34;width: 590px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-205 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sqld-running-e1586541089671.png&#34; alt=&#34;MySql ready for connections&#34; width=&#34;600&#34; height=&#34;215&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-205&#34; class=&#34;wp-caption-text&#34;&gt;MySql server ready for connections&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;connecting-to-the-database&#34;&gt;Connecting to the database&lt;/h2&gt;
+&lt;p&gt;Now that we have the system tables setup and created the root user, we can try connecting to the database.&lt;/p&gt;
+&lt;h3 id=&#34;connecting-via-command-line&#34;&gt;Connecting via command line&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Open another command line window (don’t close the mysqld) and change the directory to c:\MySql\bin.
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;mysql.exe -u root -p&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once prompted, type the password you previously saved.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;You should see mysql command prompt as shown in the picture.&lt;/p&gt;
+&lt;figure id=&#34;attachment_204&#34; aria-describedby=&#34;caption-attachment-204&#34; style=&#34;width: 490px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-204&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/my-sql-welcome-screen-e1586540996861.png&#34; alt=&#34;Mysql welcome screen&#34; width=&#34;500&#34; height=&#34;308&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-204&#34; class=&#34;wp-caption-text&#34;&gt;My sql command line tool welcome screen&lt;/figcaption&gt;&lt;/figure&gt;&lt;/li&gt; &lt;/ul&gt; &lt;/li&gt; 
+&lt;ul&gt;
+&lt;li&gt;Now lets try to execute a simple SQL statement like:&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;
+      &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;sql&#34;&gt;show databases;&lt;/code&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      Here we get a pretty annoying message that we need to change the password before we execute such statements.
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;em&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;ERROR 1820 (HY000): You must reset your password using ALTER USER statement before executing this statement.&lt;/code&gt;&lt;/em&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/li&gt;
+&lt;h3 id=&#34;changing-the-password&#34;&gt;Changing the password:&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;In the same command prompt, type (pay attention to the quotes and the semi-colon at the end of the statement):
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;sql&#34;&gt;alter user &#39;root&#39;@&#39;localhost&#39; identified by &#39;12345&#39;;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You should get the confirmation message: &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;Query OK, 0 rows affected (0.00 sec)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;In order to test the new password, type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;quit&lt;/code&gt; in the mysql prompt to exit to the Windows command prompt. Now repeat the step 1 and login with the new password.&lt;/li&gt;
+&lt;li&gt;Repeat the step 2 to show the databases. You should get a list of system databases on your server.
+&lt;figure id=&#34;attachment_203&#34; aria-describedby=&#34;caption-attachment-203&#34; style=&#34;width: 312px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-203&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/show-databases.png&#34; alt=&#34;Show databases on mysql&#34; width=&#34;322&#34; height=&#34;272&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/show-databases.png 322w, https://gotask.net/wp-content/uploads/2020/04/show-databases-300x253.png 300w&#34; sizes=&#34;(max-width: 322px) 100vw, 322px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-203&#34; class=&#34;wp-caption-text&#34;&gt;Show databases on mysql server&lt;/figcaption&gt;&lt;/figure&gt;&lt;/li&gt; &lt;/ol&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;amp;nbsp;
+        
+## Running the server
+        
+Now that we have a database created and the server binaries&amp;amp;#8217; set, we probably want to set the server running in the background when the Windows machine boots.
+        
+### Installing as a Windows Service
+        
+  1. Quit the mysqld process by pressing CTRL+X in the command prompt window.
+  2. In the command line, type: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;mysqld.exe --install&amp;lt;/code&amp;gt;
+  3. You should get a confirmation message: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;shell&amp;quot;&amp;gt;Service successfully installed.&amp;lt;/code&amp;gt;
+  4. In order to start the service, type: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;net start MySql&amp;lt;/code&amp;gt;
+        
+### Running as a Console Application
+        
+In case you dont want to install MySql as a Windows service, you can run it as a console application in the logon process. Note that MySql will not run until you logon on to the machine.
+        
+  1. In Windows Files Explorer, type &amp;amp;#8220;C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup&amp;amp;#8221; in the address bar. This will open the Windows startup folder that includes exe/bat files that will automatically run when the user is logged on.
+  2. Create a new bat file, runmysql.bat.
+  3. Put the following line in the file: &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;msdos&amp;quot;&amp;gt;call c:\MySql\bin\mysqld --console&amp;lt;/code&amp;gt;
+        
+Note that you can not run both, the server and the console application simultaneously unless you change the MySql listening port.
+        
+## Wrapping up
+        
+I found this manual process very easy and intuitive, so I dont see a reason to use the installer for MySql anymore.
+        
+In the following posts, I will explain more about MySql configuration, logging, permissions and more.&lt;/code&gt;&lt;/pre&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>How to set up Google Search Console domain verification in Hostgator</title>
+      <link>https://gotask.net/tutorials/how-to-set-up-google-search-console-domain-verification-in-hostgator/</link>
+      <pubDate>Mon, 30 Mar 2020 17:34:17 +0000</pubDate>
+      
+      <guid>https://gotask.net/tutorials/how-to-set-up-google-search-console-domain-verification-in-hostgator/</guid>
+      <description>
+        
+          &lt;p&gt;Recently, I set up a WordPress blog using HostGator’s shared hosting.&lt;/p&gt;
+&lt;p&gt;After writing the first post, I wanted to register the domain in Google Search Console (GSC) (former Google Web Master Tools). This tool provides you with very useful information on how Google’s search engine sees your site. GSC shows you insights regarding the performance of your site, referral links, sitemap, and some other experimental capabilities.&lt;/p&gt;
+&lt;p&gt;For this tutorial, I will use the sample domain name ‘sampleblog.blog’.&lt;/p&gt;
+&lt;h2 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h2&gt;
+&lt;p&gt;You will need an access to your HostGator cPanel. If you are not familiar with how to access it, please refer to the &lt;a href=&#34;https://www.hostgator.com/help/article/how-to-log-into-cpanel&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt; logging on to cPanel&lt;/a&gt; article.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;HostGator Baby Croc account&lt;/li&gt;
+&lt;li&gt;cPanel version 78.0 (build 47)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-1-8211-registering-your-domain-in-gsc&#34;&gt;Step 1 – Registering your domain in GSC&lt;/h2&gt;
+&lt;p&gt;In early 2019, Google announced its ‘domain properties’ capability, providing an easy way to verify ownership of a domain in the Google Search Console.&lt;/p&gt;
+&lt;p&gt;If this is the first domain you are registering, once you open the GSC, you will see the following screen:&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-115&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png&#34; alt=&#34;Domain property type in GSC&#34; width=&#34;924&#34; height=&#34;733&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc.png 924w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-300x238.png 300w, https://gotask.net/wp-content/uploads/2020/03/select-property-type-gsc-768x609.png 768w&#34; sizes=&#34;(max-width: 924px) 100vw, 924px&#34; /&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Chose ‘Domain’ option and type your domain name ‘sampleblog.blog’&lt;/li&gt;
+&lt;li&gt;Click on the ‘Continue’ button.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-2-8211-verifying-the-ownership-via-dns-record&#34;&gt;Step 2 – Verifying the ownership via DNS record&lt;/h2&gt;
+&lt;p&gt;As GSC requires domain ownership proof, in the following screen it requests adding a new TXT record with a specific code.&lt;/p&gt;
+&lt;figure id=&#34;attachment_105&#34; aria-describedby=&#34;caption-attachment-105&#34; style=&#34;width: 769px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-105&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png&#34; alt=&#34;Verify domain ownership DNS&#34; width=&#34;779&#34; height=&#34;677&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns.png 779w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-300x261.png 300w, https://gotask.net/wp-content/uploads/2020/03/verify-domain-ownership-dns-768x667.png 768w&#34; sizes=&#34;(max-width: 779px) 100vw, 779px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-105&#34; class=&#34;wp-caption-text&#34;&gt;Verifying domain ownership with DNS record.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;In the ‘Instructions for’ dropdown, you can find domain providers like GoDaddy and Name.com, for which Google is able to write the DNS records automatically. Unfortunately, HostGator is not supported in the list, so we will have to write them manually.&lt;/li&gt;
+&lt;li&gt;Make sure ‘Any DNS Provider’ is selected.&lt;/li&gt;
+&lt;li&gt;Click on the ‘Copy’ button to copy the text to your clipboard. Note this functionality is not fully supported in all browsers. In case the text is not copied, copy it manually using &lt;kbd&gt;CTRL&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Windows or &lt;kbd&gt;Command&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; on Mac.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;step-3-8211-setting-the-txt-record-in-hostgator&#34;&gt;Step 3 – Setting the TXT record in HostGator&lt;/h2&gt;
+&lt;h3 id=&#34;opening-8216advanced-zone-editor8217&#34;&gt;Opening ‘Advanced Zone Editor’&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Open the cPanel main screen&lt;/li&gt;
+&lt;li&gt;Locate the ‘DOMAINS’ group&lt;/li&gt;
+&lt;li&gt;Click on ‘Advanced Zone Editor’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;alignnone size-full wp-image-106&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png&#34; alt=&#34;cPanel Advanced Zone Editor&#34; width=&#34;844&#34; height=&#34;545&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone.png 844w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-300x194.png 300w, https://gotask.net/wp-content/uploads/2020/03/cpanel-advanced-dns-zone-768x496.png 768w&#34; sizes=&#34;(max-width: 844px) 100vw, 844px&#34; /&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;selecting-the-txt-record-type&#34;&gt;Selecting the TXT record type&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;In the following screen, locate the ‘Add Record’ section&lt;/li&gt;
+&lt;li&gt;From the ‘Type’ dropdown, select ‘TXT’&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure id=&#34;attachment_107&#34; aria-describedby=&#34;caption-attachment-107&#34; style=&#34;width: 565px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-107&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png&#34; alt=&#34;Add TXT record in cPanel&#34; width=&#34;575&#34; height=&#34;452&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record.png 768w, https://gotask.net/wp-content/uploads/2020/03/cpanel-add-txt-record-300x236.png 300w&#34; sizes=&#34;(max-width: 575px) 100vw, 575px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-107&#34; class=&#34;wp-caption-text&#34;&gt;Choose TXT in the &amp;#8216;Type&amp;#8217; dropdown&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;filling-the-record-fields&#34;&gt;Filling the record fields&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Leave the ‘Name’ field blank, as HostGator will set it automatically to your domain name.&lt;/li&gt;
+&lt;li&gt;Set the TTL (Time to live) records to 14400 (meaning 4 hours). This tells the named server resolver how long in seconds to store the value in it’s cache. Since we are not expected to change this value, 4 hours is reasonable.&lt;/li&gt;
+&lt;li&gt;In the ‘TXT Data’ field, paste the text you copied from Google Search Console.&lt;/li&gt;
+&lt;li&gt;Click on ‘Add Record’ to finish.&lt;/li&gt;
+&lt;li&gt;Please note that it might take between a few seconds to a few hours until this change takes effect, so don’t get discouraged if GSC is not able to immediately verify your site.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;figure id=&#34;attachment_109&#34; aria-describedby=&#34;caption-attachment-109&#34; style=&#34;width: 451px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34; wp-image-109&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png&#34; alt=&#34;TXT record form in cPanel&#34; width=&#34;461&#34; height=&#34;369&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form.png 761w, https://gotask.net/wp-content/uploads/2020/03/cpanel-fill-records-form-300x240.png 300w&#34; sizes=&#34;(max-width: 461px) 100vw, 461px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-109&#34; class=&#34;wp-caption-text&#34;&gt;Fill TXT records for site verification&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;step-4-8211-verifying-in-google-search-console&#34;&gt;Step 4 – Verifying in Google Search Console&lt;/h2&gt;
+&lt;p&gt;Assuming you set the TXT record correctly, the only part left is to let Google verify the record.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Go back to Google Search Console&lt;/li&gt;
+&lt;li&gt;Click on the ‘Verify’ button&lt;/li&gt;
+&lt;li&gt;This process might take a few seconds. By the end of the process, you should see a message displaying that your domain is verified and added to Google Search Console.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;troubleshooting&#34;&gt;Troubleshooting&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;In case Google is not able to find the TXT records, it’s recommended to wait a few minutes/hours until the DNS TXT record is fully updated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful Resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Google &lt;a href=&#34;https://webmasters.googleblog.com/2019/02/announcing-domain-wide-data-in-search.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;announces ‘domain properties’&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shell-api on GoTask</title>
+    <link>https://gotask.net/tags/shell-api/</link>
+    <description>Recent content in shell-api on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sat, 02 May 2020 23:19:51 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/shell-api/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C# – How to add or remove items from Windows recent files</title>
+      <link>https://gotask.net/programming/c-sharp-how-to-add-or-remove-items-from-windows-recent-files/</link>
+      <pubDate>Sat, 02 May 2020 23:19:51 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/c-sharp-how-to-add-or-remove-items-from-windows-recent-files/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Starting Windows 7, Microsoft added a capability for displaying recently used files. This usually includes documents, pictures, and movies we’ve recently accessed. These files can be seen in various Windows components, including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Recent files&lt;/li&gt;
+&lt;li&gt;Recent items&lt;/li&gt;
+&lt;li&gt;Start menu or application’s Jump List&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The management of the listed files is done by the operating system.&lt;/p&gt;
+&lt;p&gt;In this post, I will show how to programmatically add and remove items from the Recent files list using C#.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;Console application built on .NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;I created a helper class that uses Windows Shell API &lt;a href=&#34;https://docs.microsoft.com/en-us/windows/win32/api/shlobj_core/nf-shlobj_core-shaddtorecentdocs&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;SHAddToRecentDocs&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Imported the function using PInvoke.&lt;/li&gt;
+&lt;li&gt;Added 2 functions:
+&lt;ul&gt;
+&lt;li&gt;AddFile -&amp;gt; adds the file to Recent files view.&lt;/li&gt;
+&lt;li&gt;ClearAll -&amp;gt; clears all files from Recent files view.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public static class RecentDocsHelpers
+{
+  public enum ShellAddToRecentDocsFlags
+  {
+    Pidl = 0x001,
+    Path = 0x002,
+    PathW = 0x003
+  }
+
+  [DllImport(&#34;shell32.dll&#34;, CharSet = CharSet.Unicode)]
+  private static extern void SHAddToRecentDocs(ShellAddToRecentDocsFlags flag, string path);
+
+  public static void AddFile(string path)
+  {
+    SHAddToRecentDocs(ShellAddToRecentDocsFlags.PathW, path);
+  }
+
+  public static void ClearAll()
+  {
+    SHAddToRecentDocs(ShellAddToRecentDocsFlags.Pidl, null);
+  }
+}&lt;/pre&gt;
+&lt;h3 id=&#34;usage&#34;&gt;Usage&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;class Program
+{
+  static void Main(string[] args)
+  {
+    RecentDocsHelpers.ClearAll();
+
+    // add c:\temp\sample.json to recent files.
+    RecentDocsHelpers.AddFile(@&#34;c:\temp\sample.json&#34;);
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;limitation&#34;&gt;Limitation&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;You can not add executable files to Recent files.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;result&#34;&gt;Result&lt;/h2&gt;
+&lt;figure id=&#34;attachment_231&#34; aria-describedby=&#34;caption-attachment-231&#34; style=&#34;width: 790px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-231&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/05/windows-recent-files-added-e1588421810539.png&#34; alt=&#34;Windows recent files&#34; width=&#34;800&#34; height=&#34;261&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-231&#34; class=&#34;wp-caption-text&#34;&gt;Windows recent files&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/Utils/RecentFiles&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

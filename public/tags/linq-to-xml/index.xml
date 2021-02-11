@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>linq-to-xml on GoTask</title>
+    <link>https://gotask.net/tags/linq-to-xml/</link>
+    <description>Recent content in linq-to-xml on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sun, 18 Oct 2020 12:58:33 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/linq-to-xml/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C# Parsing XML with namespace using LINQ</title>
+      <link>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</link>
+      <pubDate>Sun, 18 Oct 2020 12:58:33 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I wrote about &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;deserializing XML with namespace&lt;/a&gt; using XmlSerializer that requires creating custom model classes in&lt;/p&gt;
+&lt;p&gt;order to perform the serialization. Today, I am going to cover another powerful method for parsing – &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-overview&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;LINQ to XML&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;my-stackfigure-idattachment_269-aria-describedbycaption-attachment-269-stylewidth-277px-classwp-caption-alignright&#34;&gt;My Stack&lt;figure id=&#34;attachment_269&#34; aria-describedby=&#34;caption-attachment-269&#34; style=&#34;width: 277px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-269&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/xml_logo.png&#34; alt=&#34;Xml element tag&#34; width=&#34;287&#34; height=&#34;65&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-269&#34; class=&#34;wp-caption-text&#34;&gt;Xml element tag&lt;/figcaption&gt;&lt;/figure&gt; &lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Core 3.1 / C#&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;implementation&#34;&gt;Implementation&lt;/h2&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading&#34;&gt;Simple LINQ-XML reading&lt;/h3&gt;
+&lt;p&gt;Consider the following XML that contains no namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In order to read the Books elements, we could use the following sample code:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;var root = XElement.Load(&#34;SimpleBooks.xml&#34;);
+
+var books = root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(&#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;Another approach could be taking an advantage of the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/anonymous-types&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;anonymous types&lt;/a&gt; in .NET. The sample code below reads all the books into an anonymous type containing the 3 elements from the XML as read only properties.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;// 2. Convert to anonymous type.
+var books = from book in root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;)
+      select new
+      {
+        Name = book.Element(&#34;Name&#34;).Value,
+        ISBN = book.Element(&#34;ISBN&#34;).Value,
+        Price = book.Element(&#34;Price&#34;).Value
+      };
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Name}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading-with-namespaces&#34;&gt;Simple LINQ-XML reading with namespaces&lt;/h3&gt;
+&lt;p&gt;A quick reminder from the previous article – why do we need &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;namespaces in our XML files&lt;/a&gt;?&lt;/p&gt;
+&lt;p&gt;The short answer would be to prevent any element’s naming conflicts in the same file. Remember, XML files can be very long and complex written by different people, so naming conflicts might be very common. A comparable example could be names of the classes in the C# code – once inside namespace the chance for conflict is very low. To create the uniqueness, we usually use URI’s that we own, but actually the namespace name can be any string. There are more details in this question regarding &lt;a href=&#34;https://softwareengineering.stackexchange.com/questions/122002/why-do-we-need-uris-for-xml-namespaces&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;URI’s and namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For the sample, I am going to add a namespace to the Books element of the XML.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=&#34;https://gotask.net&#34;&lt;/pre&gt;
+&lt;p&gt;So our XML looks like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;        
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Running the previous code on this code will produce no results. The reason is that each element has it’s own fully qualified name once we have a namespace – the element Books is actually &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt;:Books. and our code is searching for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;items.Descendants(&amp;quot;Books&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to correctly parse the file above, we need to specify the namespace using &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.xml.linq.xnamespace?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XNamespace&lt;/a&gt; class in every call for Descendants.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+   Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;nested-namespaces&#34;&gt;Nested namespaces&lt;/h3&gt;
+&lt;p&gt;Consider the following XML, where the Items element is in one namespace, but the Books child element is in other:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books xmlns=&#34;https://books.net&#34;&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In the sample code below, we need to specify both namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace y = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(y + &#34;Books&#34;).Descendants(y + &#34;Book&#34;);
+
+foreach (var book in books)
+    Console.WriteLine($&#34;Book is {book.Element(y + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;multiple-namespaces-with-prefix&#34;&gt;Multiple namespaces with prefix&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML standard&lt;/a&gt; allows us to define multiple namespaces for the same element. Once we define &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=https://somename.net&lt;/code&gt;, we are actually defining a default namespace without a prefix. In order to define another namespace, we need to specify the prefix &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns:bk=https://books.net&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to create child elements that belongs to &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; namespace, we need to declare with &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;bk:book&amp;gt;&amp;lt;/bk:book&amp;gt;&lt;/code&gt;. Elements without the prefix will belong to the default namespace.&lt;/p&gt;
+&lt;p&gt;So lets consider this is our new XML. We have 2 namespaces defined, &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt; is the default one and &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; has the bk prefix.&lt;/p&gt;
+&lt;p&gt;We have one Book element in the bk namespace and the other one in the default.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34; xmlns:bk=&#34;https://books.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;bk:Book&amp;gt;
+        &amp;lt;bk:ISBN&amp;gt;978-1788478120&amp;lt;/bk:ISBN&amp;gt;
+        &amp;lt;bk:Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/bk:Name&amp;gt;
+        &amp;lt;bk:Price&amp;gt;35.99&amp;lt;/bk:Price&amp;gt;
+      &amp;lt;/bk:Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the bk namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace b = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(b + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(b + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the default namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/LinqToXML&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

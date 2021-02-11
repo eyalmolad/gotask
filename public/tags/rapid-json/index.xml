@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rapid-json on GoTask</title>
+    <link>https://gotask.net/tags/rapid-json/</link>
+    <description>Recent content in rapid-json on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Tue, 28 Apr 2020 18:56:46 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/rapid-json/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Serialize and Deserialize array in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</link>
+      <pubDate>Tue, 28 Apr 2020 18:56:46 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In my previous article, I covered &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;serializing/deserializing JSON&lt;/a&gt; in C++ to a simple object using &lt;a href=&#34;https://rapidjson.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When working with JSON, my goal is to work always with object models and keep the actual JSON parsing behind the scenes. This keeps the readability and maintainability of the code as JSON manipulation, type checking and exception handling is done is a single class and not across the entire application. This also enables a future replacement of the JSON parsing library without the need to change the code of the entire application.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;I am going to use the same C++ Console Application from the previous post about &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;JSON Serialization in C++&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;My JSON will be an array of products in an inventory. Here is the sample of 3 products in inventory:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;[
+  {
+    &#34;id&#34;: 1,
+    &#34;name&#34;: &#34;Bush Somerset Collection Bookcase&#34;,
+    &#34;category&#34;: &#34;Furniture&#34;,
+    &#34;sales&#34;: 22.0
+  },
+  {
+    &#34;id&#34;: 2,
+    &#34;name&#34;: &#34;Mitel 5320 IP Phone VoIP phone&#34;,
+    &#34;category&#34;: &#34;Technology&#34;,
+    &#34;sales&#34;: 907.1519775390625
+  },
+  {
+    &#34;id&#34;: 3,
+    &#34;name&#34;: &#34;Poly String Tie Envelopes&#34;,
+    &#34;category&#34;: &#34;Office Supplies&#34;,
+    &#34;sales&#34;: 3.2639999389648439
+  }
+]&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-object-models&#34;&gt;Creating the object models&lt;/h2&gt;
+&lt;p&gt;For the single product, we used the following object model:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We added member variable for every JSON property with the correct type (id, name, sales, category)&lt;/li&gt;
+&lt;li&gt;Implemented getters/setters&lt;/li&gt;
+&lt;li&gt;Implemented Serialize and Deserialize functions&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Product : public JSONBase
+  {
+  public:
+    Product();		
+    virtual ~Product();			
+
+    virtual bool Deserialize(const rapidjson::Value&amp; obj);
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+    // Getters/Setters.
+    const std::string&amp; Name() const { return _name; }
+    void Name(const std::string&amp; name) { _name = name; }
+
+    const std::string&amp; Category() const { return _category; }
+    void Category(const std::string&amp; category) { _category = category; }
+
+    float Sales() const { return _sales; }
+    void Sales(float sales) { _sales = sales; }
+
+    int Id() const { return _id; }
+    void Id(int id) { _id = id; }		
+  private:
+    std::string _name;
+    std::string _category;
+    float _sales;
+    int _id;
+  };	
+}&lt;/pre&gt;
+&lt;p&gt;In the next step, we need to create a class that will hold a list of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;Product&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Products : public JSONBase
+  {
+  public:		
+    virtual ~Products() {};
+    virtual bool Deserialize(const std::string&amp; s);		
+
+    // Getters/Setters.
+    std::list&amp;lt;Product&amp;gt;&amp; ProductsList() { return _products; }
+  public:
+    virtual bool Deserialize(const rapidjson::Value&amp; obj) { return false; };
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+  private:
+    std::list&amp;lt;Product&amp;gt; _products;
+  };
+}&lt;/pre&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by JSONBase class once the object is being serialized. Our list is stored in the memory, so we need to write it to the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In this code, we iterate over all Product in our &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;_product&lt;/code&gt; list and call for Serialize function of the Product class.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const
+{
+  writer-&amp;gt;StartArray();
+
+     for (std::list&amp;lt;Product&amp;gt;::const_iterator it = _products.begin(); it != _products.end(); it++)
+     {
+        (*it).Serialize(writer);
+     }
+  writer-&amp;gt;EndArray();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with JSON string parameter.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to call for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;InitDocument&lt;/code&gt; function to parse the string&lt;/li&gt;
+&lt;li&gt;Once the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;doc&lt;/code&gt; object is initialized, we need to iterate over all JSON objects, call for Deserialize and finally add to _products list.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Deserialize(const std::string&amp; s)
+{
+  rapidjson::Document doc;
+  if (!InitDocument(s, doc))
+    return false;
+
+  if (!doc.IsArray())
+    return false;
+
+  for (rapidjson::Value::ConstValueIterator itr = doc.Begin(); itr != doc.End(); ++itr)
+  {
+    Product p;
+    p.Deserialize(*itr);
+    _products.push_back(p);
+  }
+
+  return true;
+}&lt;/pre&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;h3 id=&#34;loading-json-array-from-file&#34;&gt;Loading JSON array from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// load json array
+JSONModels::Products products;
+products.DeserializeFromFile(&#34;DataSampleArray.json&#34;);
+
+for (std::list&amp;lt;JSONModels::Product&amp;gt;::const_iterator it = products.ProductsList().begin();
+  it != products.ProductsList().end(); it++)
+{
+  // print some values.
+  printf(&#34;Name:%s, Sales:%.3f&#34;, (*it).Name().c_str(), (*it).Sales());
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-a-new-object-to-the-existing-list&#34;&gt;Adding a new object to the existing list&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// add new product
+JSONModels::Product newProduct;
+newProduct.Id(101);
+newProduct.Name(&#34;Global Value Mid-Back Manager&#39;s Chair, Gray&#34;);
+newProduct.Category(&#34;Furniture&#34;);
+newProduct.Sales(213.115f);    
+products.ProductsList().push_back(product);&lt;/pre&gt;
+&lt;h3 id=&#34;saving-the-list-to-a-new-file&#34;&gt;Saving the list to a new file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// save to new array file.
+products.SerializeToFile(&#34;DataSampleArrayNew.json&#34;)&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Serialize and Deserialize object in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</link>
+      <pubDate>Wed, 08 Apr 2020 20:12:03 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In one of my projects in C++, I had to work with an input in JSON format as we were using Django Web API that produces a JSON response for REST API calls.&lt;/p&gt;
+&lt;p&gt;Parsing the JSON format in C++ should be easy with the open source libraries such as &lt;a href=&#34;https://rapidjson.org&#34;&gt;RapidJSON&lt;/a&gt;, &lt;a href=&#34;https://github.com/nlohmann/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;nlohmann/jsonm&lt;/a&gt;, &lt;a href=&#34;https://github.com/CPPAlliance/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Boost.JSON.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;My goal was to work with strongly-typed objects and keep the parsing behind the scenes.&lt;/p&gt;
+&lt;p&gt;Such task sounds trivial if you work in C# or other programming language that supports reflection, but in C++ it requires a bit more work.&lt;/p&gt;
+&lt;p&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub.&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;In Visual Studio, create a new Console Application in C++. It can be both, 32-bit or 64-bit.&lt;/li&gt;
+&lt;li&gt;In Windows Explorer, open the root folder of the project in command line prompt.&lt;/li&gt;
+&lt;li&gt;Clone the RapidJSON repository using the following command line:
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+ &lt;ul&gt;
+   &lt;li&gt;
+     &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://github.com/Tencent/rapidjson.git&lt;/code&gt;
+   &lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;/li&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;I am going to use a very simple JSON  that represents a product in an inventory. It has a few properties of different types: &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;json&#34;&gt;{
+&amp;quot;id&amp;quot;: 9,
+&amp;quot;name&amp;quot;: &amp;quot;Bush Somerset Collection Bookcase&amp;quot;,
+&amp;quot;category&amp;quot;: &amp;quot;Furniture&amp;quot;,
+&amp;quot;sales&amp;quot;:122.0
+}&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;creating-the-object-model&#34;&gt;Creating the object model&lt;/h2&gt;
+&lt;p&gt;As I mentioned before, in the serialize/deserialize process I want to be able to work with classes with strongly typed members and accessors functions.&lt;/p&gt;
+&lt;p&gt;For this purpose, I created an abstract base class &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONBase&lt;/code&gt; that provides following capabilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Document parsing using RapidJSON&lt;/li&gt;
+&lt;li&gt;Serializing to file and Deserializing from file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Inheriting from JSONBase requires an implementation of Serialize and Deserialize pure virtual functions.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class JSONBase
+{
+public:	
+  bool DeserializeFromFile(const std::string&amp; filePath);
+  bool SerializeToFile(const std::string&amp; filePath);	
+
+  virtual std::string Serialize() const;
+  virtual bool Deserialize(const std::string&amp; s);
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj) = 0;
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const = 0;
+protected:
+  bool InitDocument(const std::string &amp; s, rapidjson::Document &amp;doc);
+};&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-product-class&#34;&gt;Creating the Product class&lt;/h2&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class Product : public JSONBase
+{
+public:
+  Product();		
+  virtual ~Product();			
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj);
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+  // Getters/Setters.
+  const std::string&amp; Name() const { return _name; }
+  void Name(const std::string&amp; name) { _name = name; }
+
+  const std::string&amp; Category() const { return _category; }
+  void Category(const std::string&amp; category) { _category = category; }
+
+  float Sales() const { return _sales; }
+  void Sales(float sales) { _sales = sales; }
+
+  int Id() const { return _id; }
+  void Id(int id) { _id = id; }		
+private:
+  std::string _name;
+  std::string _category;
+  float _sales;
+  int _id;
+};&lt;/pre&gt;
+&lt;p&gt;As my goal is to work with objects and not JSON, we need following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a class that derives from JSONBase that represents a Product.&lt;/li&gt;
+&lt;li&gt;Add member variables to the class. (id, name, category, sales)&lt;/li&gt;
+&lt;li&gt;Add Getters/Setters for member variables.&lt;/li&gt;
+&lt;li&gt;Implement the pure virtual functions Serialize and Deserialize&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by the JSON base class passing the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt; pointer. We need to write the property names and values to the buffer.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt; * writer) const
+{
+  writer-&amp;gt;StartObject();
+
+    writer-&amp;gt;String(&#34;id&#34;); // create Id property
+    writer-&amp;gt;Int(_id);     // write the Id value from the object instance
+
+    writer-&amp;gt;String(&#34;name&#34;);
+    writer-&amp;gt;String(_name.c_str());
+
+    writer-&amp;gt;String(&#34;category&#34;);
+    writer-&amp;gt;String(_category.c_str());
+
+    writer-&amp;gt;String(&#34;sales&#34;);
+    writer-&amp;gt;Double(_sales);
+
+  writer-&amp;gt;EndObject();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with the current object being parsed. We need to call the setter functions of our object to update the value from JSON.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Deserialize(const rapidjson::Value &amp; obj)
+{
+  Id(obj[&#34;id&#34;].GetInt());
+  Name(obj[&#34;name&#34;].GetString());
+  Category(obj[&#34;category&#34;].GetString());
+  Sales(obj[&#34;sales&#34;].GetFloat());
+
+  return true;
+}&lt;/pre&gt;
+&lt;p&gt;Notice that you should access every property with the correct type.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;int – GetInt()&lt;/li&gt;
+&lt;li&gt;int64 – GetInt64()&lt;/li&gt;
+&lt;li&gt;string – GetString()&lt;/li&gt;
+&lt;li&gt;float – GetFloat()&lt;/li&gt;
+&lt;li&gt;double – GetDouble()&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check this section in &lt;a href=&#34;https://rapidjson.org/md_doc_tutorial.html#QueryNumber&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON tutorial&lt;/a&gt; for more info about the supported types.&lt;/p&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;p&gt;After we’ve done all the hard work with defining the classes, the usage is very straight forward:&lt;/p&gt;
+&lt;h3 id=&#34;loading-json-from-file&#34;&gt;Loading JSON from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);
+printf(&#34;Name:%s, Sales:%.3f&#34;, product.Name().c_str(), product.Sales());&lt;/pre&gt;
+&lt;h3 id=&#34;loading-json-from-file-changing-values-to-writing-back-to-file&#34;&gt;Loading JSON from file, changing values to writing back to file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);            
+product.Sales(product.Sales() + 100.0f); // increase the sales by 100
+product.SerializeToFile(&#34;DataSampleNew.json&#34;);&lt;/pre&gt;
+&lt;p&gt;In the next article, I am going to cover serializing/deserialzing JSON arrays in C++.&lt;/p&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

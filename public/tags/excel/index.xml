@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>excel on GoTask</title>
+    <link>https://gotask.net/tags/excel/</link>
+    <description>Recent content in excel on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Wed, 14 Oct 2020 20:00:42 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/excel/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C# – Creating an Excel Addin with User Defined Functions</title>
+      <link>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</link>
+      <pubDate>Wed, 14 Oct 2020 20:00:42 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/vsto/c-sharp-creating-excel-addin-with-user-defined-functions/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I demonstrated how to create a simple &lt;a href=&#34;https://gotask.net/programming/vsto/c-sharp-vsto-addin-sample-for-excel-word-power-point-outlook/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;VSTO Addin for Excel&lt;/a&gt; that adds a button on the ribbon. In this post, I am going to show how to add a user defined functions using &lt;a href=&#34;https://excel-dna.net&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Excel-DNA&lt;/a&gt; as well as use the ribbon functionality.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;!-- /wp:paragraph --&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Framework 4.7.2 / C#&lt;/li&gt;
+&lt;li&gt;Office 365, Desktop Edition.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;user-defined-function-udf&#34;&gt;User Defined Function (UDF)&lt;/h2&gt;
+&lt;p&gt;Excel provides a large set of built in functions, giving a user the ability to perform various calculations and manipulations on the data. But what happens if a user needs a custom calculation, that needs to be used over multiple cells? Starting Excel 2002, Microsoft introduced the User Defined Functions. This capability enables you to wrap some common calculation or string manipulation in a function and call it transparently as any other Excel build-in function.&lt;/p&gt;
+&lt;h3 id=&#34;example&#34;&gt;Example&lt;/h3&gt;
+&lt;p&gt;Lets say we want to reverse a string in a cell. There are lot of examples of how to do that using the Excel built in functions. One of the examples is using &lt;a href=&#34;https://support.microsoft.com/en-us/office/textjoin-function-357b449a-ec91-49d0-80c3-0e8fc845691c&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;TEXTJOIN&lt;/a&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;generic&#34;&gt;=TEXTJOIN(&#34;&#34;,1,MID(A1,ABS(ROW(INDIRECT(&#34;1:&#34;&amp;LEN(A1)))-(LEN(A1)+1)),1))&lt;/pre&gt;
+&lt;p&gt;Additional techniques could be found &lt;a href=&#34;https://exceljet.net/formula/reverse-text-string&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Much cleaner alternative would be creating a UDF that does this in C# and calling the function from the Excel spreadsheet with:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString(A1)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;creating-an-excel-addin-that-supports-udf&#34;&gt;Creating an Excel Addin that supports UDF&lt;/h2&gt;
+&lt;p&gt;From Visual Studio menu, create a new .NET Framework Class Library project.&lt;/p&gt;
+&lt;h3 id=&#34;installing-dependencies&#34;&gt;Installing dependencies&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to reference the Excel-DNA project that enables us to make native XLL addins using C#. In the Visual Studio Package Manager Console type:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;shell&#34;&gt;Install-Package ExcelDna.AddIn&lt;/pre&gt;
+&lt;p&gt;Note: After installing the ExcelDna.Addin package, your project extension will be changed to xll which is a format for an addin that adds UDF functionality. You can read more about the &lt;a href=&#34;https://docs.microsoft.com/en-us/office/client-developer/excel/creating-xlls&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XLL addins on MSDN&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;    2. Since we want to create also some visual components and interact will the Excel elements we need to add the reference to: Microsoft.Office.Interop.Excel.dll. This component is usually located in your Office directory.&lt;/p&gt;
+&lt;h3 id=&#34;setting-up-the-control-classes&#34;&gt;Setting up the control classes&lt;/h3&gt;
+&lt;p&gt;Since we want to combine the ExcelDna.Addin and the Ribbon objects, we can’t use the regular VSTO, but need to create the control classes manually.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Create a class that implements the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ExcelDna.Integration.IExcelAddIn&lt;/code&gt; interface. &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public class ExcelRibbonUDFAddin : IExcelAddIn
+{
+public void AutoOpen()
+{
+// startup code
+}&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;public void AutoClose()
+{
+// clean up
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2. Create the ribbon controller class that derives from &amp;lt;code class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;ExcelDna.Integration.CustomUI.ExcelRibbon&amp;lt;/code&amp;gt;base class.
+
+&amp;lt;pre class=&amp;quot;EnlighterJSRAW&amp;quot; data-enlighter-language=&amp;quot;csharp&amp;quot;&amp;gt;[ComVisible(true)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;public class RibbonController : ExcelRibbon, IDisposable
+{
+private Microsoft.Office.Core.IRibbonUI _ribbonUi;&lt;/p&gt;
+&lt;p&gt;private Application App
+{
+get =&amp;gt; (Application)ExcelDnaUtil.Application;
+}&lt;/p&gt;
+&lt;p&gt;public override string GetCustomUI(string ribbonID) =&amp;gt;
+@&amp;quot;&amp;lt;customUI xmlns=&#39;http://schemas.microsoft.com/office/2009/07/customui&#39;&amp;gt;
+&amp;lt;ribbon&amp;gt;
+&amp;lt;tabs&amp;gt;
+&amp;lt;tab id=&#39;sample_tab&#39; label=&#39;GoTask&#39;&amp;gt;
+&amp;lt;group id=&#39;sample_group&#39; label=&#39;Operations&#39;&amp;gt;                                     &lt;br&gt;
+&amp;lt;button id=&#39;do_reverse_range&#39; label=&#39;Reverse&#39; size=&#39;large&#39; getImage=&#39;OnDoReverseGetImage&#39; onAction=&#39;OnDoReverse&#39;/&amp;gt;
+&amp;lt;/group&amp;gt;
+&amp;lt;/tab&amp;gt;
+&amp;lt;/tabs&amp;gt;
+&amp;lt;/ribbon&amp;gt;
+&amp;lt;/customUI&amp;gt;&amp;quot;;&lt;/p&gt;
+&lt;p&gt;public void OnLoad(Microsoft.Office.Core.IRibbonUI ribbonUI)
+{
+_ribbonUi = ribbonUI;       &lt;br&gt;
+}&lt;/p&gt;
+&lt;p&gt;public void Dispose()
+{         &lt;br&gt;
+}
+}&lt;/pre&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;amp;nbsp;
+
+a) ExcelDnaUtil.Application returns the Excel Application object instance. b) GetCustomUI returns the Ribbon XML string. You can find the full specification regarding the 
+
+&amp;lt;a href=&amp;quot;https://docs.microsoft.com/en-us/visualstudio/vsto/ribbon-xml?view=vs-2019&amp;quot; target=&amp;quot;_blank&amp;quot; rel=&amp;quot;noopener noreferrer&amp;quot;&amp;gt;Ribbon XML format on MSDN&amp;lt;/a&amp;gt;.
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;adding-the-udf-functionality&#34;&gt;Adding the UDF functionality&lt;/h3&gt;
+&lt;p&gt;Create a new static class that will contain the Reverse string function implementation. Make sure that you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;ExcelFunction&lt;/code&gt;attribute to it.&lt;/p&gt;
+&lt;p&gt;Every time you add &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt;to any cell in the Excel, this function will be called.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public static class CustomFunctions
+{
+  [ExcelFunction(Description = &#34;Reverse string function&#34;)]
+  public static string ReverseString(string str)
+  {
+    var charArray = str.ToCharArray();
+    Array.Reverse(charArray);
+    return new string(charArray);
+  }
+}&lt;/pre&gt;
+&lt;h3 id=&#34;testing-the-project&#34;&gt;Testing the project&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Build the project and run it in Debug mode. This should open the Excel application with the addin loaded.&lt;figure id=&#34;attachment_249&#34; aria-describedby=&#34;caption-attachment-249&#34; style=&#34;width: 230px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-249&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/reverse-string-excel-e1602775342176.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;240&#34; height=&#34;228&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-249&#34; class=&#34;wp-caption-text&#34;&gt;Excel functions intellisense&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Go to some cell and type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;=ReverseString&lt;/code&gt; passing a reference to a cell or hard coded string.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Your target cell should contain the reversed string. Since you are running in the debug mode, you can always set a breakpoint in the ReverseString function.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;adding-the-reverse-function-to-an-existing-range&#34;&gt;Adding the reverse function to an existing range&lt;/h2&gt;
+&lt;p&gt;After we built the basic sample, we can connect it to a button on the ribbon that reverses the string of the selected range and inserts the results to the new column.&lt;/p&gt;
+&lt;p&gt;For this, we need to implement the ribbon button action function in the Ribbon Controller class:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;public void OnDoReverse(Microsoft.Office.Core.IRibbonControl control)
+{
+  var selectedRange = App.Selection;
+
+  if (selectedRange == null) return;
+
+  foreach (Range cell in selectedRange)
+  {
+    var next = cell.Offset[0, 1];
+    next.Formula = $&#34;=ReverseString({cell.Address})&#34;;
+  }
+}&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Source code of this project on &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/VSTO/UDF/ExcelRibbonUDF&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;figure id=&#34;attachment_254&#34; aria-describedby=&#34;caption-attachment-254&#34; style=&#34;width: 290px&#34; class=&#34;wp-caption aligncenter&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-254 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/image_2020-10-15_184255-e1602780284748.png&#34; alt=&#34;Reverse string in Excel&#34; width=&#34;300&#34; height=&#34;294&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-254&#34; class=&#34;wp-caption-text&#34;&gt;Reverse string in Excel Result&lt;/figcaption&gt;&lt;/figure&gt;&lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

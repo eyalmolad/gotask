@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>serialization on GoTask</title>
+    <link>https://gotask.net/tags/serialization/</link>
+    <description>Recent content in serialization on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Sun, 18 Oct 2020 12:58:33 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/serialization/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>C# Parsing XML with namespace using LINQ</title>
+      <link>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</link>
+      <pubDate>Sun, 18 Oct 2020 12:58:33 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/c-parsing-xml-with-namespace-using-linq/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;In one of my previous posts, I wrote about &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;deserializing XML with namespace&lt;/a&gt; using XmlSerializer that requires creating custom model classes in&lt;/p&gt;
+&lt;p&gt;order to perform the serialization. Today, I am going to cover another powerful method for parsing – &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/standard/linq/linq-xml-overview&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;LINQ to XML&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;my-stackfigure-idattachment_269-aria-describedbycaption-attachment-269-stylewidth-277px-classwp-caption-alignright&#34;&gt;My Stack&lt;figure id=&#34;attachment_269&#34; aria-describedby=&#34;caption-attachment-269&#34; style=&#34;width: 277px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;/h2&gt;
+&lt;p&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-269&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/10/xml_logo.png&#34; alt=&#34;Xml element tag&#34; width=&#34;287&#34; height=&#34;65&#34; /&gt; &lt;figcaption id=&#34;caption-attachment-269&#34; class=&#34;wp-caption-text&#34;&gt;Xml element tag&lt;/figcaption&gt;&lt;/figure&gt; &lt;!-- /wp:paragraph --&gt;&lt;/p&gt;
+&lt;!-- wp:list --&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community.&lt;/li&gt;
+&lt;li&gt;.NET Core 3.1 / C#&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 19041)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;implementation&#34;&gt;Implementation&lt;/h2&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading&#34;&gt;Simple LINQ-XML reading&lt;/h3&gt;
+&lt;p&gt;Consider the following XML that contains no namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In order to read the Books elements, we could use the following sample code:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;var root = XElement.Load(&#34;SimpleBooks.xml&#34;);
+
+var books = root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(&#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;Another approach could be taking an advantage of the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/anonymous-types&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;anonymous types&lt;/a&gt; in .NET. The sample code below reads all the books into an anonymous type containing the 3 elements from the XML as read only properties.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;// 2. Convert to anonymous type.
+var books = from book in root.Descendants(&#34;Items&#34;).Descendants(&#34;Books&#34;).Descendants(&#34;Book&#34;)
+      select new
+      {
+        Name = book.Element(&#34;Name&#34;).Value,
+        ISBN = book.Element(&#34;ISBN&#34;).Value,
+        Price = book.Element(&#34;Price&#34;).Value
+      };
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Name}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;simple-linq-xml-reading-with-namespaces&#34;&gt;Simple LINQ-XML reading with namespaces&lt;/h3&gt;
+&lt;p&gt;A quick reminder from the previous article – why do we need &lt;a href=&#34;https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;namespaces in our XML files&lt;/a&gt;?&lt;/p&gt;
+&lt;p&gt;The short answer would be to prevent any element’s naming conflicts in the same file. Remember, XML files can be very long and complex written by different people, so naming conflicts might be very common. A comparable example could be names of the classes in the C# code – once inside namespace the chance for conflict is very low. To create the uniqueness, we usually use URI’s that we own, but actually the namespace name can be any string. There are more details in this question regarding &lt;a href=&#34;https://softwareengineering.stackexchange.com/questions/122002/why-do-we-need-uris-for-xml-namespaces&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;URI’s and namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;For the sample, I am going to add a namespace to the Books element of the XML.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=&#34;https://gotask.net&#34;&lt;/pre&gt;
+&lt;p&gt;So our XML looks like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;Book&amp;gt;        
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Running the previous code on this code will produce no results. The reason is that each element has it’s own fully qualified name once we have a namespace – the element Books is actually &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt;:Books. and our code is searching for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;items.Descendants(&amp;quot;Books&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to correctly parse the file above, we need to specify the namespace using &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.xml.linq.xnamespace?view=netcore-3.1&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XNamespace&lt;/a&gt; class in every call for Descendants.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+   Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;nested-namespaces&#34;&gt;Nested namespaces&lt;/h3&gt;
+&lt;p&gt;Consider the following XML, where the Items element is in one namespace, but the Books child element is in other:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34;&amp;gt;
+    &amp;lt;Books xmlns=&#34;https://books.net&#34;&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;In the sample code below, we need to specify both namespaces.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace y = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(y + &#34;Books&#34;).Descendants(y + &#34;Book&#34;);
+
+foreach (var book in books)
+    Console.WriteLine($&#34;Book is {book.Element(y + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h3 id=&#34;multiple-namespaces-with-prefix&#34;&gt;Multiple namespaces with prefix&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML standard&lt;/a&gt; allows us to define multiple namespaces for the same element. Once we define &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns=https://somename.net&lt;/code&gt;, we are actually defining a default namespace without a prefix. In order to define another namespace, we need to specify the prefix &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;xmlns:bk=https://books.net&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to create child elements that belongs to &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; namespace, we need to declare with &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;bk:book&amp;gt;&amp;lt;/bk:book&amp;gt;&lt;/code&gt;. Elements without the prefix will belong to the default namespace.&lt;/p&gt;
+&lt;p&gt;So lets consider this is our new XML. We have 2 namespaces defined, &lt;a href=&#34;https://gotask.net&#34;&gt;https://gotask.net&lt;/a&gt; is the default one and &lt;a href=&#34;https://books.net&#34;&gt;https://books.net&lt;/a&gt; has the bk prefix.&lt;/p&gt;
+&lt;p&gt;We have one Book element in the bk namespace and the other one in the default.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Root&amp;gt;
+  &amp;lt;Items xmlns=&#34;https://gotask.net&#34; xmlns:bk=&#34;https://books.net&#34;&amp;gt;
+    &amp;lt;Books&amp;gt;
+      &amp;lt;bk:Book&amp;gt;
+        &amp;lt;bk:ISBN&amp;gt;978-1788478120&amp;lt;/bk:ISBN&amp;gt;
+        &amp;lt;bk:Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/bk:Name&amp;gt;
+        &amp;lt;bk:Price&amp;gt;35.99&amp;lt;/bk:Price&amp;gt;
+      &amp;lt;/bk:Book&amp;gt;
+      &amp;lt;Book&amp;gt;
+        &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+        &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+        &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+      &amp;lt;/Book&amp;gt;
+    &amp;lt;/Books&amp;gt;
+  &amp;lt;/Items&amp;gt;
+&amp;lt;/Root&amp;gt;&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the bk namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+XNamespace b = &#34;https://books.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(b + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(b + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;p&gt;The code below, reads only the Books belonging to the default namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;XNamespace x = &#34;https://gotask.net&#34;;
+
+var books = root.Descendants(x + &#34;Items&#34;).Descendants(x + &#34;Books&#34;).Descendants(x + &#34;Book&#34;);
+
+foreach (var book in books)
+  Console.WriteLine($&#34;Book name: {book.Element(x + &#34;Name&#34;).Value}&#34;);&lt;/pre&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/LinqToXML&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Serialize and Deserialize array in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</link>
+      <pubDate>Tue, 28 Apr 2020 18:56:46 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-array-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In my previous article, I covered &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;serializing/deserializing JSON&lt;/a&gt; in C++ to a simple object using &lt;a href=&#34;https://rapidjson.org&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When working with JSON, my goal is to work always with object models and keep the actual JSON parsing behind the scenes. This keeps the readability and maintainability of the code as JSON manipulation, type checking and exception handling is done is a single class and not across the entire application. This also enables a future replacement of the JSON parsing library without the need to change the code of the entire application.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;I am going to use the same C++ Console Application from the previous post about &lt;a href=&#34;https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/&#34;&gt;JSON Serialization in C++&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;My JSON will be an array of products in an inventory. Here is the sample of 3 products in inventory:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;[
+  {
+    &#34;id&#34;: 1,
+    &#34;name&#34;: &#34;Bush Somerset Collection Bookcase&#34;,
+    &#34;category&#34;: &#34;Furniture&#34;,
+    &#34;sales&#34;: 22.0
+  },
+  {
+    &#34;id&#34;: 2,
+    &#34;name&#34;: &#34;Mitel 5320 IP Phone VoIP phone&#34;,
+    &#34;category&#34;: &#34;Technology&#34;,
+    &#34;sales&#34;: 907.1519775390625
+  },
+  {
+    &#34;id&#34;: 3,
+    &#34;name&#34;: &#34;Poly String Tie Envelopes&#34;,
+    &#34;category&#34;: &#34;Office Supplies&#34;,
+    &#34;sales&#34;: 3.2639999389648439
+  }
+]&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-object-models&#34;&gt;Creating the object models&lt;/h2&gt;
+&lt;p&gt;For the single product, we used the following object model:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We added member variable for every JSON property with the correct type (id, name, sales, category)&lt;/li&gt;
+&lt;li&gt;Implemented getters/setters&lt;/li&gt;
+&lt;li&gt;Implemented Serialize and Deserialize functions&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Product : public JSONBase
+  {
+  public:
+    Product();		
+    virtual ~Product();			
+
+    virtual bool Deserialize(const rapidjson::Value&amp; obj);
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+    // Getters/Setters.
+    const std::string&amp; Name() const { return _name; }
+    void Name(const std::string&amp; name) { _name = name; }
+
+    const std::string&amp; Category() const { return _category; }
+    void Category(const std::string&amp; category) { _category = category; }
+
+    float Sales() const { return _sales; }
+    void Sales(float sales) { _sales = sales; }
+
+    int Id() const { return _id; }
+    void Id(int id) { _id = id; }		
+  private:
+    std::string _name;
+    std::string _category;
+    float _sales;
+    int _id;
+  };	
+}&lt;/pre&gt;
+&lt;p&gt;In the next step, we need to create a class that will hold a list of &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;Product&lt;/code&gt; objects.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;namespace JSONModels
+{
+  class Products : public JSONBase
+  {
+  public:		
+    virtual ~Products() {};
+    virtual bool Deserialize(const std::string&amp; s);		
+
+    // Getters/Setters.
+    std::list&amp;lt;Product&amp;gt;&amp; ProductsList() { return _products; }
+  public:
+    virtual bool Deserialize(const rapidjson::Value&amp; obj) { return false; };
+    virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+  private:
+    std::list&amp;lt;Product&amp;gt; _products;
+  };
+}&lt;/pre&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by JSONBase class once the object is being serialized. Our list is stored in the memory, so we need to write it to the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In this code, we iterate over all Product in our &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;_product&lt;/code&gt; list and call for Serialize function of the Product class.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const
+{
+  writer-&amp;gt;StartArray();
+
+     for (std::list&amp;lt;Product&amp;gt;::const_iterator it = _products.begin(); it != _products.end(); it++)
+     {
+        (*it).Serialize(writer);
+     }
+  writer-&amp;gt;EndArray();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with JSON string parameter.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;First we need to call for &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;InitDocument&lt;/code&gt; function to parse the string&lt;/li&gt;
+&lt;li&gt;Once the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;doc&lt;/code&gt; object is initialized, we need to iterate over all JSON objects, call for Deserialize and finally add to _products list.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Products::Deserialize(const std::string&amp; s)
+{
+  rapidjson::Document doc;
+  if (!InitDocument(s, doc))
+    return false;
+
+  if (!doc.IsArray())
+    return false;
+
+  for (rapidjson::Value::ConstValueIterator itr = doc.Begin(); itr != doc.End(); ++itr)
+  {
+    Product p;
+    p.Deserialize(*itr);
+    _products.push_back(p);
+  }
+
+  return true;
+}&lt;/pre&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;h3 id=&#34;loading-json-array-from-file&#34;&gt;Loading JSON array from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// load json array
+JSONModels::Products products;
+products.DeserializeFromFile(&#34;DataSampleArray.json&#34;);
+
+for (std::list&amp;lt;JSONModels::Product&amp;gt;::const_iterator it = products.ProductsList().begin();
+  it != products.ProductsList().end(); it++)
+{
+  // print some values.
+  printf(&#34;Name:%s, Sales:%.3f&#34;, (*it).Name().c_str(), (*it).Sales());
+}&lt;/pre&gt;
+&lt;h3 id=&#34;adding-a-new-object-to-the-existing-list&#34;&gt;Adding a new object to the existing list&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// add new product
+JSONModels::Product newProduct;
+newProduct.Id(101);
+newProduct.Name(&#34;Global Value Mid-Back Manager&#39;s Chair, Gray&#34;);
+newProduct.Category(&#34;Furniture&#34;);
+newProduct.Sales(213.115f);    
+products.ProductsList().push_back(product);&lt;/pre&gt;
+&lt;h3 id=&#34;saving-the-list-to-a-new-file&#34;&gt;Saving the list to a new file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;// save to new array file.
+products.SerializeToFile(&#34;DataSampleArrayNew.json&#34;)&lt;/pre&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>Serialize and Deserialize object in C&#43;&#43; using RapidJSON</title>
+      <link>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</link>
+      <pubDate>Wed, 08 Apr 2020 20:12:03 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/serialize-and-deserialize-object-in-cpp-using-rapidjson/</guid>
+      <description>
+        
+          &lt;p&gt;In one of my projects in C++, I had to work with an input in JSON format as we were using Django Web API that produces a JSON response for REST API calls.&lt;/p&gt;
+&lt;p&gt;Parsing the JSON format in C++ should be easy with the open source libraries such as &lt;a href=&#34;https://rapidjson.org&#34;&gt;RapidJSON&lt;/a&gt;, &lt;a href=&#34;https://github.com/nlohmann/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;nlohmann/jsonm&lt;/a&gt;, &lt;a href=&#34;https://github.com/CPPAlliance/json&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Boost.JSON.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;My goal was to work with strongly-typed objects and keep the parsing behind the scenes.&lt;/p&gt;
+&lt;p&gt;Such task sounds trivial if you work in C# or other programming language that supports reflection, but in C++ it requires a bit more work.&lt;/p&gt;
+&lt;p&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub.&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition, 16.5.1&lt;/li&gt;
+&lt;li&gt;RapidJSON 1.1.0 release&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;In Visual Studio, create a new Console Application in C++. It can be both, 32-bit or 64-bit.&lt;/li&gt;
+&lt;li&gt;In Windows Explorer, open the root folder of the project in command line prompt.&lt;/li&gt;
+&lt;li&gt;Clone the RapidJSON repository using the following command line:
+&lt;li style=&#34;list-style-type: none;&#34;&gt;
+ &lt;ul&gt;
+   &lt;li&gt;
+     &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;msdos&#34;&gt;git clone https://github.com/Tencent/rapidjson.git&lt;/code&gt;
+   &lt;/li&gt;
+ &lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;/li&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;I am going to use a very simple JSON  that represents a product in an inventory. It has a few properties of different types: &lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;json&#34;&gt;{
+&amp;quot;id&amp;quot;: 9,
+&amp;quot;name&amp;quot;: &amp;quot;Bush Somerset Collection Bookcase&amp;quot;,
+&amp;quot;category&amp;quot;: &amp;quot;Furniture&amp;quot;,
+&amp;quot;sales&amp;quot;:122.0
+}&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;creating-the-object-model&#34;&gt;Creating the object model&lt;/h2&gt;
+&lt;p&gt;As I mentioned before, in the serialize/deserialize process I want to be able to work with classes with strongly typed members and accessors functions.&lt;/p&gt;
+&lt;p&gt;For this purpose, I created an abstract base class &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONBase&lt;/code&gt; that provides following capabilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Document parsing using RapidJSON&lt;/li&gt;
+&lt;li&gt;Serializing to file and Deserializing from file&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Inheriting from JSONBase requires an implementation of Serialize and Deserialize pure virtual functions.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class JSONBase
+{
+public:	
+  bool DeserializeFromFile(const std::string&amp; filePath);
+  bool SerializeToFile(const std::string&amp; filePath);	
+
+  virtual std::string Serialize() const;
+  virtual bool Deserialize(const std::string&amp; s);
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj) = 0;
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const = 0;
+protected:
+  bool InitDocument(const std::string &amp; s, rapidjson::Document &amp;doc);
+};&lt;/pre&gt;
+&lt;h2 id=&#34;creating-the-product-class&#34;&gt;Creating the Product class&lt;/h2&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;class Product : public JSONBase
+{
+public:
+  Product();		
+  virtual ~Product();			
+
+  virtual bool Deserialize(const rapidjson::Value&amp; obj);
+  virtual bool Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt;* writer) const;
+
+  // Getters/Setters.
+  const std::string&amp; Name() const { return _name; }
+  void Name(const std::string&amp; name) { _name = name; }
+
+  const std::string&amp; Category() const { return _category; }
+  void Category(const std::string&amp; category) { _category = category; }
+
+  float Sales() const { return _sales; }
+  void Sales(float sales) { _sales = sales; }
+
+  int Id() const { return _id; }
+  void Id(int id) { _id = id; }		
+private:
+  std::string _name;
+  std::string _category;
+  float _sales;
+  int _id;
+};&lt;/pre&gt;
+&lt;p&gt;As my goal is to work with objects and not JSON, we need following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a class that derives from JSONBase that represents a Product.&lt;/li&gt;
+&lt;li&gt;Add member variables to the class. (id, name, category, sales)&lt;/li&gt;
+&lt;li&gt;Add Getters/Setters for member variables.&lt;/li&gt;
+&lt;li&gt;Implement the pure virtual functions Serialize and Deserialize&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;serialize&#34;&gt;Serialize&lt;/h3&gt;
+&lt;p&gt;This function is called by the JSON base class passing the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;StringBuffer&lt;/code&gt; pointer. We need to write the property names and values to the buffer.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Serialize(rapidjson::Writer&amp;lt;rapidjson::StringBuffer&amp;gt; * writer) const
+{
+  writer-&amp;gt;StartObject();
+
+    writer-&amp;gt;String(&#34;id&#34;); // create Id property
+    writer-&amp;gt;Int(_id);     // write the Id value from the object instance
+
+    writer-&amp;gt;String(&#34;name&#34;);
+    writer-&amp;gt;String(_name.c_str());
+
+    writer-&amp;gt;String(&#34;category&#34;);
+    writer-&amp;gt;String(_category.c_str());
+
+    writer-&amp;gt;String(&#34;sales&#34;);
+    writer-&amp;gt;Double(_sales);
+
+  writer-&amp;gt;EndObject();
+
+  return true;
+}&lt;/pre&gt;
+&lt;h3 id=&#34;deserialize&#34;&gt;Deserialize&lt;/h3&gt;
+&lt;p&gt;Deserialize function is called by JSONBase class with the current object being parsed. We need to call the setter functions of our object to update the value from JSON.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;bool Product::Deserialize(const rapidjson::Value &amp; obj)
+{
+  Id(obj[&#34;id&#34;].GetInt());
+  Name(obj[&#34;name&#34;].GetString());
+  Category(obj[&#34;category&#34;].GetString());
+  Sales(obj[&#34;sales&#34;].GetFloat());
+
+  return true;
+}&lt;/pre&gt;
+&lt;p&gt;Notice that you should access every property with the correct type.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;int – GetInt()&lt;/li&gt;
+&lt;li&gt;int64 – GetInt64()&lt;/li&gt;
+&lt;li&gt;string – GetString()&lt;/li&gt;
+&lt;li&gt;float – GetFloat()&lt;/li&gt;
+&lt;li&gt;double – GetDouble()&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Check this section in &lt;a href=&#34;https://rapidjson.org/md_doc_tutorial.html#QueryNumber&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;RapidJSON tutorial&lt;/a&gt; for more info about the supported types.&lt;/p&gt;
+&lt;h2 id=&#34;usage&#34;&gt;Usage&lt;/h2&gt;
+&lt;p&gt;After we’ve done all the hard work with defining the classes, the usage is very straight forward:&lt;/p&gt;
+&lt;h3 id=&#34;loading-json-from-file&#34;&gt;Loading JSON from file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);
+printf(&#34;Name:%s, Sales:%.3f&#34;, product.Name().c_str(), product.Sales());&lt;/pre&gt;
+&lt;h3 id=&#34;loading-json-from-file-changing-values-to-writing-back-to-file&#34;&gt;Loading JSON from file, changing values to writing back to file&lt;/h3&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;cpp&#34;&gt;JSONModels::Product product;
+product.DeserializeFromFile(&#34;DataSample.json&#34;);            
+product.Sales(product.Sales() + 100.0f); // increase the sales by 100
+product.SerializeToFile(&#34;DataSampleNew.json&#34;);&lt;/pre&gt;
+&lt;p&gt;In the next article, I am going to cover serializing/deserialzing JSON arrays in C++.&lt;/p&gt;
+&lt;h2 id=&#34;useful-resources&#34;&gt;Useful resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Full source code of this post in &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/C%2B%2B/RapidJSONSample&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+    <item>
+      <title>C# Deserializing XML with namespace in .NET core</title>
+      <link>https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/</link>
+      <pubDate>Sat, 04 Apr 2020 15:38:13 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/deserializing-xml-with-namespace-in-c-sharp/</guid>
+      <description>
+        
+          &lt;p&gt;I’ve been seeing a lot of repeated questions of difficulties deserializing XML files that have a namespace.&lt;/p&gt;
+&lt;p&gt;In this post, I will provide some samples in C# of how to deserialize such XML files with minimal amount of code.&lt;/p&gt;
+&lt;p&gt;My goal for this article is to provide working examples with minimal amount of code and class attributes.&lt;/p&gt;
+&lt;p&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019&lt;/li&gt;
+&lt;li&gt;.NET Core 3.1&lt;/li&gt;
+&lt;li&gt;Notepad++ text editor for XML&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Why do we need namespaces?&lt;/p&gt;
+&lt;p&gt;There is a lot of similarity between a classes in C# project and XML document. In C#, every class needs to have it’s own namespace providing the ability to define classes with a same names across different projects. In case of class, every class is recognizable by a fully qualified name.&lt;/p&gt;
+&lt;p&gt;For example, &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlSerializer&lt;/code&gt; class that I will use in this sample is actually &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;System.Xml.Serialization.XmlSerializer&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I could easily define a class named XmlSerializer in my namespace without any conflicts.&lt;/p&gt;
+&lt;p&gt;When you work alone on a project, class naming conflict might be a rare thing, but when using external library without namespaces, the conflict could be a common thing.&lt;/p&gt;
+&lt;p&gt;A similar thing happens in XML files. Once you define a namespace, you can create elements with a same name, but different namespace.&lt;/p&gt;
+&lt;p&gt;A namespace name in XML is usually a URI of organization, but actually it can be any string. Here is a useful article describing the historical reasons for URI usage in &lt;a href=&#34;https://www.xml.com/pub/a/2005/04/13/namespace-uris.html&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML namespaces&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;XML standard attribute xmlns enables us to define a multiple namespaces for element.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;xmlns=”https://somename.org” creates a default namespace.&lt;/li&gt;
+&lt;li&gt;In cased we would like to add more namespaces, we need to use a prefix.
+&lt;ul&gt;
+&lt;li&gt;xmlns:gt=”https://somename2.org” creates a namespace with prefix gt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;preparing-the-project&#34;&gt;Preparing the project&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;In Visual Studio, create a new .NET Core Console App.&lt;/li&gt;
+&lt;li&gt;Add a SimpleBooks.xml as shown below. I used a default namespace xmlns=”https://gotask.net” attribute for Books element.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;xml&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Add 2 classes Book and Books.&lt;/li&gt;
+&lt;li&gt;The only class attribute I will use is &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34; data-enlighter-theme=&#34;git&#34;&gt;XmlRoot&lt;/code&gt; and set the name of the root element and the namespace.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public class Book
+{
+  public string ISBN { get; set; }
+
+  public string Name { get; set; }
+
+  public decimal Price { get; set; }
+}
+
+[XmlRoot(&#34;Books&#34;, Namespace = &#34;https://gotask.net&#34;)]
+public class Books : List&amp;lt;Book&amp;gt;
+{
+}&lt;/pre&gt;
+&lt;h2 id=&#34;deserializing&#34;&gt;Deserializing&lt;/h2&gt;
+&lt;h3 id=&#34;simple-case&#34;&gt;Simple Case&lt;/h3&gt;
+&lt;p&gt;Once we have the classes and the XML data set properly, the deserialize function is really simple.&lt;/p&gt;
+&lt;p&gt;In the list we have 2 books now.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var serializer = new XmlSerializer(typeof(Books));
+
+using (var reader = new FileStream(&#34;SimpleBooks.xml&#34;, FileMode.Open))
+{
+    var books = (Books)serializer.Deserialize(reader);
+    Console.WriteLine($&#34;Number of books is {books.Count}&#34;);
+}&lt;/pre&gt;
+&lt;h3 id=&#34;multiple-namespaces&#34;&gt;Multiple namespaces&lt;/h3&gt;
+&lt;p&gt;I added another namespace to the declaration of the Books element. This namespace has gt prefix and value “https://github.org”.  Running the code above on this XML will produce the same results (2 books) since there is no Book element in gt namespace.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Now lets change the XML and add one of the book elements to gt namespace. The XML would look like:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;&amp;lt;?xml version=&#34;1.0&#34; encoding=&#34;utf-8&#34; ?&amp;gt;
+&amp;lt;Books xmlns=&#34;https://gotask.net&#34; xmlns:gt=&#34;https://github.org&#34;&amp;gt;
+  &amp;lt;Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1788478120&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;C# 8.0 and .NET Core 3.0 – Modern Cross-Platform Development: Build applications with C#, .NET Core, Entity Framework Core, ASP.NET Core, and ML.NET using Visual Studio Code, 4th Edition&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;35.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/Book&amp;gt;
+  &amp;lt;gt:Book&amp;gt;
+    &amp;lt;ISBN&amp;gt;978-1789133646&amp;lt;/ISBN&amp;gt;
+    &amp;lt;Name&amp;gt;Hands-On Design Patterns with C# and .NET Core: Write clean and maintainable code by using reusable solutions to common software design problems&amp;lt;/Name&amp;gt;
+    &amp;lt;Price&amp;gt;34.99&amp;lt;/Price&amp;gt;
+  &amp;lt;/gt:Book&amp;gt;
+&amp;lt;/Books&amp;gt;&lt;/pre&gt;
+&lt;p&gt;Now the code above will deserialize only the first book (ISBN 978-1788478120), since it’s the only book that exists in the default namespace.&lt;/p&gt;
+&lt;h4 id=&#34;useful-links&#34;&gt;Useful links&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;The full source code available at &lt;a href=&#34;https://github.com/eyalmolad/gotask/tree/master/XML/XMLDeserializeCore&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;GitHub&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/namespaces-overview-linq-to-xml&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;XML Linq namespaces&lt;/a&gt; overview&lt;/li&gt;
+&lt;/ul&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

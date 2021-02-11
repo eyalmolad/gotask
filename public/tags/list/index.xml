@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>list on GoTask</title>
+    <link>https://gotask.net/tags/list/</link>
+    <description>Recent content in list on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Mon, 06 Apr 2020 22:15:04 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/list/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reverse list elements in C#</title>
+      <link>https://gotask.net/programming/reverse-list-elements-in-c-sharp/</link>
+      <pubDate>Mon, 06 Apr 2020 22:15:04 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/reverse-list-elements-in-c-sharp/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;.NET core provides a generics class List to store a strongly types objects that can be accessed by index.&lt;/p&gt;
+&lt;p&gt;This class provides us with many methods to add, remove, access, sort or manipulate the objects within the list.&lt;/p&gt;
+&lt;p&gt;In this sample, I am going to demonstrate the following &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Reverse&lt;/code&gt; options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reverse using the System.Collections.Generic List’s methods.&lt;/li&gt;
+&lt;li&gt;Reverse using Linq method&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;code-samples&#34;&gt;Code Samples&lt;/h2&gt;
+&lt;h3 id=&#34;list-initialization&#34;&gt;List Initialization&lt;/h3&gt;
+&lt;p&gt;I am going to create a list of integers and set the values using a collection initializer.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var list = new List&amp;lt;int&amp;gt;
+{
+    1, 5, 6, 7, 9, 10, 99, 777
+};&lt;/pre&gt;
+&lt;p&gt;Note that using a collection initializer as shown above produces the same code as separately using the Add function multiple times:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;var list = new List&amp;lt;int&amp;gt;();
+list.Add(1);
+list.Add(5);
+list.Add(6);
+list.Add(7);
+list.Add(9);
+list.Add(10);
+list.Add(99);
+list.Add(777);&lt;/pre&gt;
+&lt;p&gt;Printing to console the original list, produces the following output:&lt;/p&gt;
+&lt;figure id=&#34;attachment_187&#34; aria-describedby=&#34;caption-attachment-187&#34; style=&#34;width: 206px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-187&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/original-list-int.png&#34; alt=&#34;In-place reverse output&#34; width=&#34;216&#34; height=&#34;228&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-187&#34; class=&#34;wp-caption-text&#34;&gt;Original list of items sample output&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h3 id=&#34;reverse-using-listt-reverse-methods&#34;&gt;Reverse using List&lt;T&gt; Reverse Methods&lt;/h3&gt;
+&lt;p&gt;The name of the method is self-explanatory – it reverses the order of the elements in the list.&lt;/p&gt;
+&lt;p&gt;&lt;span style=&#34;text-decoration: underline;&#34;&gt;Important note:&lt;/span&gt; The Reverse methods are reversing the list in-place, meaning your original List object is being changed.&lt;/p&gt;
+&lt;p&gt;The Reverse  method has 2 overloads:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reverse(void) – Reverses the all the elements in the given list&lt;/li&gt;
+&lt;li&gt;Reverse(int, int) – Reverses the order of the elements in the specified range&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;full-reverse-in-place&#34;&gt;Full reverse in-place&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;figure id=&#34;attachment_188&#34; aria-describedby=&#34;caption-attachment-188&#34; style=&#34;width: 217px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-188&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/reversed-full-list-int.png&#34; alt=&#34;Reverset in place list c#&#34; width=&#34;227&#34; height=&#34;253&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-188&#34; class=&#34;wp-caption-text&#34;&gt;Reverse full list in C#&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h4 id=&#34;partial-reverse-in-place&#34;&gt;Partial reverse in-place&lt;/h4&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.Reverse(0, 3)&lt;/code&gt;&lt;/p&gt;
+&lt;figure id=&#34;attachment_189&#34; aria-describedby=&#34;caption-attachment-189&#34; style=&#34;width: 284px&#34; class=&#34;wp-caption alignnone&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;size-full wp-image-189&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/reversed-first-3-items-int.png&#34; alt=&#34;3 Items reversed c#&#34; width=&#34;294&#34; height=&#34;223&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-189&#34; class=&#34;wp-caption-text&#34;&gt;Reverse first 3 items in C# List&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;reverse-using-linq-reverse-method&#34;&gt;Reverse using Linq Reverse Method&lt;/h3&gt;
+&lt;p&gt;In case your wish to keep the original list unchanged, the following Linq code will create another list with reversed items:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;list.AsEnumerable().Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This is also available as query syntax:&lt;/p&gt;
+&lt;p&gt;&lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;(from i in list select i).Reverse();&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Full code:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;public class Program
+{
+  static void Main(string[] args)
+  {
+    // initialize list.
+    var list = new List&amp;lt;int&amp;gt;
+    {
+      1, 5, 6, 7, 9, 10, 99, 777 
+    };
+
+    PrintList(&#34;Original List:&#34;,  list);
+
+    list.Reverse();
+    PrintList(&#34;Reversed full:&#34;, list);
+    list.Reverse(); // reverse back since the list is changed.
+
+    // reverse first 3 items.
+    list.Reverse(0, 3);
+    PrintList(&#34;Reversed first 3 items:&#34;, list);
+    list.Reverse(0, 3); // reverse back.
+
+
+    PrintList(&#34;Reversed Using LINQ full:&#34;, list.AsEnumerable().Reverse());
+
+    PrintList(&#34;Reversed Using LINQ Query Syntax:&#34;, (from i in list select i).Reverse());
+  }
+
+  static void PrintList&amp;lt;T&amp;gt;(string message, IEnumerable&amp;lt;T&amp;gt; list)
+  {
+    Console.WriteLine($&#34;{message}\r\n{string.Join(&#34;\r\n&#34;, list)}&#34;);
+  }
+}
+&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;h2 id=&#34;useful-links&#34;&gt;Useful links&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.reverse?view=netframework-4.8#System_Collections_Generic_List_1_Reverse_System_Int32_System_Int32_&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;List&lt;T&gt; Reverse&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt; &lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>

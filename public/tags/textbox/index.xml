@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>textbox on GoTask</title>
+    <link>https://gotask.net/tags/textbox/</link>
+    <description>Recent content in textbox on GoTask</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright © 2020–2021 ; All rights reserved.</copyright>
+    <lastBuildDate>Thu, 16 Apr 2020 18:13:46 +0000</lastBuildDate><atom:link href="https://gotask.net/tags/textbox/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>How to set the focus during loading to a control in WinForms</title>
+      <link>https://gotask.net/programming/winforms/how-to-set-a-focus-to-a-control-in-winforms-during-loading/</link>
+      <pubDate>Thu, 16 Apr 2020 18:13:46 +0000</pubDate>
+      
+      <guid>https://gotask.net/programming/winforms/how-to-set-a-focus-to-a-control-in-winforms-during-loading/</guid>
+      <description>
+        
+          &lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;
+&lt;p&gt;Usually when creating forms with different controls, we would like the form be opened with a specific control in focus. This is usually true for Textboxes, but could be also very relevant for other controls such as ComboBox, Radio control, Listbox, and more. There are several ways to achieve this functionality with a very little of coding.&lt;/p&gt;
+&lt;h2 id=&#34;my-stack&#34;&gt;My Stack&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 2019 Community Edition (16.5.1)&lt;/li&gt;
+&lt;li&gt;WinForms application built on .NET Framework 4.7.2 (C#) – 32/64 bit.&lt;/li&gt;
+&lt;li&gt;Windows 10 Pro 64-bit (10.0, Build 18363) (18362.19h1_release.190318-1202)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;solutions&#34;&gt;Solutions&lt;/h2&gt;
+&lt;figure id=&#34;attachment_216&#34; aria-describedby=&#34;caption-attachment-216&#34; style=&#34;width: 490px&#34; class=&#34;wp-caption alignright&#34;&gt;&lt;img loading=&#34;lazy&#34; class=&#34;wp-image-216 size-full&#34; src=&#34;https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1.png&#34; alt=&#34;Windows Form in sample controls&#34; width=&#34;500&#34; height=&#34;303&#34; srcset=&#34;https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1.png 500w, https://gotask.net/wp-content/uploads/2020/04/win-form-sample-1-300x182.png 300w&#34; sizes=&#34;(max-width: 500px) 100vw, 500px&#34; /&gt;&lt;figcaption id=&#34;caption-attachment-216&#34; class=&#34;wp-caption-text&#34;&gt;Windows Form in sample controls&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;h3 id=&#34;1-default-behavior-8211-the-lowest-tabindex&#34;&gt;#1 Default behavior – the lowest TabIndex&lt;/h3&gt;
+&lt;p&gt;By default, Windows will set the initial focus to the control with the lowest &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;TabIndex&lt;/code&gt; value.&lt;/p&gt;
+&lt;h3 id=&#34;2-setting-the-active-control-property&#34;&gt;#2 Setting the active control property&lt;/h3&gt;
+&lt;p&gt;A &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Form&lt;/code&gt; inherited class contains the inherited property &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;ActiveControl&lt;/code&gt; of type &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;Control&lt;/code&gt;. As all Windows UI elements inherit from a Control, setting this reference to one of our controls in the Load event handler will automatically make it focused once the dialog is first shown.&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;private void Form1_Load(object sender, EventArgs e)
+{
+  ActiveControl = textBox1;
+}&lt;/pre&gt;
+&lt;p&gt; &lt;/p&gt;
+&lt;p&gt;Note that the control must have the following properties set to True value:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visible&lt;/li&gt;
+&lt;li&gt;Enabled&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In case the one of the properties above is False, the focused control will be the next control according to the &lt;code class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;csharp&#34;&gt;TabIndex.&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;3-calling-the-focus-member-function&#34;&gt;#3 Calling the Focus() member function&lt;/h3&gt;
+&lt;p&gt;I mentioned before that all Windows UI elements are inherited from the Control class. This class provides us the Focus() member function.&lt;/p&gt;
+&lt;p&gt;We can use this function to capture the focus to a specific control, but unfortunately it will not work in &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.load?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Load&lt;/a&gt; event handler. The reason is that we can not set focus to a control that haven’t been rendered (shown).&lt;/p&gt;
+&lt;p&gt;However, WinForms provides us the &lt;a href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.form.shown?view=netframework-4.8&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;Show&lt;/a&gt; event that occurs whenever the form is first displayed. In the event handler, we can call for Focus function as shown in the code below:&lt;/p&gt;
+&lt;pre class=&#34;EnlighterJSRAW&#34; data-enlighter-language=&#34;null&#34;&gt;private void Form1_Shown(object sender, EventArgs e)
+{
+  textBox1.Focus();
+}&lt;/pre&gt;
+&lt;h3 id=&#34;4-calling-the-select-member-function&#34;&gt;#4 Calling the Select() member function&lt;/h3&gt;
+&lt;p&gt;Looking at the &lt;a href=&#34;https://referencesource.microsoft.com/#System.Windows.Forms/winforms/Managed/System/WinForms/Control.cs,6c9dc153b2c496ae&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;source code of Control.cs class&lt;/a&gt;, calling the Select function without parameters is similar to setting the ActiveControl.&lt;/p&gt;
+&lt;h2 id=&#34;heading&#34;&gt;&lt;/h2&gt;
+&lt;p&gt; &lt;/p&gt;
+
+        
+      </description>
+    </item>
+    
+  </channel>
+</rss>
